@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
-import '../text.dart';
+import '../utility/color_manipulator.dart';
+import '../utility/text.dart';
 
 // TODO: получать todayMeals, статус количества продуктов и доставки из бд
 
@@ -20,9 +21,9 @@ class _HomePageState extends State<HomePage> {
         systemNavigationBarColor: Theme.of(context).colorScheme.primary,
         statusBarColor: Colors.transparent));
 
-    const double rectRounding = 20;
+    const double borderRadius = 20;
     final boxShadowDecoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(rectRounding),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
               color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
@@ -112,13 +113,12 @@ class _HomePageState extends State<HomePage> {
                   flex: 6,
                   child: Padding(
                     padding: floatingPadding.copyWith(
-                      bottom: floatingPadding.bottom * 2
-                    ),
+                        bottom: floatingPadding.bottom * 2),
                     child: Container(
                       // для теней
                       decoration: boxShadowDecoration,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(rectRounding),
+                        borderRadius: BorderRadius.circular(borderRadius),
                         child: ColoredBox(
                           color: Theme.of(context).colorScheme.primary,
                           child: Column(
@@ -155,75 +155,93 @@ class _HomePageState extends State<HomePage> {
                                       // +1 для кнопки +
                                       itemBuilder:
                                           (BuildContext context, int index) {
+                                        // TODO: вынести кнопки в отдельный класс
+                                        // TODO: добавить в кнопки картинки-миниатюры блюд
                                         const buttonsPadding =
                                             EdgeInsets.all(6.0);
                                         if (index > 0) {
+                                          // просмотр приёма пищи
                                           return Padding(
                                             padding: buttonsPadding,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      rectRounding),
-                                              child: MaterialButton(
-                                                onPressed: () {},
-                                                color: HSLColor.fromColor(
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .background)
-                                                    .withLightness(0.86)
-                                                    .toColor(),
-                                                splashColor: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                    .withOpacity(0.2),
-                                                child: Align(
-                                                  alignment: Alignment.center,
-                                                  child: formatHeadline(
+                                            child: TextButton(
+                                              onPressed: () {},
+                                              style: TextButton.styleFrom(
+                                                  backgroundColor: lighten(
                                                       Theme.of(context)
-                                                          .textTheme
-                                                          .headlineSmall!,
-                                                      TextAlign.center,
-                                                      todayMeals[index - 1]),
-                                                ),
+                                                          .colorScheme
+                                                          .background,
+                                                      50),
+                                                  foregroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
+                                                  splashFactory:
+                                                      InkSplash.splashFactory,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            borderRadius),
+                                                  ),
+                                                  elevation: 8,
+                                                  shadowColor: Colors.black),
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: formatHeadline(
+                                                    Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall!,
+                                                    TextAlign.center,
+                                                    todayMeals[index - 1]),
                                               ),
                                             ),
                                           );
                                         } else {
+                                          // добавление приёма пищи на сегодня
                                           return Padding(
                                             padding: buttonsPadding,
-                                            child: DottedBorder(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .background
-                                                  .withOpacity(0.5),
-                                              dashPattern: const [8, 8],
-                                              strokeWidth: 4,
-                                              radius: const Radius.circular(
-                                                  rectRounding),
-                                              strokeCap: StrokeCap.round,
-                                              borderType: BorderType.RRect,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        rectRounding),
-                                                child: MaterialButton(
-                                                  onPressed: () {
-                                                    // TODO: сделать экран для добавления приёма пищи на сегодня
-                                                  },
-                                                  splashColor: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary
-                                                      .withOpacity(0.05),
-                                                  clipBehavior: Clip.hardEdge,
-                                                  child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.add,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .background,
-                                                      size: 60,
-                                                    ),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                // TODO: сделать экран для добавления приёма пищи на сегодня
+                                              },
+                                              style: IconButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                splashFactory:
+                                                    InkSplash.splashFactory,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          borderRadius),
+                                                ),
+                                              ),
+                                              padding: EdgeInsets.zero,
+                                              icon: DottedBorder(
+                                                color: lighten(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                    50),
+                                                dashPattern: const [8, 8],
+                                                // чтобы при нажатии заливалась и рамка
+                                                borderPadding:
+                                                    const EdgeInsets.all(1),
+                                                strokeWidth: 4,
+                                                radius: const Radius.circular(
+                                                    borderRadius),
+                                                strokeCap: StrokeCap.round,
+                                                borderType: BorderType.RRect,
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: lighten(
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                        15),
+                                                    size: 60,
                                                   ),
                                                 ),
                                               ),

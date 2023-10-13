@@ -67,6 +67,7 @@ class MainPage extends StatelessWidget {
           ),
           navigationBarTheme: const NavigationBarThemeData(
             height: 65,
+            backgroundColor: Colors.white,
             indicatorColor: Colors.transparent,
             indicatorShape: CircleBorder(),
             labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
