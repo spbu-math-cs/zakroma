@@ -82,6 +82,7 @@ class _HomePageState extends State<HomePage> {
                       // для теней
                       decoration: boxShadowDecoration,
                       child: DisplayBar(
+                        DisplayBarType.viandStatus,
                         text: 'Дома полно продуктов',
                         textStyle: Theme.of(context).textTheme.headlineSmall!,
                         textAlign: headlineTextAlignment,
@@ -99,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                       // для теней
                       decoration: boxShadowDecoration,
                       child: DisplayBar(
+                        DisplayBarType.deliveryStatus,
                         text: 'Доставка не ожидается',
                         textStyle: Theme.of(context).textTheme.headlineSmall!,
                         textAlign: headlineTextAlignment,
@@ -226,8 +228,12 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+enum DisplayBarType {
+  deliveryStatus, viandStatus,
+}
+
 class DisplayBar extends StatelessWidget {
-  const DisplayBar({
+  const DisplayBar(this.type, {
     super.key,
     required this.text,
     this.textStyle,
@@ -235,6 +241,7 @@ class DisplayBar extends StatelessWidget {
     this.image,
   });
 
+  final DisplayBarType type;
   final String text;
   final TextStyle? textStyle;
   final TextAlign textAlign;
@@ -257,14 +264,83 @@ class DisplayBar extends StatelessWidget {
         child: Align(alignment: Alignment.center, child: image),
       ));
     }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: ColoredBox(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: contents,
+    return GestureDetector(
+      onTap: () {
+        showSlidingBottomSheet(
+          context,
+          builder: (context) {
+            return displayDetails(context);
+          });
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: ColoredBox(
+          color: Theme.of(context).colorScheme.primary,
+          child: Row(
+            children: contents,
+          ),
         ),
       ),
+    );
+  }
+
+  SlidingSheetDialog displayDetails(context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    void Function(dynamic) headlineOnDoubleTap = (context) {
+      SheetController.of(context)!.expand();
+    };
+
+    return SlidingSheetDialog(
+      padding: defaultPadding,
+      cornerRadius: borderRadius,
+      color: Theme.of(context).colorScheme.primary,
+      snapSpec: SnapSpec(
+          snap: true,
+          snappings: [0.55, 0.9],
+          onSnap: (sheetState, snap) {
+            if (snap == 0.9) {
+              // если достигли максимального размера, сворачиваем по двойному тапу
+              headlineOnDoubleTap = (context) {
+                Navigator.of(context).pop();
+              };
+            }
+          }
+      ),
+      builder: (context, sheetState) {
+        return SizedBox(
+          height: screenHeight,
+          child: Column(
+            children: [
+              // заголовок — название приёма пищи
+              Expanded(
+                flex: 1,
+                child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        onDoubleTap: () {
+                          headlineOnDoubleTap(context);
+                        },
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: formatHeadline(
+                              textStyle?.copyWith(
+                                fontSize: constraints.maxHeight / 2,
+                              ),
+                              textAlign,
+                              type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты'),
+                        ),
+                      );
+                    }
+                ),
+              ),
+              const Expanded(
+                  flex: 9,
+                  child: Placeholder()
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
