@@ -117,38 +117,48 @@ class _ZakromaState extends State<Zakroma> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          selectedIndex: currentPageIndex,
-          destinations: List<Widget>.generate(
-            navigationBarIcons.length,
-            (index) => IconButton(
-                style: IconButton.styleFrom(
-                  highlightColor: Colors.transparent,
-                  shape: const CircleBorder(),
-                  splashFactory: InkSplash.splashFactory,
-                ),
-                color: lighten(Theme.of(context).colorScheme.background),
-                onPressed: () {
-                  setState(() {
-                    currentPageIndex = index;
-                  });
-                },
-                iconSize: 45,
-                isSelected: currentPageIndex == index,
-                selectedIcon: Icon(
-                  navigationBarIcons[index][0],
-                  color: buttonColor.withGreen(buttonColor.green - 10),
-                ),
-                icon: Icon(
-                  navigationBarIcons[index][1],
-                  color: lighten(buttonColor),
-                )),
-          )),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, -2))
+            ]
+        ),
+        child: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            selectedIndex: currentPageIndex,
+            destinations: List<Widget>.generate(
+              navigationBarIcons.length,
+              (index) => IconButton(
+                  style: IconButton.styleFrom(
+                    highlightColor: Colors.transparent,
+                    shape: const CircleBorder(),
+                    splashFactory: InkSplash.splashFactory,
+                  ),
+                  color: lighten(Theme.of(context).colorScheme.background),
+                  onPressed: () {
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                  },
+                  iconSize: 45,
+                  isSelected: currentPageIndex == index,
+                  selectedIcon: Icon(
+                    navigationBarIcons[index][0],
+                    color: buttonColor.withGreen(buttonColor.green - 10),
+                  ),
+                  icon: Icon(
+                    navigationBarIcons[index][1],
+                    color: lighten(buttonColor),
+                  )),
+            )),
+      ),
       body: <Widget>[
         const HomePage(),
         const DietPage(),
