@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/material.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
@@ -47,10 +48,10 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, constraints) => formatHeadline(
                       'Закрома',
                       Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
+                            fontSize: 3 * constraints.maxHeight / 4,
+                          ),
                       TextAlign.left,
-                      ),
+                    ),
                   ),
                 ),
               ),
@@ -81,34 +82,26 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               flex: 6,
               child: Padding(
-                padding: defaultPadding.copyWith(
-                    bottom: defaultPadding.bottom * 2),
-                child: Container(
-                  // для теней
-                  decoration: shadowsBoxDecoration,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    child: ColoredBox(
-                      color: Theme.of(context).colorScheme.primary,
-                      child: Column(
-                        children: [
-                          // Сегодняшнее число и день недели
-                          // TODO: при нажатии на заголовок, открывается детальное представление сегодняшних приёмов пищи
-                          Expanded(
-                            flex: 1,
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: formatHeadline('28 февраля — суббота',
-                                    Theme.of(context).textTheme.headlineMedium)
-                            ),
-                          ),
-                          // Список приёмов пищи на сегодня
-                          Expanded(
-                            flex: 6,
-                            child: MediaQuery.removePadding(
-                              context: context,
-                              removeTop: true,
-                              child: GridView.builder(
+                  padding: EdgeInsets.only(bottom: defaultPadding.bottom),
+                  child: RRSurface(
+                    child: Column(
+                      children: [
+                        // Сегодняшнее число и день недели
+                        // TODO: при нажатии на заголовок, открывается детальное представление сегодняшних приёмов пищи
+                        Expanded(
+                          flex: 1,
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: formatHeadline('28 февраля — суббота',
+                                  Theme.of(context).textTheme.headlineMedium)),
+                        ),
+                        // Список приёмов пищи на сегодня
+                        Expanded(
+                          flex: 6,
+                          child: MediaQuery.removePadding(
+                            context: context,
+                            removeTop: true,
+                            child: GridView.builder(
                                 padding: EdgeInsets.zero,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
@@ -147,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                                               InkSplash.splashFactory,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                                    borderRadius),
+                                                borderRadius),
                                           ),
                                         ),
                                         padding: EdgeInsets.zero,
@@ -183,14 +176,11 @@ class _HomePageState extends State<HomePage> {
                                     );
                                   }
                                 }),
-                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ),
+                  )),
             ),
           ],
         ),
@@ -305,7 +295,8 @@ class MealMiniature extends StatelessWidget {
           shadowColor: Colors.black),
       child: Align(
         alignment: Alignment.center,
-        child: formatHeadline(mealName,Theme.of(context).textTheme.headlineSmall),
+        child:
+            formatHeadline(mealName, Theme.of(context).textTheme.headlineSmall),
       ),
     );
   }
@@ -337,10 +328,11 @@ SlidingSheetDialog createSlidingSheet(
                   child: Align(
                     alignment: Alignment.center,
                     child: LayoutBuilder(builder: (context, constraints) {
-                      return formatHeadline(headingText,
+                      return formatHeadline(
+                          headingText,
                           Theme.of(context).textTheme.displaySmall?.copyWith(
                                 fontSize: 3 * constraints.maxHeight / 4,
-                          ));
+                              ));
                     }),
                   ),
                 ),

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
-
 import 'package:zakroma_frontend/pages/diet.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
+import 'package:zakroma_frontend/utility/color_manipulator.dart';
 
 // TODO: доделать главный экран
 // TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
@@ -75,7 +73,6 @@ class MainPage extends StatelessWidget {
             height: 65,
             backgroundColor: Colors.white,
             indicatorColor: Colors.transparent,
-            indicatorShape: CircleBorder(),
             labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
             iconTheme: MaterialStatePropertyAll(IconThemeData(
               color: Color(0xFFFFB96C),
@@ -129,7 +126,7 @@ class _ZakromaState extends State<Zakroma> {
           selectedIndex: currentPageIndex,
           destinations: List<Widget>.generate(
             navigationBarIcons.length,
-                (index) => IconButton(
+            (index) => IconButton(
                 style: IconButton.styleFrom(
                   highlightColor: Colors.transparent,
                   shape: const CircleBorder(),
