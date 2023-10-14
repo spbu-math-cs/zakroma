@@ -131,27 +131,25 @@ class _ZakromaState extends State<Zakroma> {
             navigationBarIcons.length,
                 (index) => IconButton(
                 style: IconButton.styleFrom(
-                  foregroundColor: splashColorDark,
+                  highlightColor: Colors.transparent,
                   shape: const CircleBorder(),
                   splashFactory: InkSplash.splashFactory,
                 ),
-                // padding: EdgeInsets.all(0),
                 color: lighten(Theme.of(context).colorScheme.background),
                 onPressed: () {
                   setState(() {
                     currentPageIndex = index;
                   });
                 },
-                splashColor: splashColorDark,
                 iconSize: 45,
                 isSelected: currentPageIndex == index,
                 selectedIcon: Icon(
                   navigationBarIcons[index][0],
-                  color: buttonColor,
+                  color: buttonColor.withGreen(buttonColor.green - 10),
                 ),
                 icon: Icon(
                   navigationBarIcons[index][1],
-                  color: lighten(buttonColor, 25),
+                  color: lighten(buttonColor),
                 )),
           )),
       body: <Widget>[
