@@ -38,6 +38,7 @@ class _ZakromaState extends State<Zakroma> {
         },
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
+          // TODO: переписать на свои кнопки-иконки со сплэшем нормального размера
           NavigationDestination(
             icon: Icon(Icons.favorite_border),
             selectedIcon: Icon(Icons.favorite),

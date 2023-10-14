@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                                             (todayMeals.length + 1).clamp(1, 2),
                                       ),
                                       itemCount: todayMeals.length + 1,
-                                      // +1 для кнопки +
+                                      // добавляем единичку для кнопки +
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         // TODO: вынести кнопки в отдельный класс
@@ -164,32 +164,61 @@ class _HomePageState extends State<HomePage> {
                                           return Padding(
                                             padding: buttonsPadding,
                                             child: TextButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                showModalBottomSheet(
+                                                    context: context,
+                                                    // showDragHandle: true,
+                                                    isScrollControlled: true,
+                                                    builder: (context) {
+                                                      return SizedBox(
+                                                        height: 2 * constraints.maxHeight / 3,
+                                                        child: Padding(
+                                                          padding: floatingPadding,
+                                                          child: DraggableScrollableSheet(
+                                                            minChildSize: 0.2,
+                                                            initialChildSize: 1,
+                                                            builder: (context, _) {
+                                                              return Column(
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child: Align(
+                                                                      alignment: Alignment.center,
+                                                                      child: formatHeadline(
+                                                                          Theme.of(context).textTheme.displaySmall,
+                                                                          TextAlign.center,
+                                                                          todayMeals[index - 1]),
+                                                                    ),
+                                                                  ),
+                                                                  const Expanded(
+                                                                    flex: 9,
+                                                                    child: Placeholder()
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    });
+                                              },
                                               style: TextButton.styleFrom(
                                                   backgroundColor: lighten(
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .background,
-                                                      50),
+                                                      Theme.of(context).colorScheme.background, 50),
                                                   foregroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary,
+                                                      Theme.of(context).colorScheme.onPrimary,
                                                   splashFactory:
                                                       InkSplash.splashFactory,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            borderRadius),
+                                                        BorderRadius.circular(borderRadius),
                                                   ),
                                                   elevation: 8,
                                                   shadowColor: Colors.black),
                                               child: Align(
                                                 alignment: Alignment.center,
                                                 child: formatHeadline(
-                                                    Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall!,
+                                                    Theme.of(context).textTheme.headlineSmall!,
                                                     TextAlign.center,
                                                     todayMeals[index - 1]),
                                               ),
@@ -205,24 +234,19 @@ class _HomePageState extends State<HomePage> {
                                               },
                                               style: IconButton.styleFrom(
                                                 backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
+                                                    Theme.of(context).colorScheme.primary,
                                                 splashFactory:
                                                     InkSplash.splashFactory,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          borderRadius),
+                                                      BorderRadius.circular( borderRadius),
                                                 ),
                                               ),
                                               padding: EdgeInsets.zero,
                                               icon: DottedBorder(
                                                 color: lighten(
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                    50),
+                                                    Theme.of(context).colorScheme.background, 50
+                                                ),
                                                 dashPattern: const [8, 8],
                                                 // чтобы при нажатии заливалась и рамка
                                                 borderPadding:
@@ -237,10 +261,8 @@ class _HomePageState extends State<HomePage> {
                                                   child: Icon(
                                                     Icons.add,
                                                     color: lighten(
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .background,
-                                                        15),
+                                                        Theme.of(context).colorScheme.background, 15
+                                                    ),
                                                     size: 60,
                                                   ),
                                                 ),
