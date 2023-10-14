@@ -285,55 +285,44 @@ class DisplayBar extends StatelessWidget {
   }
 
   SlidingSheetDialog displayDetails(context) {
+    const maxSheetSize = 0.9;
     final screenHeight = MediaQuery.of(context).size.height;
+    final headlineSize = screenHeight * maxSheetSize / 12;
     void Function(dynamic) headlineOnDoubleTap = (context) {
       SheetController.of(context)!.expand();
     };
 
     return SlidingSheetDialog(
-      padding: defaultPadding,
-      cornerRadius: borderRadius,
-      color: Theme.of(context).colorScheme.primary,
-      snapSpec: SnapSpec(
-          snap: true,
-          snappings: [0.55, 0.9],
-          onSnap: (sheetState, snap) {
-            if (snap == 0.9) {
-              // если достигли максимального размера, сворачиваем по двойному тапу
-              headlineOnDoubleTap = (context) {
-                Navigator.of(context).pop();
-              };
-            }
-          }
-      ),
+      headerBuilder: (context, sheetState) {
+        return GestureDetector(
+          onDoubleTap: () {
+            headlineOnDoubleTap(context);
+          },
+          child: SizedBox(
+            height: headlineSize,
+            child: Align(
+              alignment: Alignment.center,
+              child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return formatHeadline(
+                        textStyle?.copyWith(
+                          fontSize: constraints.maxHeight / 2,
+                          // fontSize: 20,
+                        ),
+                        textAlign,
+                        type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты');
+                  }
+              ),
+            ),
+          ),
+        );
+      },
       builder: (context, sheetState) {
         return SizedBox(
           height: screenHeight,
-          child: Column(
+          child: const Column(
             children: [
-              // заголовок — название приёма пищи
               Expanded(
-                flex: 1,
-                child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return GestureDetector(
-                        onDoubleTap: () {
-                          headlineOnDoubleTap(context);
-                        },
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: formatHeadline(
-                              textStyle?.copyWith(
-                                fontSize: constraints.maxHeight / 2,
-                              ),
-                              textAlign,
-                              type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты'),
-                        ),
-                      );
-                    }
-                ),
-              ),
-              const Expanded(
                   flex: 9,
                   child: Placeholder()
               ),
@@ -341,6 +330,21 @@ class DisplayBar extends StatelessWidget {
           ),
         );
       },
+      padding: defaultPadding.copyWith(top: 0),
+      cornerRadius: borderRadius,
+      color: Theme.of(context).colorScheme.primary,
+      snapSpec: SnapSpec(
+          snap: true,
+          snappings: [0.55, maxSheetSize],
+          onSnap: (sheetState, snap) {
+            if (snap == maxSheetSize) {
+              // если достигли максимального размера, сворачиваем по двойному тапу
+              headlineOnDoubleTap = (context) {
+                Navigator.of(context).pop();
+              };
+            }
+          }
+      ),
     );
   }
 }
@@ -384,54 +388,45 @@ class MealMiniature extends StatelessWidget {
   }
 
   SlidingSheetDialog mealDetails(context) {
+    const maxSheetSize = 0.9;
     final screenHeight = MediaQuery.of(context).size.height;
+    final headlineSize = screenHeight * maxSheetSize / 12;
     void Function(dynamic) headlineOnDoubleTap = (context) {
       // по двойному тапу разворачиваем приём на полный экран
       SheetController.of(context)!.expand();
     };
 
     return SlidingSheetDialog(
-      padding: defaultPadding,
-      cornerRadius: borderRadius,
-      color: Theme.of(context).colorScheme.primary,
-      snapSpec: SnapSpec(
-        snap: true,
-        snappings: [0.55, 0.9],
-        onSnap: (sheetState, snap) {
-          if (snap == 0.9) {
-            // если достигли максимального размера, сворачиваем по двойному тапу
-            headlineOnDoubleTap = (context) {
-              Navigator.of(context).pop();
-            };
-          }
-        }
-      ),
+      headerBuilder: (context, sheetState) {
+        // заголовок — название приёма пищи
+        return GestureDetector(
+          onDoubleTap: () {
+            headlineOnDoubleTap(context);
+          },
+          child: SizedBox(
+            height: headlineSize,
+            child: Align(
+              alignment: Alignment.center,
+              child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return formatHeadline(
+                        Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontSize: constraints.maxHeight / 2,
+                        ),
+                        TextAlign.center,
+                        mealName);
+                  }
+              ),
+            ),
+          ),
+        );
+      },
       builder: (context, sheetState) {
         return SizedBox(
           height: screenHeight,
-          child: Column(
+          child: const Column(
             children: [
-              // заголовок — название приёма пищи
               Expanded(
-                flex: 1,
-                child: Builder(
-                  builder: (context) {
-                    return GestureDetector(
-                      onDoubleTap: () {
-                        headlineOnDoubleTap(context);
-                      },
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: formatHeadline(
-                            Theme.of(context).textTheme.displaySmall,
-                            TextAlign.center,
-                            mealName),
-                      ),
-                    );
-                  }
-                ),
-              ),
-              const Expanded(
                   flex: 9,
                   child: Placeholder()
               ),
@@ -439,6 +434,21 @@ class MealMiniature extends StatelessWidget {
           ),
         );
       },
+      padding: defaultPadding.copyWith(top: 0),
+      cornerRadius: borderRadius,
+      color: Theme.of(context).colorScheme.primary,
+      snapSpec: SnapSpec(
+          snap: true,
+          snappings: [0.55, maxSheetSize],
+          onSnap: (sheetState, snap) {
+            if (snap == maxSheetSize) {
+              // если достигли максимального размера, сворачиваем по двойному тапу
+              headlineOnDoubleTap = (context) {
+                Navigator.of(context).pop();
+              };
+            }
+          }
+      ),
     );
   }
 }
