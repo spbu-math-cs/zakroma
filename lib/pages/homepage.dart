@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import '../utility/color_manipulator.dart';
-import '../utility/text.dart';
+import 'package:zakroma_frontend/constants.dart';
+import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/text.dart';
 
 // TODO: получать todayMeals, статус количества продуктов и доставки из бд
-
-const double borderRadius = 20;
-const defaultPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 8);
-const headlineTextAlignment = TextAlign.center;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,14 +23,6 @@ class _HomePageState extends State<HomePage> {
         systemNavigationBarColor: Theme.of(context).colorScheme.primary,
         statusBarColor: Colors.transparent));
 
-    final boxShadowDecoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [
-          BoxShadow(
-              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 10))
-        ]); // используется для всех плавающих элементов
     final todayMeals = [
       'Завтрак',
       'Обед',
@@ -76,35 +65,23 @@ class _HomePageState extends State<HomePage> {
               // Количество имеющихся продуктов
               Expanded(
                 flex: 2,
-                child: Padding(
-                  padding: defaultPadding,
-                  child: Container(
-                      // для теней
-                      decoration: boxShadowDecoration,
-                      child: DisplayBar(
-                        DisplayBarType.viandStatus,
-                        text: 'Дома полно продуктов',
-                        textStyle: Theme.of(context).textTheme.headlineSmall!,
-                        textAlign: headlineTextAlignment,
-                        image: Image.asset(
-                            'assets/images/fridge_status_pancakes_full.png'),
-                      )),
+                child: DisplayBar(
+                  DisplayBarType.viandStatus,
+                  text: 'Дома полно продуктов',
+                  textStyle: Theme.of(context).textTheme.headlineSmall!,
+                  textAlign: headlineTextAlignment,
+                  image: Image.asset(
+                      'assets/images/fridge_status_pancakes_full.png'),
                 ),
               ),
               // Статус доставки
               Expanded(
                 flex: 2,
-                child: Padding(
-                  padding: defaultPadding,
-                  child: Container(
-                      // для теней
-                      decoration: boxShadowDecoration,
-                      child: DisplayBar(
-                        DisplayBarType.deliveryStatus,
-                        text: 'Доставка не ожидается',
-                        textStyle: Theme.of(context).textTheme.headlineSmall!,
-                        textAlign: headlineTextAlignment,
-                      )),
+                child: DisplayBar(
+                  DisplayBarType.deliveryStatus,
+                  text: 'Доставка не ожидается',
+                  textStyle: Theme.of(context).textTheme.headlineSmall!,
+                  textAlign: headlineTextAlignment,
                 ),
               ),
               // Сегодняшнее меню
@@ -115,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                       bottom: defaultPadding.bottom * 2),
                   child: Container(
                     // для теней
-                    decoration: boxShadowDecoration,
+                    decoration: shadowsBoxDecoration,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(borderRadius),
                       child: ColoredBox(
@@ -127,13 +104,14 @@ class _HomePageState extends State<HomePage> {
                             Expanded(
                               flex: 1,
                               child: Align(
-                                  alignment: Alignment.center,
-                                  child: formatHeadline(
-                                      Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!,
-                                      TextAlign.center,
-                                      '28 февраля — суббота')),
+                                alignment: Alignment.center,
+                                child: formatHeadline(
+                                    Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium,
+                                    TextAlign.center,
+                                    '28 февраля — суббота')
+                              ),
                             ),
                             // Список приёмов пищи на сегодня
                             Expanded(
@@ -154,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                                     // добавляем единичку для кнопки +
                                     itemBuilder:
                                         (BuildContext context, int index) {
-                                      // TODO: вынести кнопки в отдельный класс
                                       // TODO: добавить в кнопки картинки-миниатюры блюд
                                       const buttonsPadding =
                                           EdgeInsets.all(6.0);
@@ -167,6 +144,7 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       } else {
                                         // добавление приёма пищи на сегодня
+                                        // TODO: вынести в отдельный класс (?)
                                         return Padding(
                                           padding: buttonsPadding,
                                           child: IconButton(
@@ -254,7 +232,10 @@ class DisplayBar extends StatelessWidget {
         flex: 2,
         child: Align(
           alignment: Alignment.center,
-          child: formatHeadline(textStyle, textAlign, text),
+          child: formatHeadline(
+              textStyle,
+              textAlign,
+              text),
         ),
       ),
     ];
@@ -264,86 +245,38 @@ class DisplayBar extends StatelessWidget {
         child: Align(alignment: Alignment.center, child: image),
       ));
     }
-    return GestureDetector(
-      onTap: () {
-        showSlidingBottomSheet(
-          context,
-          builder: (context) {
-            return displayDetails(context);
-          });
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: ColoredBox(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: contents,
-          ),
-        ),
-      ),
-    );
-  }
 
-  SlidingSheetDialog displayDetails(context) {
-    const maxSheetSize = 0.9;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headlineSize = screenHeight * maxSheetSize / 12;
-    void Function(dynamic) headlineOnDoubleTap = (context) {
-      SheetController.of(context)!.expand();
-    };
-
-    return SlidingSheetDialog(
-      headerBuilder: (context, sheetState) {
-        return GestureDetector(
-          onDoubleTap: () {
-            headlineOnDoubleTap(context);
+    return Padding(
+      padding: defaultPadding,
+      child: Container(
+        decoration: shadowsBoxDecoration,
+        child: GestureDetector(
+          onTap: () {
+            showSlidingBottomSheet(
+              context,
+              builder: (context) {
+                return createSlidingSheet(context,
+                    type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты',
+                    const Column(
+                      children: [
+                        Expanded(
+                            child: Placeholder()
+                        )
+                      ],
+                    )
+                );
+              });
           },
-          child: SizedBox(
-            height: headlineSize,
-            child: Align(
-              alignment: Alignment.center,
-              child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return formatHeadline(
-                        textStyle?.copyWith(
-                          fontSize: constraints.maxHeight / 2,
-                          // fontSize: 20,
-                        ),
-                        textAlign,
-                        type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты');
-                  }
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: ColoredBox(
+              color: Theme.of(context).colorScheme.primary,
+              child: Row(
+                children: contents,
               ),
             ),
           ),
-        );
-      },
-      builder: (context, sheetState) {
-        return SizedBox(
-          height: screenHeight,
-          child: const Column(
-            children: [
-              Expanded(
-                  flex: 9,
-                  child: Placeholder()
-              ),
-            ],
-          ),
-        );
-      },
-      padding: defaultPadding.copyWith(top: 0),
-      cornerRadius: borderRadius,
-      color: Theme.of(context).colorScheme.primary,
-      snapSpec: SnapSpec(
-          snap: true,
-          snappings: [0.55, maxSheetSize],
-          onSnap: (sheetState, snap) {
-            if (snap == maxSheetSize) {
-              // если достигли максимального размера, сворачиваем по двойному тапу
-              headlineOnDoubleTap = (context) {
-                Navigator.of(context).pop();
-              };
-            }
-          }
+        ),
       ),
     );
   }
@@ -361,7 +294,14 @@ class MealMiniature extends StatelessWidget {
         showSlidingBottomSheet(
           context,
           builder: (context) {
-            return mealDetails(context);
+            return createSlidingSheet(context,
+              mealName,
+              const Column(
+                children: [
+                  Expanded(child: Placeholder())
+                ],
+              ),
+            );
           });
       },
       style: TextButton.styleFrom(
@@ -386,69 +326,78 @@ class MealMiniature extends StatelessWidget {
       ),
     );
   }
+}
 
-  SlidingSheetDialog mealDetails(context) {
-    const maxSheetSize = 0.9;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headlineSize = screenHeight * maxSheetSize / 12;
-    void Function(dynamic) headlineOnDoubleTap = (context) {
-      // по двойному тапу разворачиваем приём на полный экран
-      SheetController.of(context)!.expand();
-    };
+SlidingSheetDialog createSlidingSheet(context, String headingText, Widget body) {
+  const maxSheetSize = 0.9;
+  final screenHeight = MediaQuery.of(context).size.height;
+  final headerHeight = screenHeight * maxSheetSize / 16;
+  void Function(dynamic) headlineOnDoubleTap = (context) {
+    SheetController.of(context)!.expand();
+  };
 
-    return SlidingSheetDialog(
-      headerBuilder: (context, sheetState) {
-        // заголовок — название приёма пищи
-        return GestureDetector(
+  return SlidingSheetDialog(
+    headerBuilder: (context, sheetState) {
+      return Padding(
+        padding: EdgeInsets.only(top: defaultPadding.top),
+        child: GestureDetector(
           onDoubleTap: () {
             headlineOnDoubleTap(context);
           },
           child: SizedBox(
-            height: headlineSize,
-            child: Align(
-              alignment: Alignment.center,
-              child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return formatHeadline(
-                        Theme.of(context).textTheme.displaySmall?.copyWith(
-                          fontSize: constraints.maxHeight / 2,
-                        ),
-                        TextAlign.center,
-                        mealName);
-                  }
-              ),
+            height: headerHeight,
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return formatHeadline(
+                            Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  fontSize: 3 * constraints.maxHeight / 4,
+                                ),
+                            TextAlign.center,
+                            headingText);
+                        }
+                    ),
+                  ),
+                ),
+                const Expanded(
+                    flex: 1,
+                    child: Divider(
+                      height: 1,
+                    )
+                ),
+              ],
             ),
           ),
-        );
-      },
-      builder: (context, sheetState) {
-        return SizedBox(
-          height: screenHeight,
-          child: const Column(
-            children: [
-              Expanded(
-                  flex: 9,
-                  child: Placeholder()
-              ),
-            ],
-          ),
-        );
-      },
-      padding: defaultPadding.copyWith(top: 0),
-      cornerRadius: borderRadius,
-      color: Theme.of(context).colorScheme.primary,
-      snapSpec: SnapSpec(
-          snap: true,
-          snappings: [0.55, maxSheetSize],
-          onSnap: (sheetState, snap) {
-            if (snap == maxSheetSize) {
-              // если достигли максимального размера, сворачиваем по двойному тапу
-              headlineOnDoubleTap = (context) {
-                Navigator.of(context).pop();
-              };
-            }
+        ),
+      );
+    },
+    builder: (context, sheetState) {
+      return SizedBox(
+        height: screenHeight,
+        child: Padding(
+          padding: defaultPadding.copyWith(top: 0),
+          child: body,
+        ),
+      );
+    },
+    cornerRadius: borderRadius,
+    color: Theme.of(context).colorScheme.primary,
+    snapSpec: SnapSpec(
+        snap: true,
+        snappings: [0.55, maxSheetSize],
+        onSnap: (sheetState, snap) {
+          if (snap == maxSheetSize) {
+            // если достигли максимального размера, сворачиваем по двойному тапу
+            headlineOnDoubleTap = (context) {
+              Navigator.of(context).pop();
+            };
           }
-      ),
-    );
-  }
+        }
+    ),
+  );
 }
