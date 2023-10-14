@@ -53,11 +53,11 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.centerLeft,
                     child: LayoutBuilder(
                       builder: (context, constraints) => formatHeadline(
-                          Theme.of(context).textTheme.displaySmall!.copyWith(
-                                fontSize: 3 * constraints.maxHeight / 4,
-                              ),
-                          TextAlign.left,
-                          'Закрома'),
+                        Theme.of(context).textTheme.displaySmall!.copyWith(
+                              fontSize: 3 * constraints.maxHeight / 4,
+                            ),
+                        TextAlign.left,
+                        'Закрома'),
                     ),
                   ),
                 ),
@@ -106,11 +106,11 @@ class _HomePageState extends State<HomePage> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: formatHeadline(
-                                    Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium,
-                                    TextAlign.center,
-                                    '28 февраля — суббота')
+                                  Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
+                                  TextAlign.center,
+                                  '28 февраля — суббота')
                               ),
                             ),
                             // Список приёмов пищи на сегодня
@@ -120,76 +120,74 @@ class _HomePageState extends State<HomePage> {
                                 context: context,
                                 removeTop: true,
                                 child: GridView.builder(
-                                    padding: EdgeInsets.zero,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      // максимум по 3 элемента на строке
-                                      // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
-                                      // максимум по 2 элемента на строке
-                                      crossAxisCount:
-                                          (todayMeals.length + 1).clamp(1, 2),
-                                    ),
-                                    itemCount: todayMeals.length + 1,
-                                    // добавляем единичку для кнопки +
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      // TODO: добавить в кнопки картинки-миниатюры блюд
-                                      const buttonsPadding =
-                                          EdgeInsets.all(6.0);
-                                      if (index > 0) {
-                                        // просмотр приёма пищи
-                                        return Padding(
-                                          padding: buttonsPadding,
-                                          child: MealMiniature(
-                                              mealName: todayMeals[index - 1]),
-                                        );
-                                      } else {
-                                        // добавление приёма пищи на сегодня
-                                        // TODO: вынести в отдельный класс (?)
-                                        return Padding(
-                                          padding: buttonsPadding,
-                                          child: IconButton(
-                                            onPressed: () {
-                                              // TODO: сделать экран для добавления приёма пищи на сегодня
-                                            },
-                                            style: IconButton.styleFrom(
-                                              backgroundColor:
-                                                  Theme.of(context).colorScheme.primary,
-                                              splashFactory:
-                                                  InkSplash.splashFactory,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular( borderRadius),
-                                              ),
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    // максимум по 3 элемента на строке
+                                    // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
+                                    // максимум по 2 элемента на строке
+                                    crossAxisCount:
+                                        (todayMeals.length + 1).clamp(1, 2),
+                                  ),
+                                  itemCount: todayMeals.length + 1,
+                                  // добавляем единичку для кнопки +
+                                  itemBuilder: (BuildContext context, int index) {
+                                    // TODO: добавить в кнопки картинки-миниатюры блюд
+                                    const buttonsPadding = EdgeInsets.all(6.0);
+                                    if (index > 0) {
+                                      // просмотр приёма пищи
+                                      return Padding(
+                                        padding: buttonsPadding,
+                                        child: MealMiniature(
+                                            mealName: todayMeals[index - 1]),
+                                      );
+                                    } else {
+                                      // добавление приёма пищи на сегодня
+                                      // TODO: вынести в отдельный класс (?)
+                                      return Padding(
+                                        padding: buttonsPadding,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            // TODO: сделать экран для добавления приёма пищи на сегодня
+                                          },
+                                          style: IconButton.styleFrom(
+                                            backgroundColor:
+                                                Theme.of(context).colorScheme.primary,
+                                            splashFactory:
+                                                InkSplash.splashFactory,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular( borderRadius),
                                             ),
-                                            padding: EdgeInsets.zero,
-                                            icon: DottedBorder(
-                                              color: lighten(
-                                                  Theme.of(context).colorScheme.background, 50
-                                              ),
-                                              dashPattern: const [8, 8],
-                                              // чтобы при нажатии заливалась и рамка
-                                              borderPadding:
-                                                  const EdgeInsets.all(1),
-                                              strokeWidth: 4,
-                                              radius: const Radius.circular(
-                                                  borderRadius),
-                                              strokeCap: StrokeCap.round,
-                                              borderType: BorderType.RRect,
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: lighten(
-                                                      Theme.of(context).colorScheme.background, 15
-                                                  ),
-                                                  size: 60,
+                                          ),
+                                          padding: EdgeInsets.zero,
+                                          icon: DottedBorder(
+                                            color: lighten(
+                                              Theme.of(context).colorScheme.background, 50
+                                            ),
+                                            dashPattern: const [8, 8],
+                                            // чтобы при нажатии заливалась и рамка
+                                            borderPadding:
+                                                const EdgeInsets.all(1),
+                                            strokeWidth: 4,
+                                            radius: const Radius.circular(
+                                                borderRadius),
+                                            strokeCap: StrokeCap.round,
+                                            borderType: BorderType.RRect,
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons.add,
+                                                color: lighten(
+                                                    Theme.of(context).colorScheme.background, 15
                                                 ),
+                                                size: 60,
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }
-                                    }),
+                                        ),
+                                      );
+                                    }
+                                  }),
                               ),
                             ),
                           ],
@@ -233,9 +231,9 @@ class DisplayBar extends StatelessWidget {
         child: Align(
           alignment: Alignment.center,
           child: formatHeadline(
-              textStyle,
-              textAlign,
-              text),
+            textStyle,
+            textAlign,
+            text),
         ),
       ),
     ];
@@ -340,7 +338,7 @@ SlidingSheetDialog createSlidingSheet(context, String headingText, Widget body) 
   return SlidingSheetDialog(
     headerBuilder: (context, sheetState) {
       return Padding(
-        padding: EdgeInsets.only(top: defaultPadding.top),
+        padding: EdgeInsets.symmetric(vertical: defaultPadding.top),
         child: GestureDetector(
           onDoubleTap: () {
             headlineOnDoubleTap(context);
@@ -354,23 +352,23 @@ SlidingSheetDialog createSlidingSheet(context, String headingText, Widget body) 
                   child: Align(
                     alignment: Alignment.center,
                     child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return formatHeadline(
-                            Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontSize: 3 * constraints.maxHeight / 4,
-                                ),
-                            TextAlign.center,
-                            headingText);
-                        }
+                      builder: (context, constraints) {
+                        return formatHeadline(
+                          Theme.of(context).textTheme.displaySmall?.copyWith(
+                            fontSize: 3 * constraints.maxHeight / 4,
+                          ),
+                          TextAlign.center,
+                          headingText);
+                      }
                     ),
                   ),
                 ),
-                const Expanded(
-                    flex: 1,
-                    child: Divider(
-                      height: 1,
-                    )
-                ),
+                // const Expanded(
+                //     flex: 1,
+                //     child: Divider(
+                //       height: 1,
+                //     )
+                // ),
               ],
             ),
           ),
@@ -389,16 +387,16 @@ SlidingSheetDialog createSlidingSheet(context, String headingText, Widget body) 
     cornerRadius: borderRadius,
     color: Theme.of(context).colorScheme.primary,
     snapSpec: SnapSpec(
-        snap: true,
-        snappings: [0.55, maxSheetSize],
-        onSnap: (sheetState, snap) {
-          if (snap == maxSheetSize) {
-            // если достигли максимального размера, сворачиваем по двойному тапу
-            headlineOnDoubleTap = (context) {
-              Navigator.of(context).pop();
-            };
-          }
+      snap: true,
+      snappings: [0.55, maxSheetSize],
+      onSnap: (sheetState, snap) {
+        if (snap == maxSheetSize) {
+          // если достигли максимального размера, сворачиваем по двойному тапу
+          headlineOnDoubleTap = (context) {
+            Navigator.of(context).pop();
+          };
         }
+      }
     ),
   );
 }
