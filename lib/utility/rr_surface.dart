@@ -22,7 +22,7 @@ class RRSurface extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
       padding: continuous ? padding.copyWith(bottom: 0) : padding,
       child: Container(
-          decoration: continuous ? null : decoration ?? constants.shadowsBoxDecoration,
+          decoration: continuous ? null : (decoration ?? constants.shadowsBoxDecoration),
           child: ClipRRect(
               borderRadius: continuous
                 ? BorderRadius.vertical(top: Radius.circular(borderRadius))

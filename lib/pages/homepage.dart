@@ -84,6 +84,16 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                   padding: EdgeInsets.only(bottom: defaultPadding.bottom),
                   child: RRSurface(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: splashColorDark,
+                          blurRadius: 10,
+                          offset: Offset(0, 1)
+                        )
+                      ]
+                    ),
                     child: Column(
                       children: [
                         // Сегодняшнее число и день недели
