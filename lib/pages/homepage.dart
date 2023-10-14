@@ -45,11 +45,12 @@ class _HomePageState extends State<HomePage> {
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
                     builder: (context, constraints) => formatHeadline(
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
+                      'Закрома',
+                      Theme.of(context).textTheme.displaySmall!.copyWith(
                               fontSize: 3 * constraints.maxHeight / 4,
                             ),
-                        TextAlign.left,
-                        'Закрома'),
+                      TextAlign.left,
+                      ),
                   ),
                 ),
               ),
@@ -97,10 +98,9 @@ class _HomePageState extends State<HomePage> {
                             flex: 1,
                             child: Align(
                                 alignment: Alignment.center,
-                                child: formatHeadline(
-                                    Theme.of(context).textTheme.headlineMedium,
-                                    TextAlign.center,
-                                    '28 февраля — суббота')),
+                                child: formatHeadline('28 февраля — суббота',
+                                    Theme.of(context).textTheme.headlineMedium)
+                            ),
                           ),
                           // Список приёмов пищи на сегодня
                           Expanded(
@@ -227,7 +227,7 @@ class DisplayBar extends StatelessWidget {
         flex: 2,
         child: Align(
           alignment: Alignment.center,
-          child: formatHeadline(textStyle, textAlign, text),
+          child: formatHeadline(text, textStyle, textAlign),
         ),
       ),
     ];
@@ -305,8 +305,7 @@ class MealMiniature extends StatelessWidget {
           shadowColor: Colors.black),
       child: Align(
         alignment: Alignment.center,
-        child: formatHeadline(Theme.of(context).textTheme.headlineSmall!,
-            TextAlign.center, mealName),
+        child: formatHeadline(mealName,Theme.of(context).textTheme.headlineSmall),
       ),
     );
   }
@@ -338,12 +337,10 @@ SlidingSheetDialog createSlidingSheet(
                   child: Align(
                     alignment: Alignment.center,
                     child: LayoutBuilder(builder: (context, constraints) {
-                      return formatHeadline(
+                      return formatHeadline(headingText,
                           Theme.of(context).textTheme.displaySmall?.copyWith(
                                 fontSize: 3 * constraints.maxHeight / 4,
-                              ),
-                          TextAlign.center,
-                          headingText);
+                          ));
                     }),
                   ),
                 ),

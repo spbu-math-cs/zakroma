@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-RichText formatHeadline(
-    TextStyle? style, TextAlign horizontalAlignment, String text) {
-  final redTextEndIndex = int.tryParse(text.substring(0, 2)) == null ? 1 : 2;
+RichText formatHeadline(String text, TextStyle? style,
+    [TextAlign horizontalAlignment = TextAlign.center]) {
+  var redTextEndIndex = 1;
+  while (int.tryParse(text[redTextEndIndex]) != null) {
+    redTextEndIndex++;
+  }
   return RichText(
     textAlign: horizontalAlignment,
     text: TextSpan(
