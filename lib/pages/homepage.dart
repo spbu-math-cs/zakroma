@@ -250,30 +250,34 @@ class DisplayBar extends StatelessWidget {
       padding: defaultPadding,
       child: Container(
         decoration: shadowsBoxDecoration,
-        child: GestureDetector(
-          onTap: () {
-            showSlidingBottomSheet(
-              context,
-              builder: (context) {
-                return createSlidingSheet(context,
-                    type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты',
-                    const Column(
-                      children: [
-                        Expanded(
-                            child: Placeholder()
-                        )
-                      ],
-                    )
-                );
-              });
-          },
-          child: ClipRRect(
+        child: Material(
+          color: Theme.of(context).colorScheme.primary,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            child: ColoredBox(
-              color: Theme.of(context).colorScheme.primary,
-              child: Row(
-                children: contents,
-              ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            splashColor: splashColorDark,
+            highlightColor: splashColorDark,
+            splashFactory: InkSplash.splashFactory,
+            onTap: () {
+              showSlidingBottomSheet(
+                  context,
+                  builder: (context) {
+                    return createSlidingSheet(context,
+                        type == DisplayBarType.deliveryStatus ? 'Доставка' : 'Продукты',
+                        const Column(
+                          children: [
+                            Expanded(
+                                child: Placeholder()
+                            )
+                          ],
+                        )
+                    );
+                  });
+            },
+            child: Row(
+              children: contents,
             ),
           ),
         ),
@@ -305,12 +309,9 @@ class MealMiniature extends StatelessWidget {
           });
       },
       style: TextButton.styleFrom(
-        backgroundColor: lighten(
-            Theme.of(context).colorScheme.background, 50),
-        foregroundColor:
-        Theme.of(context).colorScheme.onPrimary,
-        splashFactory:
-        InkSplash.splashFactory,
+        backgroundColor: lighten(Theme.of(context).colorScheme.background, 50),
+        foregroundColor: splashColorDark,
+        splashFactory: InkSplash.splashFactory,
         shape: RoundedRectangleBorder(
           borderRadius:
           BorderRadius.circular(borderRadius),
