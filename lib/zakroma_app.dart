@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
-import 'pages/add.dart';
+import 'pages/diet.dart';
 import 'pages/homepage.dart';
 import 'pages/settings.dart';
 
@@ -73,7 +73,7 @@ class _ZakromaState extends State<Zakroma> {
       ),
       body: <Widget>[
         const HomePage(),
-        const AddPage(),
+        const DietPage(),
         const SettingsPage(),
       ][currentPageIndex],
     );

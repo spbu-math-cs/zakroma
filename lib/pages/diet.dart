@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+class DietPage extends StatefulWidget {
+  const DietPage({super.key});
 
   @override
-  State<AddPage> createState() => _AddPageState();
+  State<DietPage> createState() => _DietPageState();
 }
 
-class _AddPageState extends State<AddPage> {
+class _DietPageState extends State<DietPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
