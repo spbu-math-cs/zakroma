@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                                                 InkSplash.splashFactory,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular( borderRadius),
+                                                  BorderRadius.circular(borderRadius),
                                             ),
                                           ),
                                           padding: EdgeInsets.zero,
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                                               Theme.of(context).colorScheme.background, 50
                                             ),
                                             dashPattern: const [8, 8],
-                                            // чтобы при нажатии заливалась и рамка
+                                            // отступы, чтобы при нажатии заливалась и рамка
                                             borderPadding:
                                                 const EdgeInsets.all(1),
                                             strokeWidth: 4,
