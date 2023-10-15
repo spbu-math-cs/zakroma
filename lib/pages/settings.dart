@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
+
+import '../utility/color_manipulator.dart';
 
 // TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
 
@@ -61,24 +62,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                       flex: 1,
                                       child: LayoutBuilder(
                                           builder: (context, constraints) {
-                                        return Center(
-                                          child: SizedBox.square(
-                                            dimension:
-                                                3 * constraints.maxWidth / 4,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                decoration:
-                                                    shadowsBoxDecoration,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          borderRadius),
-                                                  child: Image.asset(
-                                                    'assets/images/ryan_gosling.jpg',
-                                                  ),
-                                                ),
+                                        return Padding(
+                                          padding: EdgeInsets.only(left: defaultPadding.top) + EdgeInsets.all(defaultPadding.top),
+                                          child: Container(
+                                            decoration:
+                                                shadowsBoxDecoration,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      borderRadius),
+                                              clipBehavior: Clip.antiAlias,
+                                              child: Image.asset(
+                                                'assets/images/ryan_gosling.jpeg',
                                               ),
                                             ),
                                           ),
@@ -121,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints,
+                                  width: constraints.maxWidth,
                                   text: 'Настройки группы');
                             }),
                           ),
@@ -130,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints,
+                                  width: constraints.maxWidth,
                                   text: 'Способы оплаты');
                             }),
                           ),
@@ -139,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints,
+                                  width: constraints.maxWidth,
                                   text: 'Напоминания');
                             }),
                           ),
@@ -148,7 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints,
+                                  width: constraints.maxWidth,
                                   text: 'Напоминания');
                             }),
                           ),
@@ -157,7 +152,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -165,7 +161,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -173,7 +170,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -181,7 +179,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -189,7 +188,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -197,7 +197,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -205,7 +206,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                           Flexible(
@@ -213,7 +215,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             child:
                                 LayoutBuilder(builder: (context, constraints) {
                               return SettingsCategory(
-                                  constraints: constraints, text: 'Другое');
+                                  width: constraints.maxWidth,
+                                  text: 'Другое');
                             }),
                           ),
                         ],
@@ -230,32 +233,48 @@ class _SettingsPageState extends State<SettingsPage> {
 
 // TODO: сделать кликабельной, как статус-бары на homepage
 class SettingsCategory extends StatelessWidget {
-  final BoxConstraints constraints;
+  final double width;
   final String text;
 
   const SettingsCategory(
-      {super.key, required this.constraints, required this.text});
+      {super.key, required this.width, required this.text});
 
   @override
   Widget build(BuildContext context) {
+    final categorySize = (MediaQuery.of(context).size.height -
+            MediaQuery.of(context).viewPadding.top) /
+        12;
+    final dividerPadding = width / 10;
     return SizedBox(
-      width: constraints.maxWidth,
-      child: RRSurface(
-        backgroundColor: lighten(Theme.of(context).colorScheme.background, 50),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 4))
-            ]),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child:
-              formatHeadline(text, Theme.of(context).textTheme.headlineSmall),
+      height: categorySize,
+      width: width,
+      child: Column(
+          children: [
+        Expanded(
+          flex: 20,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(dividerPadding * 1.5, 0, 0, 8),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: formatHeadline(
+                  text, Theme.of(context).textTheme.headlineMedium),
+            ),
+          ),
         ),
-      ),
+        Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: dividerPadding),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(borderRadius),
+                child: Container(
+                  color: lighten(Theme.of(context).colorScheme.background, 25),
+
+                ),
+              ),
+            )
+        )
+      ]),
     );
   }
 }
