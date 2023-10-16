@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
+import 'package:zakroma_frontend/data_cls/meal.dart';
+import 'package:zakroma_frontend/utility/collect_diets.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
+import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
@@ -18,16 +22,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final todayMeals = [
-      'Завтрак',
-      'Обед',
-      'Перекус',
-      'Перекус',
-      'Перекус',
-      'Перекус',
-      'Перекус',
-      'Ужин',
-    ];
+    final currentDiet = collectDiets()[0];
+    final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -131,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                                       return Padding(
                                         padding: buttonsPadding,
                                         child: MealMiniature(
-                                            mealName: todayMeals[index - 1]),
+                                            meal: todayMeals[index - 1]),
                                       );
                                     } else {
                                       // добавление приёма пищи на сегодня
@@ -229,6 +225,10 @@ class DisplayBar extends StatelessWidget {
                       child: Column(
                         children: [
                           Image.asset('assets/images/alesha_popovich.png'),
+                          Text('Здесь пустовато...',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w300
+                              ))
                         ],
                       ),
                     ));
@@ -248,23 +248,54 @@ class DisplayBar extends StatelessWidget {
 }
 
 class MealMiniature extends StatelessWidget {
-  final String mealName;
-  // final Widget mealInfo;
+  final Meal meal;
 
-  const MealMiniature({super.key, required this.mealName});
+  const MealMiniature({super.key, required this.meal});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
         showSlidingBottomSheet(context, builder: (context) {
-          return createSlidingSheet(
-            context,
-            headingText: mealName,
-            body: const Column(
-              children: [Expanded(child: Placeholder())],
-            ),
-          );
+          return createSlidingSheet(context, headingText: meal.name,
+              body: LayoutBuilder(builder: (context, constraints) {
+            return FlatList(
+                addSeparator: false,
+                childAlignment: Alignment.centerLeft,
+                defaultChildConstraints:
+                constraints.copyWith(maxHeight: constraints.maxHeight / 10),
+                dividerColor: Colors.white,
+                children: List.generate(
+                    meal.dishesCount(),
+                    (index) => Pair(
+                        SizedBox(
+                          width: constraints.maxWidth,
+                          child: Row(
+                            children: [
+                              SizedBox.square(
+                                dimension: (constraints.maxWidth - 16) / 5,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(borderRadius),
+                                  child: Image.asset('assets/images/${meal.getDish(index).name}.jpg',
+                                  fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: SizedBox(
+                                  width: 4 * (constraints.maxWidth - 10) / 5,
+                                  child: Text(meal.getDish(index).name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.titleLarge,
+                                      textAlign: TextAlign.left),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        null)),);
+          }));
         });
       },
       style: TextButton.styleFrom(
@@ -279,8 +310,8 @@ class MealMiniature extends StatelessWidget {
           shadowColor: Colors.black26),
       child: Align(
         alignment: Alignment.center,
-        child: formatHeadline(mealName,
-            Theme.of(context).textTheme.headlineSmall),
+        child: formatHeadline(
+            meal.name, Theme.of(context).textTheme.headlineSmall),
       ),
     );
   }

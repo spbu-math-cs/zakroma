@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/buttons.dart';
+import 'package:zakroma_frontend/utility/collect_diets.dart';
+import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
@@ -16,35 +17,14 @@ class DietPage extends StatefulWidget {
 class _DietPageState extends State<DietPage> {
   @override
   Widget build(BuildContext context) {
-    final dietList = [
-      'Текущий рацион и как я рад жить',
-      'Дефолт',
-      'Макароны с пюрешкой',
-      'Рацион 3',
-      'пользовательское_название',
-      // 'пользовательское_название',
-      // 'пользовательское_название',
-      // 'пользовательское_название',
-      // 'пользовательское_название',
-      // 'пользовательское_название',
-      // 'пользовательское_название',
-    ];
-    final dietTextStyle = Theme
-        .of(context)
-        .textTheme
-        .headlineMedium;
-    final dietBackgroundColor = lighten(
-        Theme
-            .of(context)
-            .colorScheme
-            .background,
-        25);
+    final dietList = collectDiets();
+
+    final dietTextStyle = Theme.of(context).textTheme.headlineMedium;
+    final dietBackgroundColor =
+        lighten(Theme.of(context).colorScheme.background, 50);
 
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -56,73 +36,69 @@ class _DietPageState extends State<DietPage> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
-                    builder: (context, constraints) =>
-                        formatHeadline(
-                          'Питание',
-                          Theme
-                              .of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
+                    builder: (context, constraints) => formatHeadline(
+                      'Питание',
+                      Theme.of(context).textTheme.displaySmall!.copyWith(
                             fontSize: 3 * constraints.maxHeight / 4,
                           ),
-                          horizontalAlignment: TextAlign.left,
-                        ),
+                      horizontalAlignment: TextAlign.left,
+                    ),
                   ),
                 ),
               ),
             ),
             // Текущий рацион
             Expanded(
-              flex: 5,
+              flex: 4,
               child: RRSurface(
                 child: RRButton(
-                  padding: const EdgeInsets.all(20),
-                  // decoration: BoxDecoration(),
+                    padding: const EdgeInsets.all(20),
                     backgroundColor: dietBackgroundColor,
                     onTap: () {
                       debugPrint('42');
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0),
-                      child: formatHeadline(
-                          dietList[0], dietTextStyle,
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: formatHeadline(dietList[0].name, dietTextStyle,
                           overflow: TextOverflow.ellipsis),
                     )),
               ),
             ),
             // Список всех рационов
             Expanded(
-              flex: 15,
+              flex: 16,
               child: RRSurface(
-                padding: defaultPadding.copyWith(bottom: defaultPadding.vertical),
+                padding:
+                    defaultPadding.copyWith(bottom: defaultPadding.vertical),
                 // continuous: true,
                 child: Column(
                   children: [
                     Expanded(
                       flex: 7,
-                      child: LayoutBuilder(builder: (context, constraints) {
-                        return ListView.builder(
-                            // вычитаем единичку, потому что dietList[0] ушёл в текущий рацион
-                            itemCount: dietList.length - 1,
-                            itemBuilder: (context, index) =>
-                                SizedBox(
-                                  height: constraints.maxHeight / 6,
-                                  child: RRButton(
-                                      backgroundColor: dietBackgroundColor,
-                                      onTap: () {
-                                        debugPrint(dietList[index + 1]);
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: formatHeadline(
-                                            dietList[index + 1], dietTextStyle,
-                                            overflow: TextOverflow.ellipsis),
-                                      )),
-                                ));
-                      }),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: defaultPadding.top + 8),
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return ListView.builder(
+                              // вычитаем единичку, потому что dietList[0] ушёл в текущий рацион
+                              itemCount: dietList.length - 1,
+                              itemBuilder: (context, index) => SizedBox(
+                                    height: constraints.maxHeight / 4,
+                                    child: RRButton(
+                                        backgroundColor: dietBackgroundColor,
+                                        onTap: () {
+                                          debugPrint(dietList[index + 1].name);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: formatHeadline(
+                                              dietList[index + 1].name,
+                                              dietTextStyle,
+                                              overflow: TextOverflow.ellipsis),
+                                        )),
+                                  ));
+                        }),
+                      ),
                     ),
                     // Кнопки
                     Expanded(
@@ -135,8 +111,7 @@ class _DietPageState extends State<DietPage> {
                                     color: Colors.black26,
                                     blurRadius: 10,
                                     offset: Offset(0, -2))
-                              ]
-                          ),
+                              ]),
                           child: Row(
                             children: [
                               // Кнопка «поделиться»
@@ -161,8 +136,7 @@ class _DietPageState extends State<DietPage> {
                                       debugPrint('42');
                                     },
                                     child: formatHeadline(
-                                        'Изменить', dietTextStyle)
-                                ),
+                                        'Изменить', dietTextStyle)),
                               )
                             ],
                           ),

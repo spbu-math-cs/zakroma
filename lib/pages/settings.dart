@@ -68,7 +68,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                 flex: 1,
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
-                                    debugPrint(constraints.toString());
                                     return Padding(
                                       padding: EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                       child: Center(
