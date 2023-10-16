@@ -1,9 +1,9 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
+import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> {
               child: DisplayBar(
                 DisplayBarType.deliveryStatus,
                 text: 'Доставка не ожидается',
+                image: Image.asset('assets/images/delivery.png'),
                 textStyle: Theme.of(context).textTheme.headlineSmall!,
                 textAlign: headlineTextAlignment,
               ),
@@ -82,15 +83,13 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(bottom: defaultPadding.bottom),
                   child: RRSurface(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(borderRadius),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: splashColorDark,
-                          blurRadius: 10,
-                          offset: Offset(0, 1)
-                        )
-                      ]
-                    ),
+                        borderRadius: BorderRadius.circular(borderRadius),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: splashColorDark,
+                              blurRadius: 10,
+                              offset: Offset(0, 1))
+                        ]),
                     child: Column(
                       children: [
                         // Сегодняшнее число и день недели
@@ -109,7 +108,8 @@ class _HomePageState extends State<HomePage> {
                             context: context,
                             removeTop: true,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: GridView.builder(
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
@@ -122,7 +122,8 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   itemCount: todayMeals.length + 1,
                                   // добавляем единичку для кнопки +
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     // TODO: добавить в кнопки картинки-миниатюры блюд
                                     const buttonsPadding = EdgeInsets.all(6.0);
                                     if (index > 0) {
@@ -134,55 +135,19 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       // добавление приёма пищи на сегодня
-                                      // TODO: вынести в отдельный класс (?)
-                                      return Padding(
-                                        padding: buttonsPadding,
-                                        child: IconButton(
-                                          onPressed: () {
-                                            // TODO: сделать экран для добавления приёма пищи на сегодня
+                                      return DottedRRButton(
+                                          onTap: () {
+                                            debugPrint('+');
                                           },
-                                          style: IconButton.styleFrom(
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            splashFactory:
-                                                InkSplash.splashFactory,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  borderRadius),
-                                            ),
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                          icon: DottedBorder(
+                                          child: Icon(
+                                            Icons.add,
                                             color: lighten(
                                                 Theme.of(context)
                                                     .colorScheme
                                                     .background,
-                                                50),
-                                            dashPattern: const [8, 8],
-                                            // отступы, чтобы при нажатии заливалась и рамка
-                                            borderPadding:
-                                                const EdgeInsets.all(1),
-                                            strokeWidth: 4,
-                                            radius: const Radius.circular(
-                                                borderRadius),
-                                            strokeCap: StrokeCap.round,
-                                            borderType: BorderType.RRect,
-                                            child: Align(
-                                              alignment: Alignment.center,
-                                              child: Icon(
-                                                Icons.add,
-                                                color: lighten(
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                    15),
-                                                size: 60,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
+                                                15),
+                                            size: 60,
+                                          ));
                                     }
                                   }),
                             ),
@@ -227,7 +192,8 @@ class DisplayBar extends StatelessWidget {
         flex: 2,
         child: Align(
           alignment: Alignment.center,
-          child: formatHeadline(text, textStyle, horizontalAlignment: textAlign),
+          child:
+              formatHeadline(text, textStyle, horizontalAlignment: textAlign),
         ),
       ),
     ];
@@ -254,18 +220,25 @@ class DisplayBar extends StatelessWidget {
             splashFactory: InkSplash.splashFactory,
             onTap: () {
               showSlidingBottomSheet(context, builder: (context) {
-                return createSlidingSheet(
-                    context,
-                    type == DisplayBarType.deliveryStatus
+                return createSlidingSheet(context,
+                    headingText: type == DisplayBarType.deliveryStatus
                         ? 'Доставка'
                         : 'Продукты',
-                    const Column(
-                      children: [Expanded(child: Placeholder())],
+                    body: Align(
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: [
+                          Image.asset('assets/images/alesha_popovich.png'),
+                        ],
+                      ),
                     ));
               });
             },
-            child: Row(
-              children: contents,
+            child: Padding(
+              padding: defaultPadding,
+              child: Row(
+                children: contents,
+              ),
             ),
           ),
         ),
@@ -276,6 +249,7 @@ class DisplayBar extends StatelessWidget {
 
 class MealMiniature extends StatelessWidget {
   final String mealName;
+  // final Widget mealInfo;
 
   const MealMiniature({super.key, required this.mealName});
 
@@ -286,8 +260,8 @@ class MealMiniature extends StatelessWidget {
         showSlidingBottomSheet(context, builder: (context) {
           return createSlidingSheet(
             context,
-            mealName,
-            const Column(
+            headingText: mealName,
+            body: const Column(
               children: [Expanded(child: Placeholder())],
             ),
           );
@@ -302,18 +276,18 @@ class MealMiniature extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           elevation: 8,
-          shadowColor: Colors.black),
+          shadowColor: Colors.black26),
       child: Align(
         alignment: Alignment.center,
-        child:
-            formatHeadline(mealName, Theme.of(context).textTheme.headlineSmall),
+        child: formatHeadline(mealName,
+            Theme.of(context).textTheme.headlineSmall),
       ),
     );
   }
 }
 
-SlidingSheetDialog createSlidingSheet(
-    context, String headingText, Widget body) {
+SlidingSheetDialog createSlidingSheet(context,
+    {required String headingText, required Widget body}) {
   const maxSheetSize = 0.9;
   final screenHeight = MediaQuery.of(context).size.height;
   final headerHeight = screenHeight * maxSheetSize / 16;
@@ -346,12 +320,6 @@ SlidingSheetDialog createSlidingSheet(
                     }),
                   ),
                 ),
-                // const Expanded(
-                //     flex: 1,
-                //     child: Divider(
-                //       height: 1,
-                //     )
-                // ),
               ],
             ),
           ),
