@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
+import 'package:zakroma_frontend/pages/diet_detail.dart';
 import 'package:zakroma_frontend/utility/collect_diets.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
@@ -55,7 +56,11 @@ class _DietPageState extends State<DietPage> {
                     padding: const EdgeInsets.all(20),
                     backgroundColor: dietBackgroundColor,
                     onTap: () {
-                      debugPrint('42');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DietDetailPage(diet: dietList[0])));
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -86,7 +91,11 @@ class _DietPageState extends State<DietPage> {
                                     child: RRButton(
                                         backgroundColor: dietBackgroundColor,
                                         onTap: () {
-                                          debugPrint(dietList[index + 1].name);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DietDetailPage(diet: dietList[index + 1])));
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
