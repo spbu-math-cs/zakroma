@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                       Theme.of(context).textTheme.displaySmall!.copyWith(
                             fontSize: 3 * constraints.maxHeight / 4,
                           ),
-                      TextAlign.left,
+                      horizontalAlignment: TextAlign.left,
                     ),
                   ),
                 ),
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                                           style: IconButton.styleFrom(
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
-                                                .primary,
+                                                .primaryContainer,
                                             splashFactory:
                                                 InkSplash.splashFactory,
                                             shape: RoundedRectangleBorder(
@@ -227,7 +227,7 @@ class DisplayBar extends StatelessWidget {
         flex: 2,
         child: Align(
           alignment: Alignment.center,
-          child: formatHeadline(text, textStyle, textAlign),
+          child: formatHeadline(text, textStyle, horizontalAlignment: textAlign),
         ),
       ),
     ];
@@ -243,7 +243,7 @@ class DisplayBar extends StatelessWidget {
       child: Container(
         decoration: shadowsBoxDecoration,
         child: Material(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.primaryContainer,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
@@ -368,7 +368,7 @@ SlidingSheetDialog createSlidingSheet(
       );
     },
     cornerRadius: borderRadius,
-    color: Theme.of(context).colorScheme.primary,
+    color: Theme.of(context).colorScheme.primaryContainer,
     snapSpec: SnapSpec(
         snap: true,
         snappings: [0.55, maxSheetSize],

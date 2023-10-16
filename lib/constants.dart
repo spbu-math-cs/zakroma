@@ -7,5 +7,5 @@ const splashColorDark = Colors.black26;
 final shadowsBoxDecoration = BoxDecoration(
     borderRadius: BorderRadius.circular(borderRadius),
     boxShadow: const [
-      BoxShadow(color: splashColorDark, blurRadius: 10, offset: Offset(0, 10))
+      BoxShadow(color: splashColorDark, blurRadius: 10, offset: Offset(0, 5))
     ]);

@@ -45,7 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Theme.of(context).textTheme.displaySmall!.copyWith(
                             fontSize: 3 * constraints.maxHeight / 4,
                           ),
-                      TextAlign.left,
+                      horizontalAlignment: TextAlign.left,
                     ),
                   ),
                 ),

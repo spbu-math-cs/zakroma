@@ -32,8 +32,10 @@ class MainPage extends StatelessWidget {
           useMaterial3: true,
           brightness: Brightness.light,
           colorScheme: const ColorScheme.light().copyWith(
-            primary: Colors.white,
-            onPrimary: Colors.black,
+            primary: const Color(0xFFFFB96C),
+            primaryContainer: Colors.white,
+            onPrimaryContainer: Colors.black,
+            secondary: const Color(0xFFA93500),
             background: const Color(0xFFFFB96C),
             surface: Colors.white,
             surfaceTint: Colors.white,
@@ -105,7 +107,7 @@ class _ZakromaState extends State<Zakroma> {
   Widget build(BuildContext context) {
     // делаем системную панель навигации «прозрачной»
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: Theme.of(context).colorScheme.primary,
+        systemNavigationBarColor: Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
 
     final buttonColor = Theme.of(context).colorScheme.background;
