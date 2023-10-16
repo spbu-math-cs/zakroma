@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
-
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends StatefulWidget {
@@ -26,10 +26,7 @@ class _HomePageState extends State<HomePage> {
       'Перекус',
       'Перекус',
       'Перекус',
-      'Перекус',
-      'Перекус',
-      'Перекус',
-      'Перекус'
+      'Ужин',
     ];
 
     return Scaffold(
@@ -102,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                           flex: 1,
                           child: Align(
                               alignment: Alignment.center,
-                              child: formatHeadline('28 февраля — суббота',
+                              child: formatHeadline(getCurrentDate(),
                                   Theme.of(context).textTheme.headlineMedium)),
                         ),
                         // Список приёмов пищи на сегодня
@@ -111,81 +108,84 @@ class _HomePageState extends State<HomePage> {
                           child: MediaQuery.removePadding(
                             context: context,
                             removeTop: true,
-                            child: GridView.builder(
-                                padding: EdgeInsets.zero,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  // максимум по 3 элемента на строке
-                                  // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
-                                  // максимум по 2 элемента на строке
-                                  crossAxisCount:
-                                      (todayMeals.length + 1).clamp(1, 2),
-                                ),
-                                itemCount: todayMeals.length + 1,
-                                // добавляем единичку для кнопки +
-                                itemBuilder: (BuildContext context, int index) {
-                                  // TODO: добавить в кнопки картинки-миниатюры блюд
-                                  const buttonsPadding = EdgeInsets.all(6.0);
-                                  if (index > 0) {
-                                    // просмотр приёма пищи
-                                    return Padding(
-                                      padding: buttonsPadding,
-                                      child: MealMiniature(
-                                          mealName: todayMeals[index - 1]),
-                                    );
-                                  } else {
-                                    // добавление приёма пищи на сегодня
-                                    // TODO: вынести в отдельный класс (?)
-                                    return Padding(
-                                      padding: buttonsPadding,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          // TODO: сделать экран для добавления приёма пищи на сегодня
-                                        },
-                                        style: IconButton.styleFrom(
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          splashFactory:
-                                              InkSplash.splashFactory,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                borderRadius),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: GridView.builder(
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    // максимум по 3 элемента на строке
+                                    // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
+                                    // максимум по 2 элемента на строке
+                                    crossAxisCount:
+                                        (todayMeals.length + 1).clamp(1, 2),
+                                  ),
+                                  itemCount: todayMeals.length + 1,
+                                  // добавляем единичку для кнопки +
+                                  itemBuilder: (BuildContext context, int index) {
+                                    // TODO: добавить в кнопки картинки-миниатюры блюд
+                                    const buttonsPadding = EdgeInsets.all(6.0);
+                                    if (index > 0) {
+                                      // просмотр приёма пищи
+                                      return Padding(
+                                        padding: buttonsPadding,
+                                        child: MealMiniature(
+                                            mealName: todayMeals[index - 1]),
+                                      );
+                                    } else {
+                                      // добавление приёма пищи на сегодня
+                                      // TODO: вынести в отдельный класс (?)
+                                      return Padding(
+                                        padding: buttonsPadding,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            // TODO: сделать экран для добавления приёма пищи на сегодня
+                                          },
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            splashFactory:
+                                                InkSplash.splashFactory,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  borderRadius),
+                                            ),
                                           ),
-                                        ),
-                                        padding: EdgeInsets.zero,
-                                        icon: DottedBorder(
-                                          color: lighten(
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .background,
-                                              50),
-                                          dashPattern: const [8, 8],
-                                          // отступы, чтобы при нажатии заливалась и рамка
-                                          borderPadding:
-                                              const EdgeInsets.all(1),
-                                          strokeWidth: 4,
-                                          radius: const Radius.circular(
-                                              borderRadius),
-                                          strokeCap: StrokeCap.round,
-                                          borderType: BorderType.RRect,
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: Icon(
-                                              Icons.add,
-                                              color: lighten(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .background,
-                                                  15),
-                                              size: 60,
+                                          padding: EdgeInsets.zero,
+                                          icon: DottedBorder(
+                                            color: lighten(
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .background,
+                                                50),
+                                            dashPattern: const [8, 8],
+                                            // отступы, чтобы при нажатии заливалась и рамка
+                                            borderPadding:
+                                                const EdgeInsets.all(1),
+                                            strokeWidth: 4,
+                                            radius: const Radius.circular(
+                                                borderRadius),
+                                            strokeCap: StrokeCap.round,
+                                            borderType: BorderType.RRect,
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons.add,
+                                                color: lighten(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                    15),
+                                                size: 60,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                }),
+                                      );
+                                    }
+                                  }),
+                            ),
                           ),
                         ),
                       ],
