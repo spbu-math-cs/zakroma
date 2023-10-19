@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                             removeTop: true,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
                               child: GridView.builder(
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     // TODO: добавить в кнопки картинки-миниатюры блюд
-                                    const buttonsPadding = EdgeInsets.all(6.0);
+                                    const buttonsPadding = EdgeInsets.all(10.0);
                                     if (index > 0) {
                                       // просмотр приёма пищи
                                       return Padding(
@@ -131,19 +131,22 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       // добавление приёма пищи на сегодня
-                                      return DottedRRButton(
-                                          onTap: () {
-                                            debugPrint('+');
-                                          },
-                                          child: Icon(
-                                            Icons.add,
-                                            color: lighten(
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .background,
-                                                15),
-                                            size: 60,
-                                          ));
+                                      return Padding(
+                                        padding: buttonsPadding,
+                                        child: DottedRRButton(
+                                            onTap: () {
+                                              debugPrint('+');
+                                            },
+                                            child: Icon(
+                                              Icons.add,
+                                              color: lighten(
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                                  15),
+                                              size: 60,
+                                            )),
+                                      );
                                     }
                                   }),
                             ),
@@ -226,7 +229,7 @@ class DisplayBar extends StatelessWidget {
                         children: [
                           Image.asset('assets/images/alesha_popovich.png'),
                           Text('Здесь пустовато...',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
                                 fontWeight: FontWeight.w300
                               ))
                         ],

@@ -80,29 +80,26 @@ class DottedRRButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(6),
-      child: DottedBorder(
-        color: lighten(Theme.of(context).colorScheme.background, 50),
-        dashPattern: const [8, 8],
-        borderPadding: const EdgeInsets.all(1),
-        strokeWidth: 4,
-        radius: Radius.circular(borderRadius),
-        strokeCap: StrokeCap.round,
-        borderType: BorderType.RRect,
-        child: Material(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius)
-          ),
-          color: Colors.transparent,
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            splashFactory: InkSplash.splashFactory,
-            onTap: onTap,
-            child: Align(
-              alignment: Alignment.center,
-              child: child,
-            ),
+    return DottedBorder(
+      color: lighten(Theme.of(context).colorScheme.background, 50),
+      dashPattern: const [8, 8],
+      borderPadding: const EdgeInsets.all(1),
+      strokeWidth: 4,
+      radius: Radius.circular(borderRadius),
+      strokeCap: StrokeCap.round,
+      borderType: BorderType.RRect,
+      child: Material(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius)
+        ),
+        color: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          splashFactory: InkSplash.splashFactory,
+          onTap: onTap,
+          child: Align(
+            alignment: Alignment.center,
+            child: child,
           ),
         ),
       ),

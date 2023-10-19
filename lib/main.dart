@@ -73,7 +73,7 @@ class MainPage extends StatelessWidget {
                 fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
           ),
           navigationBarTheme: const NavigationBarThemeData(
-            height: 65,
+            height: 49,
             backgroundColor: Colors.white,
             indicatorColor: Colors.transparent,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
