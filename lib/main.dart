@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:zakroma_frontend/pages/diet.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
+import 'package:zakroma_frontend/utility/pair.dart';
 
 // TODO: доделать главный экран
 // TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
@@ -107,59 +108,33 @@ class _ZakromaState extends State<Zakroma> {
   Widget build(BuildContext context) {
     // делаем системную панель навигации «прозрачной»
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: Theme.of(context).colorScheme.primaryContainer,
+        systemNavigationBarColor:
+            Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
 
-    final buttonColor = Theme.of(context).colorScheme.background;
     final navigationBarIcons = [
-      [Icons.home, Icons.home_outlined],
-      [Icons.restaurant_menu, Icons.restaurant_menu],
-      [Icons.settings, Icons.settings_outlined]
+      Pair(
+          Pair(Icons.home, Icons.home_outlined),
+          (index) => setState(() {
+                currentPageIndex = index;
+              })),
+      Pair(
+          Pair(Icons.restaurant_menu, Icons.restaurant_menu),
+          (index) => setState(() {
+                currentPageIndex = index;
+              })),
+      Pair(
+          Pair(Icons.settings, Icons.settings_outlined),
+          (index) => setState(() {
+                currentPageIndex = index;
+              })),
     ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  offset: Offset(0, -2))
-            ]
-        ),
-        child: NavigationBar(
-            onDestinationSelected: (int index) {
-              setState(() {
-                currentPageIndex = index;
-              });
-            },
-            selectedIndex: currentPageIndex,
-            destinations: List<Widget>.generate(
-              navigationBarIcons.length,
-              (index) => IconButton(
-                  style: IconButton.styleFrom(
-                    highlightColor: Colors.transparent,
-                    shape: const CircleBorder(),
-                    splashFactory: InkSplash.splashFactory,
-                  ),
-                  color: lighten(Theme.of(context).colorScheme.background),
-                  onPressed: () {
-                    setState(() {
-                      currentPageIndex = index;
-                    });
-                  },
-                  iconSize: 45,
-                  isSelected: currentPageIndex == index,
-                  selectedIcon: Icon(
-                    navigationBarIcons[index][0],
-                    color: buttonColor.withGreen(buttonColor.green - 10),
-                  ),
-                  icon: Icon(
-                    navigationBarIcons[index][1],
-                    color: lighten(buttonColor),
-                  )),
-            )),
+      bottomNavigationBar: nav_bar.BottomNavigationBar(
+        navigationBarIcons,
+        currentPageIndex,
       ),
       body: <Widget>[
         const HomePage(),
