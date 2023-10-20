@@ -27,8 +27,7 @@ class BottomNavigationBar extends StatelessWidget {
               backgroundColor: Colors.white,
               indicatorColor: Colors.transparent,
               labelTextStyle: const MaterialStatePropertyAll(TextStyle(
-                height: 0.5,
-                  fontFamily: 'YandexSansDisplay-Regular')),
+                  height: 0.5, fontFamily: 'YandexSansDisplay-Regular')),
               iconTheme: MaterialStatePropertyAll(IconThemeData(
                 color: buttonColor ?? Theme.of(context).splashColor,
                 size: 30,
