@@ -4,7 +4,6 @@ import 'package:zakroma_frontend/pages/diet.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
-import 'package:zakroma_frontend/utility/pair.dart';
 
 // TODO: доделать главный экран
 // TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
@@ -30,50 +29,47 @@ class MainPage extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Calculator',
       theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-          colorScheme: const ColorScheme.light().copyWith(
-            primary: const Color(0xFFFFB96C),
-            primaryContainer: Colors.white,
-            onPrimaryContainer: Colors.black,
-            secondary: const Color(0xFFA93500),
-            background: const Color(0xFFFFB96C),
-            surface: Colors.white,
-            surfaceTint: Colors.white,
-            onSurface: Colors.black,
-          ),
-          splashColor: Colors.black26,
-          splashFactory: InkSplash.splashFactory,
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            displayMedium:
-                TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            displaySmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            headlineLarge:
-                TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            headlineMedium:
-                TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            headlineSmall:
-                TextStyle(fontFamily: 'Preslav', color: Colors.black),
-            titleLarge: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            titleMedium: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            titleSmall: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            labelLarge: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            labelMedium: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            labelSmall: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            bodyLarge: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            bodyMedium: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-            bodySmall: TextStyle(
-                fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          ),),
+        useMaterial3: true,
+        brightness: Brightness.light,
+        colorScheme: const ColorScheme.light().copyWith(
+          primary: const Color(0xFFFFB96C),
+          primaryContainer: Colors.white,
+          onPrimaryContainer: Colors.black,
+          secondary: const Color(0xFFA93500),
+          background: const Color(0xFFFFB96C),
+          surface: Colors.white,
+          surfaceTint: Colors.white,
+          onSurface: Colors.black,
+        ),
+        splashColor: Colors.black26,
+        splashFactory: InkSplash.splashFactory,
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          displayMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          displaySmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          headlineLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          headlineMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          headlineSmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
+          titleLarge: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          titleMedium: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          titleSmall: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          labelLarge: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          labelMedium: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          labelSmall: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          bodyLarge: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          bodyMedium: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          bodySmall: TextStyle(
+              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+        ),
+      ),
       home: const Zakroma(),
     );
   }
@@ -104,29 +100,35 @@ class _ZakromaState extends State<Zakroma> {
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
 
-    final navigationBarIcons = [
-      (Pair(Icons.home, Icons.home_outlined),
-      'Домой',
-          (index) => setState(() {
-                currentPageIndex = index;
-              })),
-      (Pair(Icons.restaurant_menu, Icons.restaurant_menu),
-          'Рационы',
-          (index) => setState(() {
-                currentPageIndex = index;
-              })),
-      (Pair(Icons.settings, Icons.settings_outlined),
-          'Настройки',
-          (index) => setState(() {
-                currentPageIndex = index;
-              })),
-    ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      bottomNavigationBar: nav_bar.BottomNavigationBar(
-        navigationBarIcons,
-        currentPageIndex,
+      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+        // height: 49,
+        height: MediaQuery.of(context).size.height / 17,
+        buttonColor: Colors.black38,
+        selectedButtonColor: Theme.of(context).colorScheme.background,
+        onDestinationSelected: (index) => setState(() {
+          currentPageIndex = index;
+        }),
+        selectedIndex: currentPageIndex,
+        navigationBarIcons: const [
+          nav_bar.NavigationDestination(
+            icon: Icons.home_outlined,
+            label: 'Главная',
+            selectedIcon: Icons.home,
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.restaurant_menu,
+            label: 'Рационы',
+            selectedIcon: Icons.restaurant_menu,
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.settings_outlined,
+            label: 'Настройки',
+            selectedIcon: Icons.settings,
+          ),
+        ],
       ),
       body: <Widget>[
         const HomePage(),

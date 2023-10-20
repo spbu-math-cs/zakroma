@@ -1,57 +1,124 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 
-class BottomNavigationBar extends StatelessWidget {
-  // <Pair<активная_иконка::IconData, неактивная иконка::IconData>, подпись::String, обработчик_нажатия::void Function(int)>
-  final List<(Pair<IconData, IconData>, String, void Function(int))>
-      navigationBarIcons;
-  final int currentPageIndex;
+class FunctionalBottomBar extends StatelessWidget {
+  final List<NavigationDestination> navigationBarIcons;
+  final double height;
+  final int selectedIndex;
+  final Color? backgroundColor;
   final Color? buttonColor;
-  final bool markSelectedPage;
+  final TextStyle? labelStyle;
+  final Color? selectedButtonColor;
+  final void Function(int)? onDestinationSelected;
 
-  const BottomNavigationBar(this.navigationBarIcons, this.currentPageIndex,
-      {super.key, this.buttonColor, this.markSelectedPage = true});
+  const FunctionalBottomBar(
+      {super.key,
+      required this.height,
+      required this.navigationBarIcons,
+      required this.selectedIndex,
+      this.backgroundColor,
+      this.buttonColor,
+      this.labelStyle,
+      this.selectedButtonColor,
+      this.onDestinationSelected});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(boxShadow: [
-        BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, -2))
-      ]),
-      child: Theme(
-        data: ThemeData(
-            highlightColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            navigationBarTheme: NavigationBarThemeData(
-              height: 49,
-              backgroundColor: Colors.white,
-              indicatorColor: Colors.transparent,
-              labelTextStyle: const MaterialStatePropertyAll(TextStyle(
-                  height: 0.5, fontFamily: 'YandexSansDisplay-Regular')),
-              iconTheme: MaterialStatePropertyAll(IconThemeData(
-                color: buttonColor ?? Theme.of(context).splashColor,
-                size: 30,
-              )),
-            )),
-        child: NavigationBar(
-          onDestinationSelected: (int index) =>
-              navigationBarIcons[index].$3(index),
-          selectedIndex: currentPageIndex,
-          destinations: List<Widget>.generate(
-              navigationBarIcons.length,
-              (index) => NavigationDestination(
-                  icon: Icon(
-                    navigationBarIcons[index].$1.second,
+      decoration: BoxDecoration(
+          color:
+              backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black26, blurRadius: 10, offset: Offset(0, -2))
+          ]),
+      height: height,
+      child: Row(
+        children: List<Widget>.generate(
+            navigationBarIcons.length,
+            (index) => Expanded(
+                    child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
+                  // а если и то, и другое == null, то просто ничего не делаем
+                  onTap: () => navigationBarIcons[index].onTap != null
+                      ? navigationBarIcons[index].onTap!()
+                      : onDestinationSelected != null
+                          ? onDestinationSelected!(index)
+                          : {},
+                  child: NavigationDestination(
+                    icon: navigationBarIcons[index].icon,
+                    label: navigationBarIcons[index].label,
+                    color: navigationBarIcons[index].color ??
+                        buttonColor ??
+                        Colors.black38,
+                    selectedIcon: navigationBarIcons[index].selectedIcon,
+                    selectedColor: navigationBarIcons[index].selectedColor ??
+                        selectedButtonColor ??
+                        Theme.of(context).colorScheme.background,
+                    onTap: navigationBarIcons[index].onTap,
+                    labelStyle: navigationBarIcons[index].labelStyle ??
+                        labelStyle ??
+                        Theme.of(context).textTheme.labelMedium,
+                    isSelected: navigationBarIcons[index].isSelected ??
+                        selectedIndex == index,
                   ),
-                  selectedIcon: Icon(
-                    navigationBarIcons[index].$1.first,
-                    color: markSelectedPage
-                        ? Theme.of(context).colorScheme.background
-                        : null,
-                  ),
-                  label: navigationBarIcons[index].$2)),
-        ),
+                ))),
       ),
+    );
+  }
+}
+
+class NavigationDestination extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color? color;
+  final IconData? selectedIcon;
+  final Color? selectedColor;
+  final void Function()? onTap;
+  final TextStyle? labelStyle;
+  final bool? isSelected;
+
+  const NavigationDestination({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.color,
+    this.selectedIcon,
+    this.selectedColor,
+    this.onTap,
+    this.labelStyle,
+    this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: добавить отступ сверху
+    // TODO: заменить Column на Stack, чтобы убрать лишнее пространство между иконкой и текстом
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Expanded(
+          flex: 6,
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Icon(
+              (isSelected ?? false) ? selectedIcon : icon,
+              color: (isSelected ?? false) ? selectedColor : color,
+              size: constraints.maxHeight.ceilToDouble(),
+            );
+          }),
+        ),
+        Expanded(
+          flex: 4,
+          child: Text(
+            label,
+            style: labelStyle?.copyWith(
+              color: (isSelected ?? false) ? selectedColor : color,
+            ),
+          ),
+        )
+      ],
     );
   }
 }

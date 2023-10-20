@@ -31,24 +31,6 @@ class _DietDetailPageState extends State<DietDetailPage> {
       'Суббота',
       'Воскресенье',
     ];
-    // TODO: доделать функциональность для 2 и 3 кнопок
-    var navigationBarIcons = [
-      (Pair(Icons.arrow_back, Icons.arrow_back),
-          'Назад',
-          (index) => Navigator.of(context).pop()),
-      (
-          Pair(Icons.edit, Icons.edit_outlined),
-          'Редактировать',
-          (index) => setState(() {
-                currentPageIndex = index;
-              })),
-      (
-          Pair(Icons.more_horiz, Icons.more_horiz),
-          'Опции',
-          (index) => setState(() {
-                currentPageIndex = index;
-              }))
-    ];
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -99,9 +81,34 @@ class _DietDetailPageState extends State<DietDetailPage> {
           ],
         ),
       ),
-      bottomNavigationBar: nav_bar.BottomNavigationBar(
-        navigationBarIcons, currentPageIndex,
-        markSelectedPage: false,
+      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+        // height: 49,
+        height: MediaQuery.of(context).size.height / 17,
+        buttonColor: Colors.black38,
+        selectedIndex: -1,  // никогда не хотим выделять никакую кнопку
+        navigationBarIcons: [
+          nav_bar.NavigationDestination(
+            icon: Icons.arrow_back,
+            label: 'Назад',
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.edit_outlined,
+            label: 'Редактировать',
+            onTap: () {
+              // TODO: изменять текущий под редактирование рациона или переходить в новый экран редактирования
+            },
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.more_horiz,
+            label: 'Опции',
+            onTap: () {
+              // TODO: показывать всплывающее окошко со списком опций (см. черновики/figma)
+            },
+          ),
+        ],
       ),
     );
   }
