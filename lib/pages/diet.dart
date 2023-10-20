@@ -38,7 +38,7 @@ class _DietPageState extends State<DietPage> {
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
                     builder: (context, constraints) => formatHeadline(
-                      'Питание',
+                      'Рационы',
                       Theme.of(context).textTheme.displaySmall!.copyWith(
                             fontSize: 3 * constraints.maxHeight / 4,
                           ),

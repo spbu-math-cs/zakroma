@@ -42,6 +42,8 @@ class MainPage extends StatelessWidget {
             surfaceTint: Colors.white,
             onSurface: Colors.black,
           ),
+          splashColor: Colors.black26,
+          splashFactory: InkSplash.splashFactory,
           textTheme: const TextTheme(
             displayLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
             displayMedium:
@@ -71,17 +73,7 @@ class MainPage extends StatelessWidget {
                 fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
             bodySmall: TextStyle(
                 fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          ),
-          navigationBarTheme: const NavigationBarThemeData(
-            height: 49,
-            backgroundColor: Colors.white,
-            indicatorColor: Colors.transparent,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-            iconTheme: MaterialStatePropertyAll(IconThemeData(
-              color: Color(0xFFFFB96C),
-              size: 45,
-            )),
-          )),
+          ),),
       home: const Zakroma(),
     );
   }
@@ -113,18 +105,18 @@ class _ZakromaState extends State<Zakroma> {
         statusBarColor: Colors.transparent));
 
     final navigationBarIcons = [
-      Pair(
-          Pair(Icons.home, Icons.home_outlined),
+      (Pair(Icons.home, Icons.home_outlined),
+      'Домой',
           (index) => setState(() {
                 currentPageIndex = index;
               })),
-      Pair(
-          Pair(Icons.restaurant_menu, Icons.restaurant_menu),
+      (Pair(Icons.restaurant_menu, Icons.restaurant_menu),
+          'Рационы',
           (index) => setState(() {
                 currentPageIndex = index;
               })),
-      Pair(
-          Pair(Icons.settings, Icons.settings_outlined),
+      (Pair(Icons.settings, Icons.settings_outlined),
+          'Настройки',
           (index) => setState(() {
                 currentPageIndex = index;
               })),

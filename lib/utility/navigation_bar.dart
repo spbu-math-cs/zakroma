@@ -1,52 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
 
 class BottomNavigationBar extends StatelessWidget {
-  // <<активная_иконка, неактивная иконка>, обработчик_нажатия>
-  final List<Pair<Pair<IconData, IconData>, void Function(int)>> navigationBarIcons;
+  // <Pair<активная_иконка::IconData, неактивная иконка::IconData>, подпись::String, обработчик_нажатия::void Function(int)>
+  final List<(Pair<IconData, IconData>, String, void Function(int))>
+      navigationBarIcons;
   final int currentPageIndex;
   final Color? buttonColor;
   final bool markSelectedPage;
 
-  const BottomNavigationBar(
-      this.navigationBarIcons,
-      this.currentPageIndex,
-      {super.key,
-      this.buttonColor,
-      this.markSelectedPage = true});
+  const BottomNavigationBar(this.navigationBarIcons, this.currentPageIndex,
+      {super.key, this.buttonColor, this.markSelectedPage = true});
 
   @override
   Widget build(BuildContext context) {
-    final buttonColor_ = buttonColor ?? Theme.of(context).colorScheme.background;
     return Container(
       decoration: const BoxDecoration(boxShadow: [
         BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, -2))
       ]),
-      child: NavigationBar(
-          onDestinationSelected: (int index) => navigationBarIcons[index].second(index),
+      child: Theme(
+        data: ThemeData(
+            highlightColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
+            navigationBarTheme: NavigationBarThemeData(
+              height: 49,
+              backgroundColor: Colors.white,
+              indicatorColor: Colors.transparent,
+              labelTextStyle: const MaterialStatePropertyAll(TextStyle(
+                height: 0.5,
+                  fontFamily: 'YandexSansDisplay-Regular')),
+              iconTheme: MaterialStatePropertyAll(IconThemeData(
+                color: buttonColor ?? Theme.of(context).splashColor,
+                size: 30,
+              )),
+            )),
+        child: NavigationBar(
+          onDestinationSelected: (int index) =>
+              navigationBarIcons[index].$3(index),
           selectedIndex: currentPageIndex,
           destinations: List<Widget>.generate(
-            navigationBarIcons.length,
-            (index) => IconButton(
-                style: IconButton.styleFrom(
-                  highlightColor: Colors.transparent,
-                  shape: const CircleBorder(),
-                  splashFactory: InkSplash.splashFactory,
-                ),
-                color: lighten(Theme.of(context).colorScheme.background),
-                onPressed: () => navigationBarIcons[index].second(index),
-                iconSize: 45,
-                isSelected: currentPageIndex == index,
-                selectedIcon: Icon(
-                  navigationBarIcons[index].first.first,
-                  color: markSelectedPage ? buttonColor_.withGreen(buttonColor_.green - 10) : buttonColor_,
-                ),
-                icon: Icon(
-                  navigationBarIcons[index].first.second,
-                  color: markSelectedPage ? lighten(buttonColor_) : buttonColor_,
-                )),
-          )),
+              navigationBarIcons.length,
+              (index) => NavigationDestination(
+                  icon: Icon(
+                    navigationBarIcons[index].$1.second,
+                  ),
+                  selectedIcon: Icon(
+                    navigationBarIcons[index].$1.first,
+                    color: markSelectedPage
+                        ? Theme.of(context).colorScheme.background
+                        : null,
+                  ),
+                  label: navigationBarIcons[index].$2)),
+        ),
+      ),
     );
   }
 }

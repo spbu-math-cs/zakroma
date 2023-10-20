@@ -33,15 +33,18 @@ class _DietDetailPageState extends State<DietDetailPage> {
     ];
     // TODO: доделать функциональность для 2 и 3 кнопок
     var navigationBarIcons = [
-      Pair(Pair(Icons.arrow_back, Icons.arrow_back),
+      (Pair(Icons.arrow_back, Icons.arrow_back),
+          'Назад',
           (index) => Navigator.of(context).pop()),
-      Pair(
-          Pair(Icons.edit_outlined, Icons.edit_outlined),
+      (
+          Pair(Icons.edit, Icons.edit_outlined),
+          'Редактировать',
           (index) => setState(() {
                 currentPageIndex = index;
               })),
-      Pair(
+      (
           Pair(Icons.more_horiz, Icons.more_horiz),
+          'Опции',
           (index) => setState(() {
                 currentPageIndex = index;
               }))
