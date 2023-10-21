@@ -2,16 +2,16 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart' as constants;
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
 
 class RRButton extends StatelessWidget {
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final double borderRadius;
   final Widget child;
   final Alignment childAlignment;
   final Decoration? decoration;
   final Decoration? foregroundDecoration;
   final EdgeInsets padding;
+  final double elevation;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
   final void Function()? onLongPress;
@@ -20,11 +20,12 @@ class RRButton extends StatelessWidget {
       {super.key,
       required this.child,
       this.childAlignment = Alignment.center,
-      this.backgroundColor = Colors.white,
+      this.backgroundColor,
       this.borderRadius = constants.borderRadius,
       this.decoration,
       this.foregroundDecoration,
       this.padding = constants.defaultPadding,
+      this.elevation = defaultElevation,
       this.onTap,
       this.onDoubleTap,
       this.onLongPress});
@@ -34,76 +35,67 @@ class RRButton extends StatelessWidget {
       padding: padding,
       child: Container(
           foregroundDecoration: foregroundDecoration,
-          decoration: decoration ??
-              constants.shadowsBoxDecoration.copyWith(boxShadow: const [
-                BoxShadow(
-                    color: splashColorDark, blurRadius: 5, offset: Offset(0, 3))
-              ]),
           child: Material(
-              color: backgroundColor,
+              color: backgroundColor ?? Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               clipBehavior: Clip.antiAlias,
+              elevation: elevation,
               child: InkWell(
-                splashColor: splashColorDark,
-                // highlightColor: splashColorDark,
-                splashFactory: InkSplash.splashFactory,
                 onTap: onTap,
                 onDoubleTap: onDoubleTap,
                 onLongPress: onLongPress,
-                child: Align(alignment: childAlignment, child: child),
+                child: Align(
+                    alignment: childAlignment,
+                    child: Padding(
+                      padding: defaultPadding,
+                      child: child,
+                    )),
               ))));
 }
 
-class DottedRRButton extends StatelessWidget {
-  final Color backgroundColor;
-  final Color borderColor;
-  final double borderRadius;
-  final Widget child;
-  final Alignment childAlignment;
-  final Decoration? decoration;
-  final EdgeInsets padding;
-  final void Function()? onTap;
-  final void Function()? onDoubleTap;
-  final void Function()? onLongPress;
+class DottedRRButton extends RRButton {
+  final Color? borderColor;
 
   const DottedRRButton(
       {super.key,
-      required this.child,
-      this.childAlignment = Alignment.center,
-      this.backgroundColor = Colors.white,
-      this.borderColor = splashColorDark,
-      this.borderRadius = constants.borderRadius,
-      this.decoration,
-      this.padding = constants.defaultPadding,
-      this.onTap,
-      this.onDoubleTap,
-      this.onLongPress});
+      required super.child,
+      super.childAlignment = Alignment.center,
+      super.backgroundColor,
+      this.borderColor,
+      super.borderRadius = constants.borderRadius,
+      super.decoration,
+      super.padding = constants.defaultPadding,
+      super.onTap,
+      super.onDoubleTap,
+      super.onLongPress});
 
   @override
   Widget build(BuildContext context) {
-    return DottedBorder(
-      color: lighten(Theme.of(context).colorScheme.background, 50),
-      dashPattern: const [8, 8],
-      borderPadding: const EdgeInsets.all(1),
-      strokeWidth: 4,
-      radius: Radius.circular(borderRadius),
-      strokeCap: StrokeCap.round,
-      borderType: BorderType.RRect,
-      child: Material(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius)),
-        color: Colors.transparent,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          splashFactory: InkSplash.splashFactory,
-          onTap: onTap,
-          child: Align(
-            alignment: Alignment.center,
-            child: child,
-          ),
-        ),
+    return Padding(
+      padding: padding,
+      child: DottedBorder(
+        color: borderColor ?? Theme.of(context).colorScheme.surface,
+        dashPattern: const [8, 8],
+        padding: EdgeInsets.zero,
+        // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
+        borderPadding: const EdgeInsets.all(2),
+        strokeWidth: 4,
+        radius: const Radius.circular(borderRadius),
+        strokeCap: StrokeCap.round,
+        borderType: BorderType.RRect,
+        child: RRButton(
+            backgroundColor: backgroundColor,
+            childAlignment: childAlignment,
+            borderRadius: borderRadius,
+            decoration: const BoxDecoration(),
+            padding: EdgeInsets.zero,
+            elevation: 0,
+            onTap: onTap,
+            onDoubleTap: onDoubleTap,
+            onLongPress: onLongPress,
+            child: child),
       ),
     );
   }

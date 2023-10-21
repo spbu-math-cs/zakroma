@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/utility/collect_diets.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
@@ -78,14 +77,6 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                   padding: EdgeInsets.only(bottom: defaultPadding.bottom),
                   child: RRSurface(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(borderRadius),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: splashColorDark,
-                              blurRadius: 10,
-                              offset: Offset(0, 1))
-                        ]),
                     child: Column(
                       children: [
                         // Сегодняшнее число и день недели
@@ -124,29 +115,115 @@ class _HomePageState extends State<HomePage> {
                                     const buttonsPadding = EdgeInsets.all(10.0);
                                     if (index > 0) {
                                       // просмотр приёма пищи
-                                      return Padding(
-                                        padding: buttonsPadding,
-                                        child: MealMiniature(
-                                            meal: todayMeals[index - 1]),
-                                      );
+                                      return RRButton(
+                                          padding: buttonsPadding,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                          // TODO: вынести этот огромный кусок в отдельный метод
+                                          onTap: () {
+                                            showSlidingBottomSheet(context,
+                                                builder: (context) {
+                                              return createSlidingSheet(context,
+                                                  headingText:
+                                                      todayMeals[index - 1]
+                                                          .name,
+                                                  body: LayoutBuilder(builder:
+                                                      (context, constraints) {
+                                                return FlatList(
+                                                  addSeparator: false,
+                                                  childAlignment:
+                                                      Alignment.centerLeft,
+                                                  defaultChildConstraints:
+                                                      constraints.copyWith(
+                                                          maxHeight: constraints
+                                                                  .maxHeight /
+                                                              10),
+                                                  dividerColor: Colors.white,
+                                                  children: List.generate(
+                                                      todayMeals[index - 1]
+                                                          .dishesCount(),
+                                                      (dishIndex) => Pair(
+                                                          SizedBox(
+                                                            width: constraints
+                                                                .maxWidth,
+                                                            child: Row(
+                                                              children: [
+                                                                SizedBox.square(
+                                                                  dimension:
+                                                                      (constraints.maxWidth -
+                                                                              16) /
+                                                                          5,
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            borderRadius),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      'assets/images/${todayMeals[index - 1].getDish(dishIndex).name}.jpg',
+                                                                      fit: BoxFit
+                                                                          .fitHeight,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              10.0),
+                                                                  child:
+                                                                      SizedBox(
+                                                                    width: 4 *
+                                                                        (constraints.maxWidth -
+                                                                            10) /
+                                                                        5,
+                                                                    child: Text(
+                                                                        todayMeals[index -
+                                                                                1]
+                                                                            .getDish(
+                                                                                dishIndex)
+                                                                            .name,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .titleLarge,
+                                                                        textAlign:
+                                                                            TextAlign.left),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          null)),
+                                                );
+                                              }));
+                                            });
+                                          },
+                                          child: formatHeadline(
+                                              todayMeals[index - 1].name,
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall));
                                     } else {
                                       // добавление приёма пищи на сегодня
-                                      return Padding(
-                                        padding: buttonsPadding,
-                                        child: DottedRRButton(
-                                            onTap: () {
-                                              debugPrint('+');
-                                            },
-                                            child: Icon(
-                                              Icons.add,
-                                              color: lighten(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .background,
-                                                  15),
-                                              size: 60,
-                                            )),
-                                      );
+                                      return DottedRRButton(
+                                          padding: buttonsPadding,
+                                          onTap: () {
+                                            debugPrint('+');
+                                          },
+                                          child: Icon(
+                                            Icons.add,
+                                            color: lighten(
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .background,
+                                                15),
+                                            size: 60,
+                                          ));
                                     }
                                   }),
                             ),
@@ -203,120 +280,32 @@ class DisplayBar extends StatelessWidget {
       ));
     }
 
-    return Padding(
-      padding: defaultPadding,
-      child: Container(
-        decoration: shadowsBoxDecoration,
-        child: Material(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            splashColor: splashColorDark,
-            highlightColor: splashColorDark,
-            splashFactory: InkSplash.splashFactory,
-            onTap: () {
-              showSlidingBottomSheet(context, builder: (context) {
-                return createSlidingSheet(context,
-                    headingText: type == DisplayBarType.deliveryStatus
-                        ? 'Доставка'
-                        : 'Продукты',
-                    body: Align(
-                      alignment: Alignment.topCenter,
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/alesha_popovich.png'),
-                          Text('Здесь пустовато...',
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                fontWeight: FontWeight.w300
-                              ))
-                        ],
-                      ),
-                    ));
-              });
-            },
-            child: Padding(
-              padding: defaultPadding,
-              child: Row(
-                children: contents,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class MealMiniature extends StatelessWidget {
-  final Meal meal;
-
-  const MealMiniature({super.key, required this.meal});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        showSlidingBottomSheet(context, builder: (context) {
-          return createSlidingSheet(context, headingText: meal.name,
-              body: LayoutBuilder(builder: (context, constraints) {
-            return FlatList(
-                addSeparator: false,
-                childAlignment: Alignment.centerLeft,
-                defaultChildConstraints:
-                constraints.copyWith(maxHeight: constraints.maxHeight / 10),
-                dividerColor: Colors.white,
-                children: List.generate(
-                    meal.dishesCount(),
-                    (index) => Pair(
-                        SizedBox(
-                          width: constraints.maxWidth,
-                          child: Row(
-                            children: [
-                              SizedBox.square(
-                                dimension: (constraints.maxWidth - 16) / 5,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(borderRadius),
-                                  child: Image.asset('assets/images/${meal.getDish(index).name}.jpg',
-                                  fit: BoxFit.fitHeight,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: SizedBox(
-                                  width: 4 * (constraints.maxWidth - 10) / 5,
-                                  child: Text(meal.getDish(index).name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context).textTheme.titleLarge,
-                                      textAlign: TextAlign.left),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        null)),);
-          }));
-        });
-      },
-      style: TextButton.styleFrom(
-          backgroundColor:
-              lighten(Theme.of(context).colorScheme.background, 50),
-          foregroundColor: splashColorDark,
-          splashFactory: InkSplash.splashFactory,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          elevation: 8,
-          shadowColor: Colors.black26),
-      child: Align(
-        alignment: Alignment.center,
-        child: formatHeadline(
-            meal.name, Theme.of(context).textTheme.headlineSmall),
-      ),
-    );
+    return RRButton(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        onTap: () {
+          showSlidingBottomSheet(context, builder: (context) {
+            return createSlidingSheet(context,
+                headingText: type == DisplayBarType.deliveryStatus
+                    ? 'Доставка'
+                    : 'Продукты',
+                body: Align(
+                  alignment: Alignment.topCenter,
+                  child: Column(
+                    children: [
+                      Image.asset('assets/images/alesha_popovich.png'),
+                      Text('Здесь пустовато...',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(fontWeight: FontWeight.w300))
+                    ],
+                  ),
+                ));
+          });
+        },
+        child: Row(
+          children: contents,
+        ));
   }
 }
 

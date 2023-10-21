@@ -72,18 +72,15 @@ class _SettingsPageState extends State<SettingsPage> {
                                       padding: EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                       child: Center(
                                         // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
-                                        child: Container(
-                                          decoration: shadowsBoxDecoration,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                borderRadius),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: SizedBox.square(
-                                              dimension: 3 * constraints.maxHeight / 4,
-                                              child: Image.asset(
-                                                'assets/images/ryan_gosling.jpeg',
-                                              ),
+                                        child: Material(
+                                          borderRadius: BorderRadius.circular(
+                                              borderRadius),
+                                          clipBehavior: Clip.antiAlias,
+                                          elevation: defaultElevation,
+                                          child: SizedBox.square(
+                                            dimension: 3 * constraints.maxHeight / 4,
+                                            child: Image.asset(
+                                              'assets/images/ryan_gosling.jpeg',
                                             ),
                                           ),
                                         ),
@@ -139,8 +136,6 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
                 flex: 6,
                 child: RRSurface(
-                    // continuous: true,
-                    // padding: defaultPadding.copyWith(bottom: 0),
                     padding: defaultPadding.copyWith(bottom: defaultPadding.vertical),
                     child: LayoutBuilder(builder: (context, constraints) {
                       return FlatList(
@@ -159,53 +154,6 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-// TODO: сделать кликабельной, как статус-бары на homepage
-class SettingsCategory extends StatelessWidget {
-  final double width;
-  final String text;
-
-  const SettingsCategory({super.key, required this.width, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    final categorySize = (MediaQuery.of(context).size.height -
-            MediaQuery.of(context).viewPadding.top) /
-        12;
-    final dividerPadding = width / 10;
-    return SizedBox(
-      height: categorySize,
-      width: width,
-      child: Column(
-          // mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-              flex: 20,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(dividerPadding * 1.5, 0, 0, 8),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: formatHeadline(
-                      text, Theme.of(context).textTheme.headlineMedium),
-                ),
-              ),
-            ),
-            Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: dividerPadding),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    child: Container(
-                      color:
-                          lighten(Theme.of(context).colorScheme.background, 25),
-                    ),
-                  ),
-                ))
-          ]),
     );
   }
 }

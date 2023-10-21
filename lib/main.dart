@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
+import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 
 // TODO: доделать главный экран
@@ -25,49 +26,45 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // const backgroundColor = Color(0xFFFFBA6C);
+    const backgroundColor = Color(0xFFFFB96C);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Calculator',
+      title: 'zakroma',
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         colorScheme: const ColorScheme.light().copyWith(
-          primary: const Color(0xFFFFB96C),
+          primary: backgroundColor,
           primaryContainer: Colors.white,
           onPrimaryContainer: Colors.black,
+          // secondary: const Color(0xFFA14524),
+          // secondary: const Color(0xFFE36942),
           secondary: const Color(0xFFA93500),
-          background: const Color(0xFFFFB96C),
-          surface: Colors.white,
+          background: backgroundColor,
+          surface: lighten(backgroundColor, 50),
           surfaceTint: Colors.white,
           onSurface: Colors.black,
         ),
         splashColor: Colors.black26,
+        highlightColor: Colors.black12,
         splashFactory: InkSplash.splashFactory,
         textTheme: const TextTheme(
-          displayLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          displayMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          displaySmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineSmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          titleLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          titleMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          titleSmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelSmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodyLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodyMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodySmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          displayLarge: TextStyle(fontFamily: 'Preslav'),
+          displayMedium: TextStyle(fontFamily: 'Preslav'),
+          displaySmall: TextStyle(fontFamily: 'Preslav'),
+          headlineLarge: TextStyle(fontFamily: 'Preslav'),
+          headlineMedium: TextStyle(fontFamily: 'Preslav'),
+          headlineSmall: TextStyle(fontFamily: 'Preslav'),
+          titleLarge: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          titleMedium: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          titleSmall: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          labelLarge: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          labelMedium: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          labelSmall: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          bodyLarge: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          bodyMedium: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
+          bodySmall: TextStyle(fontFamily: 'YandexSansDisplay-Regular'),
         ),
       ),
       home: const Zakroma(),
@@ -99,7 +96,6 @@ class _ZakromaState extends State<Zakroma> {
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
-
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
