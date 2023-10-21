@@ -21,8 +21,7 @@ class _DietListPageState extends State<DietListPage> {
     final dietList = collectDiets();
 
     final dietTextStyle = Theme.of(context).textTheme.headlineMedium;
-    final dietBackgroundColor =
-        lighten(Theme.of(context).colorScheme.background, 50);
+    final dietBackgroundColor =Theme.of(context).colorScheme.surface;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -54,41 +53,44 @@ class _DietListPageState extends State<DietListPage> {
               child: RRSurface(
                 padding:
                     defaultPadding.copyWith(bottom: defaultPadding.vertical),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return ListView.builder(
-                      itemCount: dietList.length,
-                      itemBuilder: (context, index) => SizedBox(
-                            height: constraints.maxHeight / 5,
-                            child: RRButton(
-                                foregroundDecoration: index == 0
-                                    ? BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(borderRadius),
-                                        border: Border.all(
-                                            width: 3,
-                                            color: Color.alphaBlend(
-                                                Colors.greenAccent
-                                                    .withOpacity(0.3),
-                                                dietBackgroundColor)),
-                                      )
-                                    : null,
-                                backgroundColor: dietBackgroundColor,
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DietPage(
-                                              diet: dietList[index])));
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: formatHeadline(
-                                      dietList[index].name, dietTextStyle,
-                                      overflow: TextOverflow.ellipsis),
-                                )),
-                          ));
-                }),
+                child: Padding(
+                  padding: EdgeInsets.only(top: defaultPadding.top),
+                  child: LayoutBuilder(builder: (context, constraints) {
+                    return ListView.builder(
+                        itemCount: dietList.length,
+                        itemBuilder: (context, index) => SizedBox(
+                              height: constraints.maxHeight / 5,
+                              child: RRButton(
+                                  foregroundDecoration: index == 0
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(borderRadius),
+                                          border: Border.all(
+                                              width: 4,
+                                              color: Color.alphaBlend(
+                                                  const Color(0xffe36942)
+                                                      .withOpacity(0.5),
+                                                  dietBackgroundColor)),
+                                        )
+                                      : null,
+                                  backgroundColor: dietBackgroundColor,
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DietPage(
+                                                diet: dietList[index])));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: formatHeadline(
+                                        dietList[index].name, dietTextStyle,
+                                        overflow: TextOverflow.ellipsis),
+                                  )),
+                            ));
+                  }),
+                ),
               ),
             ),
           ],

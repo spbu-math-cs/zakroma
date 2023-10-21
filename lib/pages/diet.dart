@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
-import 'package:zakroma_frontend/utility/pair.dart';
+import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
@@ -31,6 +29,7 @@ class _DietPageState extends State<DietPage> {
       'Суббота',
       'Воскресенье',
     ];
+    final weekDayTextStyle = Theme.of(context).textTheme.headlineMedium;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -58,26 +57,34 @@ class _DietPageState extends State<DietPage> {
             Expanded(
                 flex: 10,
                 child: RRSurface(
-                    padding: defaultPadding.copyWith(
-                        bottom: defaultPadding.vertical),
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      return FlatList(
-                          childAlignment: Alignment.centerLeft,
-                          scrollPhysics: const NeverScrollableScrollPhysics(),
-                          defaultChildConstraints: constraints.copyWith(
-                              maxHeight: constraints.maxHeight / 7),
-                          dividerColor:
-                              lighten(Theme.of(context).colorScheme.background),
-                          children: List.generate(
-                              widget.diet.days.length,
-                              (index) => Pair(
-                                  formatHeadline(
-                                      weekDays[widget.diet.getDay(index).index],
-                                      Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium),
-                                  null)));
-                    })))
+                  padding:
+                      defaultPadding.copyWith(bottom: defaultPadding.vertical),
+                  child: Padding(
+                    padding: defaultPadding.copyWith(left: 0, right: 0),
+                    child: Column(
+                        children: List.generate(
+                            weekDays.length,
+                            (index) => Expanded(
+                                child: widget.diet.days.any(
+                                        (dietDay) => dietDay.index == index)
+                                    ? RRButton(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                        onTap: () {
+                                          debugPrint('${weekDays[index]} >');
+                                        },
+                                        elevation: 8,
+                                        child: formatHeadline(
+                                            weekDays[index], weekDayTextStyle))
+                                    : DottedRRButton(
+                                        onTap: () {
+                                          debugPrint('${weekDays[index]} +');
+                                        },
+                                        child: formatHeadline(weekDays[index],
+                                            weekDayTextStyle))))),
+                  ),
+                ))
           ],
         ),
       ),
@@ -85,7 +92,7 @@ class _DietPageState extends State<DietPage> {
         // height: 49,
         height: MediaQuery.of(context).size.height / 17,
         buttonColor: Colors.black38,
-        selectedIndex: -1,  // никогда не хотим выделять никакую кнопку
+        selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         navigationBarIcons: [
           nav_bar.NavigationDestination(
             icon: Icons.arrow_back,
