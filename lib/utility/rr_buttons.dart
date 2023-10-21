@@ -10,6 +10,7 @@ class RRButton extends StatelessWidget {
   final Widget child;
   final Alignment childAlignment;
   final Decoration? decoration;
+  final Decoration? foregroundDecoration;
   final EdgeInsets padding;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
@@ -22,6 +23,7 @@ class RRButton extends StatelessWidget {
       this.backgroundColor = Colors.white,
       this.borderRadius = constants.borderRadius,
       this.decoration,
+      this.foregroundDecoration,
       this.padding = constants.defaultPadding,
       this.onTap,
       this.onDoubleTap,
@@ -31,11 +33,12 @@ class RRButton extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
       padding: padding,
       child: Container(
-          decoration: decoration ?? constants.shadowsBoxDecoration.copyWith(
-            boxShadow: const [
-              BoxShadow(color: splashColorDark, blurRadius: 5, offset: Offset(0, 3))
-            ]
-          ),
+          foregroundDecoration: foregroundDecoration,
+          decoration: decoration ??
+              constants.shadowsBoxDecoration.copyWith(boxShadow: const [
+                BoxShadow(
+                    color: splashColorDark, blurRadius: 5, offset: Offset(0, 3))
+              ]),
           child: Material(
               color: backgroundColor,
               shape: RoundedRectangleBorder(
@@ -90,8 +93,7 @@ class DottedRRButton extends StatelessWidget {
       borderType: BorderType.RRect,
       child: Material(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius)
-        ),
+            borderRadius: BorderRadius.circular(borderRadius)),
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
