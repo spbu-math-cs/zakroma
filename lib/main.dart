@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zakroma_frontend/pages/diet.dart';
+import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
@@ -132,7 +132,7 @@ class _ZakromaState extends State<Zakroma> {
       ),
       body: <Widget>[
         const HomePage(),
-        const DietPage(),
+        const DietListPage(),
         const SettingsPage(),
       ][currentPageIndex],
     );
