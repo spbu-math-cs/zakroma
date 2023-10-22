@@ -6,8 +6,6 @@ import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
-import '../utility/color_manipulator.dart';
-
 class DietListPage extends StatefulWidget {
   const DietListPage({super.key});
 
@@ -73,7 +71,6 @@ class _DietListPageState extends State<DietListPage> {
                                                   dietBackgroundColor)),
                                         )
                                       : null,
-                                  backgroundColor: dietBackgroundColor,
                                   onTap: () {
                                     Navigator.push(
                                         context,

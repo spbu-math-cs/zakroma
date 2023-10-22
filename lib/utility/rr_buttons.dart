@@ -36,7 +36,7 @@ class RRButton extends StatelessWidget {
       child: Container(
           foregroundDecoration: foregroundDecoration,
           child: Material(
-              color: backgroundColor ?? Colors.transparent,
+              color: backgroundColor ?? Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
@@ -86,7 +86,7 @@ class DottedRRButton extends RRButton {
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(
-            backgroundColor: backgroundColor,
+            backgroundColor: Colors.transparent,
             childAlignment: childAlignment,
             borderRadius: borderRadius,
             decoration: const BoxDecoration(),

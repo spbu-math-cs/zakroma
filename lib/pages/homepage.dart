@@ -117,9 +117,6 @@ class _HomePageState extends State<HomePage> {
                                       // просмотр приёма пищи
                                       return RRButton(
                                           padding: buttonsPadding,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
                                           // TODO: вынести этот огромный кусок в отдельный метод
                                           onTap: () {
                                             showSlidingBottomSheet(context,

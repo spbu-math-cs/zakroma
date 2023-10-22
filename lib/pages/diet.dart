@@ -68,13 +68,9 @@ class _DietPageState extends State<DietPage> {
                                 child: widget.diet.days.any(
                                         (dietDay) => dietDay.index == index)
                                     ? RRButton(
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
                                         onTap: () {
                                           debugPrint('${weekDays[index]} >');
                                         },
-                                        elevation: 8,
                                         child: formatHeadline(
                                             weekDays[index], weekDayTextStyle))
                                     : DottedRRButton(
