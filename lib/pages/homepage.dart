@@ -37,12 +37,12 @@ class _HomePageState extends State<HomePage> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
-                    builder: (context, constraints) => formatHeadline(
-                      'Закрома',
-                      Theme.of(context).textTheme.displaySmall!.copyWith(
-                            fontSize: 3 * constraints.maxHeight / 4,
-                          ),
-                      horizontalAlignment: TextAlign.left,
+                    builder: (context, constraints) => StyledHeadline(
+                      text: 'Закрома',
+                      textStyle:
+                          Theme.of(context).textTheme.displaySmall!.copyWith(
+                                fontSize: 3 * constraints.maxHeight / 4,
+                              ),
                     ),
                   ),
                 ),
@@ -85,8 +85,11 @@ class _HomePageState extends State<HomePage> {
                           flex: 1,
                           child: Align(
                               alignment: Alignment.center,
-                              child: formatHeadline(getCurrentDate(),
-                                  Theme.of(context).textTheme.headlineMedium)),
+                              child: StyledHeadline(
+                                  text: getCurrentDate(),
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium)),
                         ),
                         // Список приёмов пищи на сегодня
                         Expanded(
@@ -200,9 +203,9 @@ class _HomePageState extends State<HomePage> {
                                               }));
                                             });
                                           },
-                                          child: formatHeadline(
-                                              todayMeals[index - 1].name,
-                                              Theme.of(context)
+                                          child: StyledHeadline(
+                                              text: todayMeals[index - 1].name,
+                                              textStyle: Theme.of(context)
                                                   .textTheme
                                                   .headlineSmall));
                                     } else {
@@ -265,8 +268,11 @@ class DisplayBar extends StatelessWidget {
         flex: 2,
         child: Align(
           alignment: Alignment.center,
-          child:
-              formatHeadline(text, textStyle, horizontalAlignment: textAlign),
+          child: StyledHeadline(
+              text: text,
+              textStyle: textStyle,
+              overflow: TextOverflow.clip,
+              horizontalAlignment: textAlign),
         ),
       ),
     ];
@@ -332,9 +338,12 @@ SlidingSheetDialog createSlidingSheet(context,
                   child: Align(
                     alignment: Alignment.center,
                     child: LayoutBuilder(builder: (context, constraints) {
-                      return formatHeadline(
-                          headingText,
-                          Theme.of(context).textTheme.displaySmall?.copyWith(
+                      return StyledHeadline(
+                          text: headingText,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .displaySmall
+                              ?.copyWith(
                                 fontSize: 3 * constraints.maxHeight / 4,
                               ));
                     }),

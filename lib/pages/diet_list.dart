@@ -19,7 +19,7 @@ class _DietListPageState extends State<DietListPage> {
     final dietList = collectDiets();
 
     final dietTextStyle = Theme.of(context).textTheme.headlineMedium;
-    final dietBackgroundColor =Theme.of(context).colorScheme.surface;
+    final dietBackgroundColor = Theme.of(context).colorScheme.surface;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -34,12 +34,12 @@ class _DietListPageState extends State<DietListPage> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
-                    builder: (context, constraints) => formatHeadline(
-                      'Рационы',
-                      Theme.of(context).textTheme.displaySmall!.copyWith(
-                            fontSize: 3 * constraints.maxHeight / 4,
-                          ),
-                      horizontalAlignment: TextAlign.left,
+                    builder: (context, constraints) => StyledHeadline(
+                      text: 'Рационы',
+                      textStyle:
+                          Theme.of(context).textTheme.displaySmall!.copyWith(
+                                fontSize: 3 * constraints.maxHeight / 4,
+                              ),
                     ),
                   ),
                 ),
@@ -61,8 +61,8 @@ class _DietListPageState extends State<DietListPage> {
                               child: RRButton(
                                   foregroundDecoration: index == 0
                                       ? BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(borderRadius),
+                                          borderRadius: BorderRadius.circular(
+                                              borderRadius),
                                           border: Border.all(
                                               width: 4,
                                               color: Color.alphaBlend(
@@ -81,9 +81,10 @@ class _DietListPageState extends State<DietListPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0),
-                                    child: formatHeadline(
-                                        dietList[index].name, dietTextStyle,
-                                        overflow: TextOverflow.ellipsis),
+                                    child: StyledHeadline(
+                                      text: dietList[index].name,
+                                      textStyle: dietTextStyle,
+                                    ),
                                   )),
                             ));
                   }),

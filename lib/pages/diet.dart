@@ -42,13 +42,12 @@ class _DietPageState extends State<DietPage> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
-                    builder: (context, constraints) => formatHeadline(
-                        widget.diet.name,
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
-                        horizontalAlignment: TextAlign.left,
-                        overflow: TextOverflow.ellipsis),
+                    builder: (context, constraints) => StyledHeadline(
+                        text: widget.diet.name,
+                        textStyle:
+                            Theme.of(context).textTheme.displaySmall!.copyWith(
+                                  fontSize: 3 * constraints.maxHeight / 4,
+                                )),
                   ),
                 ),
               ),
@@ -71,14 +70,16 @@ class _DietPageState extends State<DietPage> {
                                         onTap: () {
                                           debugPrint('${weekDays[index]} >');
                                         },
-                                        child: formatHeadline(
-                                            weekDays[index], weekDayTextStyle))
+                                        child: StyledHeadline(
+                                            text: weekDays[index],
+                                            textStyle: weekDayTextStyle))
                                     : DottedRRButton(
                                         onTap: () {
                                           debugPrint('${weekDays[index]} +');
                                         },
-                                        child: formatHeadline(weekDays[index],
-                                            weekDayTextStyle))))),
+                                        child: StyledHeadline(
+                                            text: weekDays[index],
+                                            textStyle: weekDayTextStyle))))),
                   ),
                 ))
           ],
