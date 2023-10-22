@@ -29,7 +29,7 @@ class FunctionalBottomBar extends StatelessWidget {
               backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
           boxShadow: const [
             BoxShadow(
-                color: Colors.black26, blurRadius: 10, offset: Offset(0, -2))
+                color: Colors.black26, blurRadius: 5, offset: Offset(0, -1))
           ]),
       height: height,
       child: Row(
@@ -58,7 +58,7 @@ class FunctionalBottomBar extends StatelessWidget {
                     onTap: navigationBarIcons[index].onTap,
                     labelStyle: navigationBarIcons[index].labelStyle ??
                         labelStyle ??
-                        Theme.of(context).textTheme.labelMedium,
+                        Theme.of(context).textTheme.labelSmall,
                     isSelected: navigationBarIcons[index].isSelected ??
                         selectedIndex == index,
                   ),
@@ -92,33 +92,36 @@ class NavigationDestination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: добавить отступ сверху
-    // TODO: заменить Column на Stack, чтобы убрать лишнее пространство между иконкой и текстом
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          flex: 6,
-          child: LayoutBuilder(builder: (context, constraints) {
-            return Icon(
-              (isSelected ?? false) ? selectedIcon : icon,
-              color: (isSelected ?? false) ? selectedColor : color,
-              size: constraints.maxHeight.ceilToDouble(),
-            );
-          }),
-        ),
-        Expanded(
-          flex: 4,
-          child: Text(
-            label,
-            style: labelStyle?.copyWith(
-              color: (isSelected ?? false) ? selectedColor : color,
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: constraints.maxHeight / 20),
+          child: Stack(
+            fit: StackFit.loose,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Icon(
+                    (isSelected ?? false) ? selectedIcon : icon,
+                    color: (isSelected ?? false) ? selectedColor : color,
+                    size: 5 * constraints.maxHeight / 8,
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  label,
+                  textAlign: TextAlign.end,
+                  style: labelStyle?.copyWith(
+                    fontSize: 2 * constraints.maxHeight / 8,
+                    color: (isSelected ?? false) ? selectedColor : color,
+                  ),
+                ),
+              ),
+            ],
           ),
-        )
-      ],
+        );
+      }
     );
   }
 }
