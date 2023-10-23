@@ -54,7 +54,7 @@ class FunctionalBottomBar extends StatelessWidget {
                     selectedIcon: navigationBarIcons[index].selectedIcon,
                     selectedColor: navigationBarIcons[index].selectedColor ??
                         selectedButtonColor ??
-                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.primary,
                     onTap: navigationBarIcons[index].onTap,
                     labelStyle: navigationBarIcons[index].labelStyle ??
                         labelStyle ??
@@ -113,7 +113,7 @@ class NavigationDestination extends StatelessWidget {
                   label,
                   textAlign: TextAlign.end,
                   style: labelStyle?.copyWith(
-                    fontSize: 2 * constraints.maxHeight / 8,
+                    fontSize: 7 * constraints.maxHeight / 32,
                     color: (isSelected ?? false) ? selectedColor : color,
                   ),
                 ),

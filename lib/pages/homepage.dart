@@ -215,13 +215,14 @@ class _HomePageState extends State<HomePage> {
                                           onTap: () {
                                             debugPrint('+');
                                           },
+                                          borderColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
                                           child: Icon(
                                             Icons.add,
-                                            color: lighten(
-                                                Theme.of(context)
+                                            color: Theme.of(context)
                                                     .colorScheme
-                                                    .background,
-                                                15),
+                                                    .surface,
                                             size: 60,
                                           ));
                                     }

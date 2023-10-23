@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/homepage.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
@@ -15,7 +16,7 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 // TODO: холодильник
 
 void main() {
-  runApp(const MainPage());
+  runApp(const ProviderScope(child: MainPage()));
 }
 
 class MainPage extends StatelessWidget {
@@ -26,8 +27,8 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // const backgroundColor = Color(0xFFFFBA6C);
-    const backgroundColor = Color(0xFFFFB96C);
+    // const backgroundColor = Color(0xFFFFB96C);
+    const backgroundColor = Color(0xFFFFE7CE);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
@@ -35,15 +36,15 @@ class MainPage extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
         colorScheme: const ColorScheme.light().copyWith(
-          primary: backgroundColor,
+          primary: const Color(0xFFFFB96C),
           primaryContainer: Colors.white,
           onPrimaryContainer: Colors.black,
           // secondary: const Color(0xFFA14524),
           // secondary: const Color(0xFFE36942),
           secondary: const Color(0xFFA93500),
           background: backgroundColor,
-          surface: lighten(backgroundColor, 55),
-          surfaceTint: Colors.white,
+          surface: const Color(0xFFFCEFE1),
+          surfaceTint: Colors.transparent,
           onSurface: Colors.black,
         ),
         splashColor: Colors.black26,
@@ -53,18 +54,18 @@ class MainPage extends StatelessWidget {
           displayLarge: TextStyle(fontFamily: 'Preslav'),
           displayMedium: TextStyle(fontFamily: 'Preslav'),
           displaySmall: TextStyle(fontFamily: 'Preslav'),
-          headlineLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          titleLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          titleMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          titleSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          labelLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          labelMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          labelSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          bodySmall: TextStyle(fontFamily: 'TinkoffSans'),
+          headlineLarge: TextStyle(fontFamily: 'YandexSans'),
+          headlineMedium: TextStyle(fontFamily: 'YandexSans'),
+          headlineSmall: TextStyle(fontFamily: 'YandexSans'),
+          titleLarge: TextStyle(fontFamily: 'YandexSans'),
+          titleMedium: TextStyle(fontFamily: 'YandexSans'),
+          titleSmall: TextStyle(fontFamily: 'YandexSans'),
+          labelLarge: TextStyle(fontFamily: 'YandexSans'),
+          labelMedium: TextStyle(fontFamily: 'YandexSans'),
+          labelSmall: TextStyle(fontFamily: 'YandexSans'),
+          bodyLarge: TextStyle(fontFamily: 'YandexSans'),
+          bodyMedium: TextStyle(fontFamily: 'YandexSans'),
+          bodySmall: TextStyle(fontFamily: 'YandexSans'),
         ),
       ),
       home: const Zakroma(),
@@ -103,7 +104,6 @@ class _ZakromaState extends State<Zakroma> {
         // height: 49,
         height: MediaQuery.of(context).size.height / 17,
         buttonColor: Colors.black38,
-        selectedButtonColor: Theme.of(context).colorScheme.background,
         onDestinationSelected: (index) => setState(() {
           currentPageIndex = index;
         }),
