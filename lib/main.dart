@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
-import 'package:zakroma_frontend/pages/homepage.dart';
+import 'package:zakroma_frontend/pages/home.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
@@ -15,7 +16,7 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 // TODO: холодильник
 
 void main() {
-  runApp(const MainPage());
+  runApp(const ProviderScope(child: MainPage()));
 }
 
 class MainPage extends StatelessWidget {

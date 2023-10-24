@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
-import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
@@ -29,7 +28,7 @@ class _DietPageState extends State<DietPage> {
       'Суббота',
       'Воскресенье',
     ];
-    final weekDayTextStyle = Theme.of(context).textTheme.headlineMedium;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -55,33 +54,30 @@ class _DietPageState extends State<DietPage> {
             // Список дней недели в рационе
             Expanded(
                 flex: 10,
-                child: RRSurface(
-                  padding:
-                      defaultPadding.copyWith(bottom: defaultPadding.vertical),
-                  child: Padding(
-                    padding: defaultPadding.copyWith(left: 0, right: 0),
-                    child: Column(
-                        children: List.generate(
-                            weekDays.length,
-                            (index) => Expanded(
-                                child: widget.diet.days.any(
-                                        (dietDay) => dietDay.index == index)
-                                    ? RRButton(
-                                        onTap: () {
-                                          debugPrint('${weekDays[index]} >');
-                                        },
-                                        child: StyledHeadline(
-                                            text: weekDays[index],
-                                            textStyle: weekDayTextStyle))
-                                    : DottedRRButton(
-                                        onTap: () {
-                                          debugPrint('${weekDays[index]} +');
-                                        },
-                                        child: StyledHeadline(
-                                            text: weekDays[index],
-                                            textStyle: weekDayTextStyle))))),
-                  ),
-                ))
+                child: PageView(
+                    controller: PageController(),
+                    children: List.generate(
+                        weekDays.length,
+                        (index) => RRSurface(
+                                child: Column(
+                              children: [
+                                Expanded(
+                                    child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: defaultPadding.left),
+                                    child: StyledHeadline(
+                                      text: weekDays[index],
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge,
+                                    ),
+                                  ),
+                                )),
+                                const Expanded(flex: 10, child: Placeholder())
+                              ],
+                            )))))
           ],
         ),
       ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/collect_diets.dart';
+import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
@@ -11,17 +12,12 @@ import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    final currentDiet = collectDiets()[0];
+  Widget build(BuildContext context, ref) {
+    final currentDiet = ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
     final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(

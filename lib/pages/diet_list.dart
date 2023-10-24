@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/pages/diet.dart';
-import 'package:zakroma_frontend/utility/collect_diets.dart';
+import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/pages/diet_display.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
-class DietListPage extends StatefulWidget {
+class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});
 
   @override
-  State<DietListPage> createState() => _DietListPageState();
-}
-
-class _DietListPageState extends State<DietListPage> {
-  @override
-  Widget build(BuildContext context) {
-    final dietList = collectDiets();
+  Widget build(BuildContext context, ref) {
+    final dietList = ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new));
 
     final dietTextStyle = Theme.of(context).textTheme.headlineMedium;
     final dietBackgroundColor = Theme.of(context).colorScheme.surface;
