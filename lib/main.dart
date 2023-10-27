@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zakroma_frontend/pages/diet.dart';
-import 'package:zakroma_frontend/pages/homepage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/pages/diet_list.dart';
+import 'package:zakroma_frontend/pages/home.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
+import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 
 // TODO: доделать главный экран
@@ -14,7 +16,7 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 // TODO: холодильник
 
 void main() {
-  runApp(const MainPage());
+  runApp(const ProviderScope(child: MainPage()));
 }
 
 class MainPage extends StatelessWidget {
@@ -25,49 +27,45 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // const backgroundColor = Color(0xFFFFBA6C);
+    const backgroundColor = Color(0xFFFFB96C);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Calculator',
+      title: 'zakroma',
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         colorScheme: const ColorScheme.light().copyWith(
-          primary: const Color(0xFFFFB96C),
+          primary: backgroundColor,
           primaryContainer: Colors.white,
           onPrimaryContainer: Colors.black,
+          // secondary: const Color(0xFFA14524),
+          // secondary: const Color(0xFFE36942),
           secondary: const Color(0xFFA93500),
-          background: const Color(0xFFFFB96C),
-          surface: Colors.white,
+          background: backgroundColor,
+          surface: lighten(backgroundColor, 55),
           surfaceTint: Colors.white,
           onSurface: Colors.black,
         ),
         splashColor: Colors.black26,
+        highlightColor: Colors.black12,
         splashFactory: InkSplash.splashFactory,
         textTheme: const TextTheme(
-          displayLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          displayMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          displaySmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineLarge: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineMedium: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          headlineSmall: TextStyle(fontFamily: 'Preslav', color: Colors.black),
-          titleLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          titleMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          titleSmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          labelSmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodyLarge: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodyMedium: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
-          bodySmall: TextStyle(
-              fontFamily: 'YandexSansDisplay-Regular', color: Colors.black),
+          displayLarge: TextStyle(fontFamily: 'Preslav'),
+          displayMedium: TextStyle(fontFamily: 'Preslav'),
+          displaySmall: TextStyle(fontFamily: 'Preslav'),
+          headlineLarge: TextStyle(fontFamily: 'TinkoffSans'),
+          headlineMedium: TextStyle(fontFamily: 'TinkoffSans'),
+          headlineSmall: TextStyle(fontFamily: 'TinkoffSans'),
+          titleLarge: TextStyle(fontFamily: 'TinkoffSans'),
+          titleMedium: TextStyle(fontFamily: 'TinkoffSans'),
+          titleSmall: TextStyle(fontFamily: 'TinkoffSans'),
+          labelLarge: TextStyle(fontFamily: 'TinkoffSans'),
+          labelMedium: TextStyle(fontFamily: 'TinkoffSans'),
+          labelSmall: TextStyle(fontFamily: 'TinkoffSans'),
+          bodyLarge: TextStyle(fontFamily: 'TinkoffSans'),
+          bodyMedium: TextStyle(fontFamily: 'TinkoffSans'),
+          bodySmall: TextStyle(fontFamily: 'TinkoffSans'),
         ),
       ),
       home: const Zakroma(),
@@ -100,7 +98,6 @@ class _ZakromaState extends State<Zakroma> {
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
 
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
@@ -132,7 +129,7 @@ class _ZakromaState extends State<Zakroma> {
       ),
       body: <Widget>[
         const HomePage(),
-        const DietPage(),
+        const DietListPage(),
         const SettingsPage(),
       ][currentPageIndex],
     );

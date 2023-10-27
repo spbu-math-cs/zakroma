@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
-class DietDetailPage extends StatefulWidget {
+class DietPage extends StatefulWidget {
   final Diet diet;
 
-  const DietDetailPage({super.key, required this.diet});
+  const DietPage({super.key, required this.diet});
 
   @override
-  State<DietDetailPage> createState() => _DietDetailPageState();
+  State<DietPage> createState() => _DietPageState();
 }
 
-class _DietDetailPageState extends State<DietDetailPage> {
+class _DietPageState extends State<DietPage> {
   int currentPageIndex = 0;
 
   @override
@@ -31,6 +28,7 @@ class _DietDetailPageState extends State<DietDetailPage> {
       'Суббота',
       'Воскресенье',
     ];
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -43,13 +41,12 @@ class _DietDetailPageState extends State<DietDetailPage> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
-                    builder: (context, constraints) => formatHeadline(
-                        widget.diet.name,
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
-                        horizontalAlignment: TextAlign.left,
-                        overflow: TextOverflow.ellipsis),
+                    builder: (context, constraints) => StyledHeadline(
+                        text: widget.diet.name,
+                        textStyle:
+                            Theme.of(context).textTheme.displaySmall!.copyWith(
+                                  fontSize: 3 * constraints.maxHeight / 4,
+                                )),
                   ),
                 ),
               ),
@@ -57,27 +54,30 @@ class _DietDetailPageState extends State<DietDetailPage> {
             // Список дней недели в рационе
             Expanded(
                 flex: 10,
-                child: RRSurface(
-                    padding: defaultPadding.copyWith(
-                        bottom: defaultPadding.vertical),
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      return FlatList(
-                          childAlignment: Alignment.centerLeft,
-                          scrollPhysics: const NeverScrollableScrollPhysics(),
-                          defaultChildConstraints: constraints.copyWith(
-                              maxHeight: constraints.maxHeight / 7),
-                          dividerColor:
-                              lighten(Theme.of(context).colorScheme.background),
-                          children: List.generate(
-                              widget.diet.days.length,
-                              (index) => Pair(
-                                  formatHeadline(
-                                      weekDays[widget.diet.getDay(index).index],
-                                      Theme.of(context)
+                child: PageView(
+                    controller: PageController(),
+                    children: List.generate(
+                        weekDays.length,
+                        (index) => RRSurface(
+                                child: Column(
+                              children: [
+                                Expanded(
+                                    child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: defaultPadding.left),
+                                    child: StyledHeadline(
+                                      text: weekDays[index],
+                                      textStyle: Theme.of(context)
                                           .textTheme
-                                          .headlineMedium),
-                                  null)));
-                    })))
+                                          .headlineLarge,
+                                    ),
+                                  ),
+                                )),
+                                const Expanded(flex: 10, child: Placeholder())
+                              ],
+                            )))))
           ],
         ),
       ),
@@ -85,7 +85,7 @@ class _DietDetailPageState extends State<DietDetailPage> {
         // height: 49,
         height: MediaQuery.of(context).size.height / 17,
         buttonColor: Colors.black38,
-        selectedIndex: -1,  // никогда не хотим выделять никакую кнопку
+        selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         navigationBarIcons: [
           nav_bar.NavigationDestination(
             icon: Icons.arrow_back,

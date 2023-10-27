@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   dotted_border: ^2.1.0
   wtf_sliding_sheet: ^1.1.2
+  flutter_riverpod: ^2.4.4
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +62,12 @@ flutter:
     - family: Preslav
       fonts:
         - asset: assets/fonts/preslav.otf
+    - family: YandexSansDisplay
+      fonts:
         - asset: assets/fonts/YandexSansDisplay-Regular.ttf
+    - family: TinkoffSans
+      fonts:
+        - asset: assets/fonts/TinkoffSans-Regular.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
