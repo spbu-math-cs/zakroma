@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/home.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 
 // TODO: доделать главный экран
@@ -19,55 +19,19 @@ void main() {
   runApp(const ProviderScope(child: MainPage()));
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
   static const serverIP = '';
   static const serverPort = '';
 
   @override
-  Widget build(BuildContext context) {
-    // const backgroundColor = Color(0xFFFFBA6C);
-    const backgroundColor = Color(0xFFFFB96C);
+  Widget build(BuildContext context, ref) {
+    final theme = ref.watch(themes.themeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorScheme: const ColorScheme.light().copyWith(
-          primary: backgroundColor,
-          primaryContainer: Colors.white,
-          onPrimaryContainer: Colors.black,
-          // secondary: const Color(0xFFA14524),
-          // secondary: const Color(0xFFE36942),
-          secondary: const Color(0xFFA93500),
-          background: backgroundColor,
-          surface: lighten(backgroundColor, 55),
-          surfaceTint: Colors.white,
-          onSurface: Colors.black,
-        ),
-        splashColor: Colors.black26,
-        highlightColor: Colors.black12,
-        splashFactory: InkSplash.splashFactory,
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(fontFamily: 'Preslav'),
-          displayMedium: TextStyle(fontFamily: 'Preslav'),
-          displaySmall: TextStyle(fontFamily: 'Preslav'),
-          headlineLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          titleLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          titleMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          titleSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          labelLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          labelMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          labelSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          bodySmall: TextStyle(fontFamily: 'TinkoffSans'),
-        ),
-      ),
+      theme: theme.getThemeData(),
       home: const Zakroma(),
     );
   }

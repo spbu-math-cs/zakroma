@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
@@ -19,6 +20,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final currentDiet = ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
     final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
+    final themeNotifier = ref.read(themes.themeProvider.notifier);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -232,6 +234,14 @@ class HomePage extends ConsumerWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        themeNotifier.setTheme(themeNotifier.getTheme().switchTheme());
+        debugPrint(themeNotifier.getTheme().name);
+        // ref.read(themes.themeProvider.notifier).setTheme(.paleOrangeLight);
+        // themes.themeProvider.setTheme(themes.Theme.paleOrangeLight);
+      },
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      child: const Icon(Icons.swap_horiz),),
     );
   }
 }
