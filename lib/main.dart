@@ -27,11 +27,10 @@ class MainPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final theme = ref.watch(themes.themeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
-      theme: theme.getThemeData(),
+      theme: ref.watch(themes.themeProvider).getThemeData(),
       home: const Zakroma(),
     );
   }
