@@ -1,0 +1,4 @@
+go get github.com/gin-gonic/gin
+go get github.com/golang-jwt/jwt/v4
+go get github.com/gin-contrib/sessions/cookie
+go get github.com/gin-contrib/sessions
