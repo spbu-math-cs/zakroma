@@ -93,45 +93,47 @@ class _ZakromaState extends State<Zakroma> {
   @override
   Widget build(BuildContext context) {
     // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
+        statusBarColor: Theme.of(context).colorScheme.background));
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        // height: 49,
-        height: MediaQuery.of(context).size.height / 17,
-        buttonColor: Colors.black38,
-        selectedButtonColor: Theme.of(context).colorScheme.background,
-        onDestinationSelected: (index) => setState(() {
-          currentPageIndex = index;
-        }),
-        selectedIndex: currentPageIndex,
-        navigationBarIcons: const [
-          nav_bar.NavigationDestination(
-            icon: Icons.home_outlined,
-            label: 'Главная',
-            selectedIcon: Icons.home,
-          ),
-          nav_bar.NavigationDestination(
-            icon: Icons.restaurant_menu,
-            label: 'Рационы',
-            selectedIcon: Icons.restaurant_menu,
-          ),
-          nav_bar.NavigationDestination(
-            icon: Icons.settings_outlined,
-            label: 'Настройки',
-            selectedIcon: Icons.settings,
-          ),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        bottomNavigationBar: nav_bar.FunctionalBottomBar(
+          // height: 49,
+          height: MediaQuery.of(context).size.height / 17,
+          buttonColor: Colors.black38,
+          selectedButtonColor: Theme.of(context).colorScheme.background,
+          onDestinationSelected: (index) => setState(() {
+            currentPageIndex = index;
+          }),
+          selectedIndex: currentPageIndex,
+          navigationBarIcons: const [
+            nav_bar.NavigationDestination(
+              icon: Icons.home_outlined,
+              label: 'Главная',
+              selectedIcon: Icons.home,
+            ),
+            nav_bar.NavigationDestination(
+              icon: Icons.restaurant_menu,
+              label: 'Рационы',
+              selectedIcon: Icons.restaurant_menu,
+            ),
+            nav_bar.NavigationDestination(
+              icon: Icons.settings_outlined,
+              label: 'Настройки',
+              selectedIcon: Icons.settings,
+            ),
+          ],
+        ),
+        body: <Widget>[
+          const HomePage(),
+          const DietListPage(),
+          const SettingsPage(),
+        ][currentPageIndex],
       ),
-      body: <Widget>[
-        const HomePage(),
-        const DietListPage(),
-        const SettingsPage(),
-      ][currentPageIndex],
     );
   }
 }

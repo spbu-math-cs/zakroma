@@ -23,46 +23,48 @@ class FunctionalBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          color:
-              backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
-          boxShadow: const [
-            BoxShadow(
-                color: Colors.black26, blurRadius: 5, offset: Offset(0, -1))
-          ]),
-      height: height,
-      child: Row(
-        children: List<Widget>.generate(
-            navigationBarIcons.length,
-            (index) => Expanded(
-                    child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
-                  // а если и то, и другое == null, то просто ничего не делаем
-                  onTap: () => navigationBarIcons[index].onTap != null
-                      ? navigationBarIcons[index].onTap!()
-                      : onDestinationSelected != null
-                          ? onDestinationSelected!(index)
-                          : {},
-                  child: NavigationDestination(
-                    icon: navigationBarIcons[index].icon,
-                    label: navigationBarIcons[index].label,
-                    color: navigationBarIcons[index].color ??
-                        buttonColor ??
-                        Colors.black38,
-                    selectedIcon: navigationBarIcons[index].selectedIcon,
-                    selectedColor: navigationBarIcons[index].selectedColor ??
-                        selectedButtonColor ??
-                        Theme.of(context).colorScheme.background,
-                    onTap: navigationBarIcons[index].onTap,
-                    labelStyle: navigationBarIcons[index].labelStyle ??
-                        labelStyle ??
-                        Theme.of(context).textTheme.labelSmall,
-                    isSelected: navigationBarIcons[index].isSelected ??
-                        selectedIndex == index,
-                  ),
-                ))),
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+            color:
+                backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.black26, blurRadius: 5, offset: Offset(0, -1))
+            ]),
+        height: height,
+        child: Row(
+          children: List<Widget>.generate(
+              navigationBarIcons.length,
+              (index) => Expanded(
+                      child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
+                    // а если и то, и другое == null, то просто ничего не делаем
+                    onTap: () => navigationBarIcons[index].onTap != null
+                        ? navigationBarIcons[index].onTap!()
+                        : onDestinationSelected != null
+                            ? onDestinationSelected!(index)
+                            : {},
+                    child: NavigationDestination(
+                      icon: navigationBarIcons[index].icon,
+                      label: navigationBarIcons[index].label,
+                      color: navigationBarIcons[index].color ??
+                          buttonColor ??
+                          Colors.black38,
+                      selectedIcon: navigationBarIcons[index].selectedIcon,
+                      selectedColor: navigationBarIcons[index].selectedColor ??
+                          selectedButtonColor ??
+                          Theme.of(context).colorScheme.background,
+                      onTap: navigationBarIcons[index].onTap,
+                      labelStyle: navigationBarIcons[index].labelStyle ??
+                          labelStyle ??
+                          Theme.of(context).textTheme.labelSmall,
+                      isSelected: navigationBarIcons[index].isSelected ??
+                          selectedIndex == index,
+                    ),
+                  ))),
+        ),
       ),
     );
   }
