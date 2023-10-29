@@ -234,14 +234,6 @@ class HomePage extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        themeNotifier.setTheme(themeNotifier.getTheme().switchTheme());
-        debugPrint(themeNotifier.getTheme().name);
-        // ref.read(themes.themeProvider.notifier).setTheme(.paleOrangeLight);
-        // themes.themeProvider.setTheme(themes.Theme.paleOrangeLight);
-      },
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      child: const Icon(Icons.swap_horiz),),
     );
   }
 }
