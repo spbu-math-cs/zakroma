@@ -62,12 +62,10 @@ class _ZakromaState extends State<Zakroma> {
         statusBarColor: Colors.transparent));
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        // height: 49,
         height: MediaQuery.of(context).size.height / 17,
-        buttonColor: Colors.black38,
-        selectedButtonColor: Theme.of(context).colorScheme.background,
         onDestinationSelected: (index) => setState(() {
           currentPageIndex = index;
         }),

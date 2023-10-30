@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
@@ -21,7 +20,7 @@ class HomePage extends ConsumerWidget {
     final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: [
@@ -94,17 +93,16 @@ class HomePage extends ConsumerWidget {
                             context: context,
                             removeTop: true,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: dPadding.horizontal / 2),
                               child: GridView.builder(
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
                                     // максимум по 3 элемента на строке
                                     // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
                                     // максимум по 2 элемента на строке
-                                    crossAxisCount:
-                                        (todayMeals.length + 1).clamp(1, 2),
+                                    crossAxisCount: 2,
                                   ),
                                   itemCount: todayMeals.length + 1,
                                   // добавляем единичку для кнопки +
@@ -128,7 +126,6 @@ class HomePage extends ConsumerWidget {
                                                       (context, constraints) {
                                                 return FlatList(
                                                   addSeparator: false,
-                                                  dividerColor: Colors.transparent,
                                                   children: List.generate(
                                                       todayMeals[index - 1]
                                                           .dishesCount(),
@@ -204,11 +201,9 @@ class HomePage extends ConsumerWidget {
                                           },
                                           child: Icon(
                                             Icons.add,
-                                            color: lighten(
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .background,
-                                                15),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
                                             size: 60,
                                           ));
                                     }

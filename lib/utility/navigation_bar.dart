@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zakroma_frontend/constants.dart';
 
 class FunctionalBottomBar extends StatelessWidget {
   final List<NavigationDestination> navigationBarIcons;
@@ -25,11 +26,13 @@ class FunctionalBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color:
-              backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
-          boxShadow: const [
+          color: backgroundColor ??
+              Theme.of(context).colorScheme.secondaryContainer,
+          boxShadow: [
             BoxShadow(
-                color: Colors.black26, blurRadius: 5, offset: Offset(0, -1))
+                color: Theme.of(context).colorScheme.shadow,
+                blurRadius: dElevation,
+                offset: const Offset(0, -1))
           ]),
       height: height,
       child: Row(
@@ -50,11 +53,11 @@ class FunctionalBottomBar extends StatelessWidget {
                     label: navigationBarIcons[index].label,
                     color: navigationBarIcons[index].color ??
                         buttonColor ??
-                        Colors.black38,
+                        Theme.of(context).colorScheme.onSecondaryContainer,
                     selectedIcon: navigationBarIcons[index].selectedIcon,
                     selectedColor: navigationBarIcons[index].selectedColor ??
                         selectedButtonColor ??
-                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.primary,
                     onTap: navigationBarIcons[index].onTap,
                     labelStyle: navigationBarIcons[index].labelStyle ??
                         labelStyle ??
@@ -92,36 +95,34 @@ class NavigationDestination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: constraints.maxHeight / 20),
-          child: Stack(
-            fit: StackFit.loose,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Icon(
-                    (isSelected ?? false) ? selectedIcon : icon,
-                    color: (isSelected ?? false) ? selectedColor : color,
-                    size: 5 * constraints.maxHeight / 8,
+    return LayoutBuilder(builder: (context, constraints) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: constraints.maxHeight / 20),
+        child: Stack(
+          fit: StackFit.loose,
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Icon(
+                (isSelected ?? false) ? selectedIcon : icon,
+                color: (isSelected ?? false) ? selectedColor : color,
+                size: 5 * constraints.maxHeight / 8,
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                label,
+                textAlign: TextAlign.end,
+                style: labelStyle?.copyWith(
+                  fontSize: 2 * constraints.maxHeight / 8,
+                  color: (isSelected ?? false) ? selectedColor : color,
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  label,
-                  textAlign: TextAlign.end,
-                  style: labelStyle?.copyWith(
-                    fontSize: 2 * constraints.maxHeight / 8,
-                    color: (isSelected ?? false) ? selectedColor : color,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

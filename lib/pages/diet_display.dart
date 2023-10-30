@@ -31,6 +31,7 @@ class _DietPageState extends State<DietPage> {
     ];
 
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -70,9 +71,7 @@ class _DietPageState extends State<DietPage> {
         ),
       ),
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        // height: 49,
         height: MediaQuery.of(context).size.height / 17,
-        buttonColor: Colors.black38,
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         navigationBarIcons: [
           nav_bar.NavigationDestination(

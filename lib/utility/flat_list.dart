@@ -4,7 +4,7 @@ import 'package:zakroma_frontend/constants.dart';
 class FlatList extends StatelessWidget {
   final List<Widget> children;
   final Alignment childAlignment;
-  final Color dividerColor;
+  final Color? dividerColor;
   final ScrollPhysics? scrollPhysics;
   final bool addSeparator;
 
@@ -12,7 +12,7 @@ class FlatList extends StatelessWidget {
       {super.key,
       this.childAlignment = Alignment.bottomLeft,
       this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
-      required this.dividerColor,
+      this.dividerColor,
       required this.children,
       this.addSeparator = true});
 

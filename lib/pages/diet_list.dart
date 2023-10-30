@@ -18,7 +18,7 @@ class DietListPage extends ConsumerWidget {
     final dietBackgroundColor = Theme.of(context).colorScheme.surface;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: [

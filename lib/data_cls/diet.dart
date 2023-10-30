@@ -18,7 +18,9 @@ class Diet {
   // TODO: сделать проверку на то, что в days не встречается нескольких дней с одним и тем же индексом
   const Diet({required this.id, required this.name, required this.days});
 
-  int length() => days.length;
+  int get length => days.length;
+
+  bool get isEmpty => days.isEmpty;
 
   DietDay getDay(int index) => days[index];
 
@@ -26,15 +28,21 @@ class Diet {
 }
 
 class DietList extends Notifier<List<Diet>> {
+  // TODO: получать список всех диет с сервера
   @override
-  List<Diet> build() => collectDiets();  // TODO
+  List<Diet> build() => collectDiets();
 
   void add(
       {required String id, required String name, required List<DietDay> days}) {
-    state = [
-      ...state,
-      Diet(id: id, name: name, days: days),
-    ];
+    state = state.isEmpty
+        ? [
+            Diet(id: id, name: name, days: days),
+          ]
+        : [
+            state.first,
+            Diet(id: id, name: name, days: days),
+            ...state.sublist(1),
+          ];
   }
 
   void setName({required String id, required String newName}) {
@@ -46,6 +54,9 @@ class DietList extends Notifier<List<Diet>> {
           diet,
     ];
   }
+
+  Diet? getById({required String id}) =>
+      state.where((element) => element.id == id).firstOrNull;
 
   void setDays({required String id, required List<DietDay> newDays}) {
     state = [
@@ -61,6 +72,8 @@ class DietList extends Notifier<List<Diet>> {
     state = state.where((diet) => diet.id != id).toList();
   }
 }
+
+final dietListProvider = NotifierProvider<DietList, List<Diet>>(DietList.new);
 
 // TODO: переписать функцию так, чтобы она отправляла запрос на сервер и получала данные оттуда
 List<Diet> collectDiets() {
@@ -144,7 +157,8 @@ List<Diet> collectDiets() {
           MapEntry(Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
               150),
           MapEntry(Ingredient(name: 'Киноа', unit: IngredientUnit.grams), 100),
-          MapEntry(Ingredient(name: 'Петрушка', unit: IngredientUnit.grams), 30),
+          MapEntry(
+              Ingredient(name: 'Петрушка', unit: IngredientUnit.grams), 30),
           MapEntry(
               Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
           MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
@@ -158,8 +172,10 @@ List<Diet> collectDiets() {
         ],
         tags: [],
         ingredients: Map.fromEntries([
-          MapEntry(Ingredient(name: 'Спагетти', unit: IngredientUnit.grams), 100),
-          MapEntry(Ingredient(name: 'Томатный соус', unit: IngredientUnit.grams),
+          MapEntry(
+              Ingredient(name: 'Спагетти', unit: IngredientUnit.grams), 100),
+          MapEntry(
+              Ingredient(name: 'Томатный соус', unit: IngredientUnit.grams),
               150),
           MapEntry(
               Ingredient(name: 'Брокколи', unit: IngredientUnit.grams), 50),
@@ -168,12 +184,11 @@ List<Diet> collectDiets() {
           MapEntry(Ingredient(name: 'Оливковое', unit: IngredientUnit.mils), 5),
         ])),
   ];
+  return [];
   return [
     Diet(id: '0', name: 'Текущий рацион или как я рад жить', days: [
       DietDay(index: 0, meals: [
-        Meal(name: 'Завтрак', dishes: [
-          dishes[0]
-        ]),
+        Meal(name: 'Завтрак', dishes: [dishes[0]]),
         Meal(name: 'Обед', dishes: [
           dishes[2],
         ]),
@@ -233,9 +248,7 @@ List<Diet> collectDiets() {
         ]),
       ]),
       DietDay(index: 3, meals: [
-        Meal(name: 'Завтрак', dishes: [
-          dishes[0]
-        ]),
+        Meal(name: 'Завтрак', dishes: [dishes[0]]),
         Meal(name: 'Обед', dishes: [
           dishes[2],
         ]),
@@ -255,9 +268,7 @@ List<Diet> collectDiets() {
         ]),
       ]),
       DietDay(index: 5, meals: [
-        Meal(name: 'Завтрак', dishes: [
-          dishes[0]
-        ]),
+        Meal(name: 'Завтрак', dishes: [dishes[0]]),
         Meal(name: 'Обед', dishes: [
           dishes[2],
         ]),
