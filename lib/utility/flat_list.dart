@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
-import '../constants.dart';
+import 'package:zakroma_frontend/constants.dart';
 
 class FlatList extends StatelessWidget {
   final List<Widget> children;
   final Alignment childAlignment;
-  final BoxConstraints defaultChildConstraints;
   final Color dividerColor;
   final ScrollPhysics? scrollPhysics;
   final bool addSeparator;
 
   const FlatList(
       {super.key,
-      this.childAlignment = Alignment.bottomCenter,
-      required this.defaultChildConstraints,
+      this.childAlignment = Alignment.bottomLeft,
+      this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
       required this.dividerColor,
       required this.children,
-      this.scrollPhysics,
       this.addSeparator = true});
 
   @override
@@ -24,10 +21,9 @@ class FlatList extends StatelessWidget {
     if (addSeparator) {
       return LayoutBuilder(builder: (context, constraints) {
         final dividerPadding = constraints.maxWidth / 10;
-        final dividerHeight = defaultChildConstraints.maxHeight / 16;
         return ListView.separated(
             padding: EdgeInsets.zero,
-            physics: scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
+            physics: scrollPhysics,
             itemBuilder: (BuildContext context, int index) => Padding(
               padding: EdgeInsets.only(left: dividerPadding * 1.5),
               child: Align(

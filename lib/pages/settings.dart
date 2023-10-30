@@ -4,8 +4,6 @@ import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
-import '../utility/color_manipulator.dart';
-
 // TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
 
 class SettingsPage extends StatefulWidget {
@@ -101,18 +99,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         StyledHeadline(
-                                          text: "Райан Г.",
+                                          text: 'Райан Г.',
                                           textStyle: Theme.of(context)
                                               .textTheme
                                               .headlineSmall,
                                         ),
                                         StyledHeadline(
-                                            text: "185 см",
+                                            text: '185 см',
                                             textStyle: Theme.of(context)
                                                 .textTheme
                                                 .headlineSmall),
                                         StyledHeadline(
-                                          text: "80 кг",
+                                          text: '80 кг',
                                           textStyle: Theme.of(context)
                                               .textTheme
                                               .headlineSmall,
@@ -144,17 +142,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: LayoutBuilder(builder: (context, constraints) {
                       return FlatList(
                           scrollPhysics: const ClampingScrollPhysics(),
-                          childAlignment: Alignment.centerLeft,
-                          defaultChildConstraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth,
-                              maxHeight: constraints.maxHeight / 6),
-                          dividerColor:
-                              lighten(Theme.of(context).colorScheme.background),
+                          dividerColor: Theme.of(context).colorScheme.surface,
                           children: List.generate(
                             categoryList.length,
-                            (index) => StyledHeadline(
-                              text: categoryList[index],
-                              textStyle: categoryTextStyle,
+                            (index) => Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => {
+                                  //TODO
+                                },
+                                child: StyledHeadline(
+                                  text: categoryList[index],
+                                  textStyle: categoryTextStyle,
+                                ),
+                              ),
                             ),
                           ));
                     }))),

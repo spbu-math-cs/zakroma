@@ -9,7 +9,7 @@ class StyledHeadline extends StatelessWidget {
   const StyledHeadline(
       {super.key,
       required this.text,
-      this.textStyle,
+      required this.textStyle,
       this.horizontalAlignment = TextAlign.left,
       this.overflow = TextOverflow.ellipsis});
 

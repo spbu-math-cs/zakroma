@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
@@ -20,7 +19,6 @@ class HomePage extends ConsumerWidget {
     final currentDiet =
         ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
     final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
-    final themeNotifier = ref.read(themes.themeProvider.notifier);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -130,14 +128,7 @@ class HomePage extends ConsumerWidget {
                                                       (context, constraints) {
                                                 return FlatList(
                                                   addSeparator: false,
-                                                  childAlignment:
-                                                      Alignment.centerLeft,
-                                                  defaultChildConstraints:
-                                                      constraints.copyWith(
-                                                          maxHeight: constraints
-                                                                  .maxHeight /
-                                                              10),
-                                                  dividerColor: Colors.white,
+                                                  dividerColor: Colors.transparent,
                                                   children: List.generate(
                                                       todayMeals[index - 1]
                                                           .dishesCount(),
