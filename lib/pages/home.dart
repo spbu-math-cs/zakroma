@@ -7,7 +7,6 @@ import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
@@ -18,7 +17,8 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final currentDiet = ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
+    final currentDiet =
+        ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
     final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
     final themeNotifier = ref.read(themes.themeProvider.notifier);
 
@@ -141,8 +141,7 @@ class HomePage extends ConsumerWidget {
                                                   children: List.generate(
                                                       todayMeals[index - 1]
                                                           .dishesCount(),
-                                                      (dishIndex) => Pair(
-                                                          SizedBox(
+                                                      (dishIndex) => SizedBox(
                                                             width: constraints
                                                                 .maxWidth,
                                                             child: Row(
@@ -195,8 +194,7 @@ class HomePage extends ConsumerWidget {
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
-                                                          null)),
+                                                          )),
                                                 );
                                               }));
                                             });

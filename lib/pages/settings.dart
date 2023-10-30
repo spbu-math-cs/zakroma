@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
 
@@ -141,26 +140,23 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
                 flex: 6,
                 child: RRSurface(
-                    padding: dPadding.copyWith(
-                        bottom: dPadding.vertical),
+                    padding: dPadding.copyWith(bottom: dPadding.vertical),
                     child: LayoutBuilder(builder: (context, constraints) {
                       return FlatList(
                           scrollPhysics: const ClampingScrollPhysics(),
                           childAlignment: Alignment.centerLeft,
-                          children: List.generate(
-                            categoryList.length,
-                            (index) => Pair(
-                                StyledHeadline(
-                                  text: categoryList[index],
-                                  textStyle: categoryTextStyle,
-                                ),
-                                null),
-                          ),
                           defaultChildConstraints: BoxConstraints(
                               maxWidth: constraints.maxWidth,
                               maxHeight: constraints.maxHeight / 6),
-                          dividerColor: lighten(
-                              Theme.of(context).colorScheme.background));
+                          dividerColor:
+                              lighten(Theme.of(context).colorScheme.background),
+                          children: List.generate(
+                            categoryList.length,
+                            (index) => StyledHeadline(
+                              text: categoryList[index],
+                              textStyle: categoryTextStyle,
+                            ),
+                          ));
                     }))),
           ],
         ),

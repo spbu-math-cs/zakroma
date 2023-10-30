@@ -3,7 +3,7 @@ import 'package:zakroma_frontend/utility/pair.dart';
 import '../constants.dart';
 
 class FlatList extends StatelessWidget {
-  final List<Pair<Widget, BoxConstraints?>> children;
+  final List<Widget> children;
   final Alignment childAlignment;
   final BoxConstraints defaultChildConstraints;
   final Color dividerColor;
@@ -28,26 +28,20 @@ class FlatList extends StatelessWidget {
         return ListView.separated(
             padding: EdgeInsets.zero,
             physics: scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) => SizedBox(
-              height: (children[index].second?.maxHeight ??
-                  defaultChildConstraints.maxHeight) -
-                  dividerHeight,
-              width: children[index].second?.maxWidth ??
-                  defaultChildConstraints.maxWidth,
-              child: Padding(
-                padding: EdgeInsets.only(left: dividerPadding * 1.5),
-                child: Align(
-                    alignment: childAlignment, child: children[index].first),
-              ),
+            itemBuilder: (BuildContext context, int index) => Padding(
+              padding: EdgeInsets.only(left: dividerPadding * 1.5),
+              child: Align(
+                  alignment: childAlignment, child: children[index]),
             ),
             separatorBuilder: (BuildContext context, int index) => Align(
               alignment: Alignment.center,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: dividerPadding),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(borderRadius),
+                child: Material(
+                  borderRadius: BorderRadius.circular(dBorderRadius),
+                  clipBehavior: Clip.antiAlias,
                   child: Container(
-                    height: dividerHeight,
+                    height: dDividerHeight,
                     color: dividerColor,
                   ),
                 ),
@@ -60,16 +54,10 @@ class FlatList extends StatelessWidget {
       return ListView.builder(
           padding: EdgeInsets.zero,
           physics: scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) => SizedBox(
-            height: children[index].second?.maxHeight ??
-                defaultChildConstraints.maxHeight,
-            width: children[index].second?.maxWidth ??
-                defaultChildConstraints.maxWidth,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Align(
-                  alignment: childAlignment, child: children[index].first),
-            ),
+          itemBuilder: (BuildContext context, int index) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Align(
+                alignment: childAlignment, child: children[index]),
           ),
           itemCount: children.length);
     });
