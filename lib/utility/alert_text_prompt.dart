@@ -35,7 +35,6 @@ class AlertTextPrompt extends StatelessWidget {
           ),
           controller: textController,
           validator: (value) {
-            debugPrint('!!! validator works !!! value = $value');
             if (value == null || value.isEmpty) {
               return 'Название не может быть пустым';
             }

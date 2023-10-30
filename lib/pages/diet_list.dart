@@ -65,48 +65,11 @@ class DietListPage extends ConsumerWidget {
 }
 
 Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
-  final dietTextStyle = Theme.of(context).textTheme.headlineMedium;
-  final dietBackgroundColor = Theme.of(context).colorScheme.surface;
   final diets = ref.watch(dietListProvider);
 
   if (diets.isEmpty || index == 1) {
     return DottedRRButton(
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (_) => AlertTextPrompt(
-                    title: 'Введите название рациона',
-                    hintText: '',
-                    actions: [
-                      (
-                        buttonText: 'Назад',
-                        needsValidation: false,
-                        onTap: (text) {
-                          Navigator.of(context).pop();
-                        }
-                      ),
-                      (
-                        buttonText: 'Продолжить',
-                        needsValidation: true,
-                        onTap: (text) {
-                          // TODO: получить с сервера/самостоятельно сгенерировать новый id
-                          const newDietId = '10';
-                          ref.read(dietListProvider.notifier).add(
-                              id: newDietId, // TODO: получить нормальный ид
-                              name: text);
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DietPage(
-                                      diet: ref
-                                          .read(dietListProvider.notifier)
-                                          .getById(id: newDietId)!)));
-                        }
-                      ),
-                    ],
-                  ));
-        },
+        onTap: () => Diet.showAddDietDialog(context, ref),
         child: Icon(
           Icons.add,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -122,7 +85,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
                   width: 4,
                   color: Color.alphaBlend(
                       const Color(0xffe36942).withOpacity(0.5),
-                      dietBackgroundColor)),
+                      Theme.of(context).colorScheme.surface)),
             )
           : null,
       onTap: () {
@@ -135,7 +98,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: StyledHeadline(
           text: diets[index].name,
-          textStyle: dietTextStyle,
+          textStyle: Theme.of(context).textTheme.headlineMedium,
         ),
       ));
 }

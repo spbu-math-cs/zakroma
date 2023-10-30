@@ -1,9 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/diet_day.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
+import 'package:zakroma_frontend/pages/diet_display.dart';
+import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
 
 @immutable
 class Diet {
@@ -27,7 +29,8 @@ class Diet {
         DietDay(index: 4, meals: []),
         DietDay(index: 5, meals: []),
         DietDay(index: 6, meals: []),
-      ]}) : assert(days.length == 7);
+      ]})
+      : assert(days.length == 7);
 
   int get length => days.length;
 
@@ -36,6 +39,42 @@ class Diet {
   DietDay getDay(int index) => days[index];
 
   void addDay(DietDay day) => days.add(day);
+
+  static void showAddDietDialog(BuildContext context, WidgetRef ref) =>
+      showDialog(
+          context: context,
+          builder: (_) => AlertTextPrompt(
+                title: 'Введите название рациона',
+                hintText: '',
+                actions: [
+                  (
+                    buttonText: 'Назад',
+                    needsValidation: false,
+                    onTap: (text) {
+                      Navigator.of(context).pop();
+                    }
+                  ),
+                  (
+                    buttonText: 'Продолжить',
+                    needsValidation: true,
+                    onTap: (text) {
+                      // TODO: получить с сервера/самостоятельно сгенерировать новый id
+                      const newDietId = '10';
+                      ref.read(dietListProvider.notifier).add(
+                          id: newDietId, // TODO: получить нормальный ид
+                          name: text);
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DietPage(
+                                  diet: ref
+                                      .read(dietListProvider.notifier)
+                                      .getById(id: newDietId)!)));
+                    }
+                  ),
+                ],
+              ));
 }
 
 class DietList extends Notifier<List<Diet>> {
