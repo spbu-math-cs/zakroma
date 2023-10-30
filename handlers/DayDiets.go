@@ -59,6 +59,35 @@ func (handler *DayDietsHandler) GetDayDiet(c *gin.Context) {
 	c.JSON(http.StatusOK, dayDiet)
 }
 
+func (handler *DayDietsHandler) CreateRation(c *gin.Context) {
+	dayDietId, err := strconv.Atoi(c.Params.ByName("id"))
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	order, err := strconv.Atoi(c.Params.ByName("order"))
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var ration schemas.Ration
+	err = c.BindJSON(&ration)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = handler.DayDietsStore.CreateRation(dayDietId, order, ration)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
 func (handler *DayDietsHandler) SaveRation(c *gin.Context) {
 	dayDietId, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {

@@ -38,7 +38,7 @@ func (store *DayDietsStore) CreateDayDiet() int {
 	store.DayDiets[store.NextId] = schemas.DayDiet{Id: store.NextId}
 	store.NextId++
 
-	return store.DayDiets[store.NextId].Id
+	return store.DayDiets[store.NextId-1].Id
 }
 
 func (store *DayDietsStore) SaveDayDiet(dayDiet schemas.DayDiet) error {
@@ -53,6 +53,35 @@ func (store *DayDietsStore) SaveDayDiet(dayDiet schemas.DayDiet) error {
 	return nil
 }
 
+func (store *DayDietsStore) CreateRation(dayDietId int, order int, ration schemas.Ration) error {
+	store.Lock()
+	defer store.Unlock()
+
+	_, ok := store.DayDiets[dayDietId]
+	if !ok {
+		return fmt.Errorf("dayDiet with id=%d not found", dayDietId)
+	}
+
+	dayDiet := store.DayDiets[dayDietId]
+
+	for order > len(dayDiet.Rations) {
+		dayDiet.Rations = append(dayDiet.Rations, schemas.Ration{})
+	}
+
+	head := dayDiet.Rations[:order]
+
+	tail := make([]schemas.Ration, len(dayDiet.Rations)-order)
+	copy(tail, dayDiet.Rations[order:])
+
+	dayDiet.Rations = head
+	dayDiet.Rations = append(dayDiet.Rations, ration)
+	dayDiet.Rations = append(dayDiet.Rations, tail...)
+
+	store.DayDiets[dayDietId] = dayDiet
+
+	return nil
+}
+
 func (store *DayDietsStore) SaveRation(dayDietId int, order int, ration schemas.Ration) error {
 	store.Lock()
 	defer store.Unlock()
@@ -64,8 +93,8 @@ func (store *DayDietsStore) SaveRation(dayDietId int, order int, ration schemas.
 
 	dayDiet := store.DayDiets[dayDietId]
 
-	for order >= len(dayDiet.Rations) {
-		dayDiet.Rations = append(dayDiet.Rations, schemas.Ration{})
+	if order >= len(dayDiet.Rations) {
+		return fmt.Errorf("dayDiet with id=%d has no rations with order=%d", dayDietId, order)
 	}
 
 	dayDiet.Rations[order] = ration

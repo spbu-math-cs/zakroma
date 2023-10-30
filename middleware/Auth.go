@@ -38,8 +38,8 @@ func Auth(c *gin.Context) {
 			})
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "bad request",
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
 		})
 		return
 	}

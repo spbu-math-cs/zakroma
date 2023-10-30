@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"zakroma/middleware"
@@ -37,11 +38,19 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// TODO: receive id
-	_, err = handler.UsersStore.ValidateUser(user.Username, user.Password)
+	id, err := handler.UsersStore.ValidateUser(user.Username, user.Password)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": err.Error(),
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("id", id)
+	if err := session.Save(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to save session",
 		})
 		return
 	}

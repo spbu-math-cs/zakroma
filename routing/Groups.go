@@ -11,10 +11,9 @@ func GroupsRouting(router *gin.RouterGroup) {
 	router.GET("/", handler.GetUserGroups)
 
 	router.POST("/create", handler.CreateGroup)
+	router.POST("/save", handler.SaveGroup)
 
-	router.POST("/member/add", handler.AddMember)
-	router.POST("/member/change", handler.SaveMemberRole)
-	router.GET("/member/:group/:user", handler.GetMemberRole)
+	router.POST("/member/add/:id", handler.AddMember)
 
 	router.POST("/menu/add", handler.AddMenu)
 	router.GET("/menu/:group/:date", handler.GetMenuByDate)

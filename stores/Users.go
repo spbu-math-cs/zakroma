@@ -34,7 +34,7 @@ func (store *UsersStore) ValidateUser(username string, password string) (int, er
 
 	for id := range store.Users {
 		if store.Users[id].Username == username {
-			if store.Users[id].Username == password {
+			if store.Users[id].Password == password {
 				return id, nil
 			}
 			return -1, fmt.Errorf("incorrect password")

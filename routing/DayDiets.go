@@ -12,6 +12,7 @@ func DayDietsRouting(router *gin.RouterGroup) {
 	router.POST("/save", handler.SaveDayDiet)
 	router.GET("/:id", handler.GetDayDiet)
 
-	router.POST("/ration/save", handler.SaveRation)
+	router.POST("/ration/create/:id/:order", handler.CreateRation)
+	router.POST("/ration/save/:id/:order", handler.SaveRation)
 	router.GET("/ration/:id/:order", handler.GetRation)
 }

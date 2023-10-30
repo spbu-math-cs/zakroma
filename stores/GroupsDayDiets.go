@@ -11,11 +11,11 @@ type GroupsDayDietsStore struct {
 	DayDiets map[int]map[string]int // DayDiets[<GroupId>][<Date>] = DayDietId
 }
 
-func CreateGroupsMenusStore() *GroupsDayDietsStore {
+func CreateGroupsDayDietsStore() *GroupsDayDietsStore {
 	return &GroupsDayDietsStore{DayDiets: make(map[int]map[string]int)}
 }
 
-func (store *GroupsDayDietsStore) GetMenuIdByDate(groupId int, date string) (int, error) {
+func (store *GroupsDayDietsStore) GetDay(groupId int, date string) (int, error) {
 	store.Lock()
 	defer store.Unlock()
 
@@ -31,10 +31,10 @@ func (store *GroupsDayDietsStore) SaveMenuIdByDate(groupId int, date string, day
 	store.Lock()
 	defer store.Unlock()
 
-	groupMenus, ok := store.DayDiets[groupId]
+	groupDayDiets, ok := store.DayDiets[groupId]
 	if !ok {
 		store.DayDiets[groupId] = make(map[string]int)
-		groupMenus = store.DayDiets[groupId]
+		groupDayDiets = store.DayDiets[groupId]
 	}
-	groupMenus[date] = dayDietId
+	groupDayDiets[date] = dayDietId
 }
