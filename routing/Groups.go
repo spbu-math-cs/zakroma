@@ -15,6 +15,6 @@ func GroupsRouting(router *gin.RouterGroup) {
 
 	router.POST("/member/add/:id", handler.AddMember)
 
-	router.POST("/menu/add", handler.AddMenu)
-	router.GET("/menu/:group/:date", handler.GetMenuByDate)
+	router.POST("/diets/day/add/:group/:date/:id", handler.AddDayDiet)
+	router.GET("/diets/day/:group/:date", handler.GetDayDiet)
 }

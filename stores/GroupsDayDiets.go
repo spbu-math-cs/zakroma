@@ -15,7 +15,7 @@ func CreateGroupsDayDietsStore() *GroupsDayDietsStore {
 	return &GroupsDayDietsStore{DayDiets: make(map[int]map[string]int)}
 }
 
-func (store *GroupsDayDietsStore) GetDay(groupId int, date string) (int, error) {
+func (store *GroupsDayDietsStore) GetDayDiet(groupId int, date string) (int, error) {
 	store.Lock()
 	defer store.Unlock()
 
@@ -27,7 +27,7 @@ func (store *GroupsDayDietsStore) GetDay(groupId int, date string) (int, error) 
 	}
 }
 
-func (store *GroupsDayDietsStore) SaveMenuIdByDate(groupId int, date string, dayDietId int) {
+func (store *GroupsDayDietsStore) SaveDayDiet(groupId int, date string, dayDietId int) {
 	store.Lock()
 	defer store.Unlock()
 

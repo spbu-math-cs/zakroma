@@ -10,14 +10,16 @@ import (
 )
 
 type GroupsHandler struct {
-	GroupsStore        *stores.GroupsStore
-	GroupsMembersStore *stores.GroupsMembersStore
+	GroupsStore         *stores.GroupsStore
+	GroupsMembersStore  *stores.GroupsMembersStore
+	GroupsDayDietsStore *stores.GroupsDayDietsStore
 }
 
 func CreateGroupsHandler() *GroupsHandler {
 	return &GroupsHandler{
-		GroupsStore:        stores.CreateGroupsStore(),
-		GroupsMembersStore: stores.CreateGroupsMembersStore(),
+		GroupsStore:         stores.CreateGroupsStore(),
+		GroupsMembersStore:  stores.CreateGroupsMembersStore(),
+		GroupsDayDietsStore: stores.CreateGroupsDayDietsStore(),
 	}
 }
 
@@ -105,10 +107,57 @@ func (handler *GroupsHandler) AddMember(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (handler *GroupsHandler) AddMenu(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+func (handler *GroupsHandler) AddDayDiet(c *gin.Context) {
+	session := sessions.Default(c)
+	userId, _ := strconv.Atoi(session.Get("id").(string))
+
+	groupId, err := strconv.Atoi(c.Params.ByName("group"))
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !handler.GroupsMembersStore.CheckRights(userId, groupId, handler.GroupsMembersStore.RightsSaveGroup()) {
+		c.String(http.StatusBadRequest,
+			"user with id=%d do not have permission to save group with id=%d", userId, groupId)
+		return
+	}
+
+	date := c.Params.ByName("date")
+	dayDietId, err := strconv.Atoi(c.Params.ByName("id"))
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	handler.GroupsDayDietsStore.SaveDayDiet(groupId, date, dayDietId)
+
+	c.Status(http.StatusOK)
 }
 
-func (handler *GroupsHandler) GetMenuByDate(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+func (handler *GroupsHandler) GetDayDiet(c *gin.Context) {
+	session := sessions.Default(c)
+	userId, _ := strconv.Atoi(session.Get("id").(string))
+
+	groupId, err := strconv.Atoi(c.Params.ByName("group"))
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !handler.GroupsMembersStore.CheckRights(userId, groupId, handler.GroupsMembersStore.RightsViewGroup()) {
+		c.String(http.StatusBadRequest,
+			"user with id=%d do not have permission to save group with id=%d", userId, groupId)
+		return
+	}
+
+	date := c.Params.ByName("date")
+
+	dayDiet, err := handler.GroupsDayDietsStore.GetDayDiet(groupId, date)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, dayDiet)
 }

@@ -32,6 +32,7 @@ func main() {
 	routing.AuthRouting(router.Group("/auth"))
 	routing.MealsRouting(router.Group("/meals", middleware.Auth))
 	routing.DayDietsRouting(router.Group("/diets/day", middleware.Auth))
+	routing.GroupsRouting(router.Group("/groups", middleware.Auth))
 
 	runHttp(router)
 }
