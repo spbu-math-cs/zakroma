@@ -16,7 +16,8 @@ class StyledHeadline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var redTextEndIndex = 1;
-    while (int.tryParse(text[redTextEndIndex]) != null) {
+    while (text.length < redTextEndIndex &&
+        int.tryParse(text[redTextEndIndex]) != null) {
       redTextEndIndex++;
     }
     return RichText(
