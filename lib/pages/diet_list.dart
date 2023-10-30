@@ -4,7 +4,6 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/pages/diet_display.dart';
 import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
@@ -80,24 +79,32 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
                     title: 'Введите название рациона',
                     hintText: '',
                     actions: [
-                      Pair('Назад', (text) {
-                        Navigator.of(context).pop();
-                      }),
-                      Pair('Продолжить', (text) {
-                        // TODO: получить с сервера/самостоятельно сгенерировать новый id
-                        const newDietId = '10';
-                        ref.read(dietListProvider.notifier).add(
-                            id: newDietId, // TODO: получить нормальный ид
-                            name: text);
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DietPage(
-                                    diet: ref
-                                        .read(dietListProvider.notifier)
-                                        .getById(id: newDietId)!)));
-                      }),
+                      (
+                        buttonText: 'Назад',
+                        needsValidation: false,
+                        onTap: (text) {
+                          Navigator.of(context).pop();
+                        }
+                      ),
+                      (
+                        buttonText: 'Продолжить',
+                        needsValidation: true,
+                        onTap: (text) {
+                          // TODO: получить с сервера/самостоятельно сгенерировать новый id
+                          const newDietId = '10';
+                          ref.read(dietListProvider.notifier).add(
+                              id: newDietId, // TODO: получить нормальный ид
+                              name: text);
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DietPage(
+                                      diet: ref
+                                          .read(dietListProvider.notifier)
+                                          .getById(id: newDietId)!)));
+                        }
+                      ),
                     ],
                   ));
         },
