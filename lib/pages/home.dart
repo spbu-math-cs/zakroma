@@ -15,9 +15,12 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final currentDiet =
-        ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
-    final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
+    final currentDiet = ref.watch(dietListProvider).firstOrNull;
+    final todayMeals = currentDiet == null
+        ? []
+        : currentDiet.isEmpty
+            ? []
+            : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
