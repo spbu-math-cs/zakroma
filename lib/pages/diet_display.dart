@@ -4,7 +4,7 @@ import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/text.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
 
 class DietPage extends StatefulWidget {
   final Diet diet;

@@ -7,7 +7,7 @@ import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/text.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {

@@ -6,8 +6,8 @@ import 'package:zakroma_frontend/pages/diet_display.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/text.dart';
-import 'package:zakroma_frontend/utility/text_field.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
+import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
 
 class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});
