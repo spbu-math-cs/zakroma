@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
+import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
@@ -16,7 +16,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final currentDiet = ref.watch(dietListProvider).firstOrNull;
-    final todayMeals = currentDiet == null
+    final List<Meal> todayMeals = currentDiet == null
         ? []
         : currentDiet.isEmpty
             ? []
@@ -102,9 +102,6 @@ class HomePage extends ConsumerWidget {
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
-                                    // максимум по 3 элемента на строке
-                                    // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
-                                    // максимум по 2 элемента на строке
                                     crossAxisCount: 2,
                                   ),
                                   itemCount: todayMeals.length + 1,
@@ -121,74 +118,14 @@ class HomePage extends ConsumerWidget {
                                           onTap: () {
                                             showSlidingBottomSheet(context,
                                                 builder: (context) {
-                                              return createSlidingSheet(context,
-                                                  headingText:
-                                                      todayMeals[index - 1]
-                                                          .name,
-                                                  body: LayoutBuilder(builder:
-                                                      (context, constraints) {
-                                                return FlatList(
-                                                  addSeparator: false,
-                                                  padding: EdgeInsets.zero,
-                                                  children: List.generate(
-                                                      todayMeals[index - 1]
-                                                          .dishesCount(),
-                                                      (dishIndex) => SizedBox(
-                                                            width: constraints
-                                                                .maxWidth,
-                                                            child: Row(
-                                                              children: [
-                                                                SizedBox.square(
-                                                                  dimension:
-                                                                      (constraints.maxWidth -
-                                                                              16) /
-                                                                          5,
-                                                                  child:
-                                                                      ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            dBorderRadius),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      'assets/images/${todayMeals[index - 1].getDish(dishIndex).name}.jpg',
-                                                                      fit: BoxFit
-                                                                          .fitHeight,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              10.0),
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 4 *
-                                                                        (constraints.maxWidth -
-                                                                            10) /
-                                                                        5,
-                                                                    child: Text(
-                                                                        todayMeals[index -
-                                                                                1]
-                                                                            .getDish(
-                                                                                dishIndex)
-                                                                            .name,
-                                                                        overflow:
-                                                                            TextOverflow
-                                                                                .ellipsis,
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .titleLarge,
-                                                                        textAlign:
-                                                                            TextAlign.left),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )),
-                                                );
-                                              }));
+                                              return createSlidingSheet(
+                                                context,
+                                                headingText:
+                                                    todayMeals[index - 1].name,
+                                                body: todayMeals[index - 1]
+                                                    .getDishesList(context,
+                                                        dishMiniatures: true),
+                                              );
                                             });
                                           },
                                           child: StyledHeadline(

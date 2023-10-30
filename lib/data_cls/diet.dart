@@ -16,7 +16,18 @@ class Diet {
   final List<DietDay> days;
 
   // TODO: сделать проверку на то, что в days не встречается нескольких дней с одним и тем же индексом
-  const Diet({required this.id, required this.name, required this.days});
+  const Diet(
+      {required this.id,
+      required this.name,
+      this.days = const [
+        DietDay(index: 0, meals: []),
+        DietDay(index: 1, meals: []),
+        DietDay(index: 2, meals: []),
+        DietDay(index: 3, meals: []),
+        DietDay(index: 4, meals: []),
+        DietDay(index: 5, meals: []),
+        DietDay(index: 6, meals: []),
+      ]}) : assert(days.length == 7);
 
   int get length => days.length;
 
@@ -32,15 +43,18 @@ class DietList extends Notifier<List<Diet>> {
   @override
   List<Diet> build() => collectDiets();
 
-  void add(
-      {required String id, required String name, required List<DietDay> days}) {
+  void add({required String id, required String name, List<DietDay>? days}) {
     state = state.isEmpty
         ? [
-            Diet(id: id, name: name, days: days),
+            days == null
+                ? Diet(id: id, name: name)
+                : Diet(id: id, name: name, days: days),
           ]
         : [
             state.first,
-            Diet(id: id, name: name, days: days),
+            days == null
+                ? Diet(id: id, name: name)
+                : Diet(id: id, name: name, days: days),
             ...state.sublist(1),
           ];
   }
@@ -184,7 +198,7 @@ List<Diet> collectDiets() {
           MapEntry(Ingredient(name: 'Оливковое', unit: IngredientUnit.mils), 5),
         ])),
   ];
-  return [];
+  // return [];
   return [
     Diet(id: '0', name: 'Текущий рацион или как я рад жить', days: [
       DietDay(index: 0, meals: [
@@ -289,12 +303,37 @@ List<Diet> collectDiets() {
       ]),
     ]),
     Diet(id: '1', name: 'Котлетки с пюрешкой', days: [
+      DietDay(index: 0, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
+      DietDay(index: 1, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
       DietDay(index: 2, meals: [
         Meal(name: 'Завтрак', dishes: []),
         Meal(name: 'Обед', dishes: []),
         Meal(name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 3, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
+      DietDay(index: 4, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
+      DietDay(index: 5, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
+      DietDay(index: 6, meals: [
         Meal(name: 'Завтрак', dishes: []),
         Meal(name: 'Обед', dishes: []),
         Meal(name: 'Ужин', dishes: []),
@@ -316,8 +355,16 @@ List<Diet> collectDiets() {
         Meal(name: 'Обед', dishes: []),
         Meal(name: 'Ужин', dishes: []),
       ]),
-    ]),
-    Diet(id: '3', name: 'Алёша Попович рекомендует', days: [
+      DietDay(index: 3, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
+      DietDay(index: 4, meals: [
+        Meal(name: 'Завтрак', dishes: []),
+        Meal(name: 'Обед', dishes: []),
+        Meal(name: 'Ужин', dishes: []),
+      ]),
       DietDay(index: 5, meals: [
         Meal(name: 'Завтрак', dishes: []),
         Meal(name: 'Обед', dishes: []),
@@ -329,5 +376,17 @@ List<Diet> collectDiets() {
         Meal(name: 'Ужин', dishes: []),
       ]),
     ]),
+    // Diet(id: '3', name: 'Алёша Попович рекомендует', days: [
+    //   DietDay(index: 5, meals: [
+    //     Meal(name: 'Завтрак', dishes: []),
+    //     Meal(name: 'Обед', dishes: []),
+    //     Meal(name: 'Ужин', dishes: []),
+    //   ]),
+    //   DietDay(index: 6, meals: [
+    //     Meal(name: 'Завтрак', dishes: []),
+    //     Meal(name: 'Обед', dishes: []),
+    //     Meal(name: 'Ужин', dishes: []),
+    //   ]),
+    // ]),
   ];
 }

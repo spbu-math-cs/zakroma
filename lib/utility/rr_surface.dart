@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart' as constants;
+import 'package:zakroma_frontend/constants.dart';
 
 class RRSurface extends StatelessWidget {
   final Widget child;
@@ -13,10 +13,10 @@ class RRSurface extends StatelessWidget {
       {super.key,
       required this.child,
       this.backgroundColor,
-      this.borderRadius = constants.dBorderRadius,
+      this.borderRadius = dBorderRadius,
       this.continuous = false,
-      this.elevation = constants.dElevation,
-      this.padding = constants.dPadding});
+      this.elevation = dElevation,
+      this.padding = dPadding});
 
   @override
   Widget build(BuildContext context) => Padding(

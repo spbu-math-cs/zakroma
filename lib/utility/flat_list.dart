@@ -5,14 +5,16 @@ class FlatList extends StatelessWidget {
   final bool addSeparator;
   final List<Widget> children;
   final Alignment childAlignment;
+  final EdgeInsets childPadding;
   final Color? dividerColor;
   final EdgeInsets padding;
-  final ScrollPhysics? scrollPhysics;
+  final ScrollPhysics scrollPhysics;
 
   const FlatList({
     super.key,
     this.addSeparator = true,
     this.childAlignment = Alignment.bottomLeft,
+    this.childPadding = dPadding,
     this.dividerColor,
     this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
     this.padding = dPadding,
@@ -23,36 +25,45 @@ class FlatList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: addSeparator ? ListView.separated(
-          padding: EdgeInsets.zero,
-          physics: scrollPhysics,
-          itemBuilder: (BuildContext context, int index) => Padding(
-            padding: EdgeInsets.only(left: dPadding.horizontal),
-            child: Align(alignment: childAlignment, child: children[index]),
-          ),
-          separatorBuilder: (BuildContext context, int index) => Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: dPadding.left),
-              child: Material(
-                borderRadius: BorderRadius.circular(dBorderRadius),
-                clipBehavior: Clip.antiAlias,
-                child: Container(
-                  height: dDividerHeight,
-                  color: dividerColor,
-                ),
-              ),
-            ),
-          ),
-          itemCount: children.length)
-      : ListView.builder(
-          padding: EdgeInsets.zero,
-          physics: scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Align(alignment: childAlignment, child: children[index]),
-          ),
-          itemCount: children.length),
+      child: addSeparator
+          ? ListView.separated(
+              // вариант с разделителями
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: scrollPhysics,
+              itemBuilder: (BuildContext context, int index) => Padding(
+                    padding:
+                        childPadding + EdgeInsets.only(left: dPadding.left),
+                    child: Align(
+                        alignment: childAlignment, child: children[index]),
+                  ),
+              separatorBuilder: (BuildContext context, int index) => Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: dPadding.left),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(dBorderRadius),
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          height: dDividerHeight,
+                          color: dividerColor ??
+                              Theme.of(context).colorScheme.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+              itemCount: children.length)
+          : ListView.builder(
+              // вариант без разделителей
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: scrollPhysics,
+              itemBuilder: (BuildContext context, int index) => Padding(
+                    padding: childPadding,
+                    child: Align(
+                        alignment: childAlignment, child: children[index]),
+                  ),
+              itemCount: children.length),
     );
   }
 }

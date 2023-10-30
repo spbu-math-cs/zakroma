@@ -16,6 +16,7 @@ enum AppTheme {
       brightness: Brightness.light,
       colorScheme: const ColorScheme.light().copyWith(
         primary: orangeBackground,
+        onPrimary: Colors.white,
         primaryContainer: Colors.white,
         onPrimaryContainer: Colors.black,
         secondaryContainer: Colors.white,
