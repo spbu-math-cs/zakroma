@@ -13,10 +13,10 @@ class RRSurface extends StatelessWidget {
       {super.key,
       required this.child,
       this.backgroundColor,
-      this.borderRadius = constants.borderRadius,
+      this.borderRadius = constants.dBorderRadius,
       this.continuous = false,
-      this.elevation = constants.defaultElevation,
-      this.padding = constants.defaultPadding});
+      this.elevation = constants.dElevation,
+      this.padding = constants.dPadding});
 
   @override
   Widget build(BuildContext context) => Padding(

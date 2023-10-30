@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Expanded(
                         flex: 2,
                         child: Padding(
-                          padding: EdgeInsets.all(defaultPadding.top),
+                          padding: EdgeInsets.all(dPadding.top),
                           child: Row(
                             children: [
                               Expanded(
@@ -77,9 +77,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                         child: Material(
                                           borderRadius: BorderRadius.circular(
-                                              borderRadius),
+                                              dBorderRadius),
                                           clipBehavior: Clip.antiAlias,
-                                          elevation: defaultElevation,
+                                          elevation: dElevation,
                                           child: SizedBox.square(
                                             dimension:
                                                 3 * constraints.maxHeight / 4,
@@ -141,8 +141,8 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
                 flex: 6,
                 child: RRSurface(
-                    padding: defaultPadding.copyWith(
-                        bottom: defaultPadding.vertical),
+                    padding: dPadding.copyWith(
+                        bottom: dPadding.vertical),
                     child: LayoutBuilder(builder: (context, constraints) {
                       return FlatList(
                           scrollPhysics: const ClampingScrollPhysics(),

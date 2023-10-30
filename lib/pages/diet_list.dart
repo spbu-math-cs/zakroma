@@ -26,7 +26,7 @@ class DietListPage extends ConsumerWidget {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -46,9 +46,9 @@ class DietListPage extends ConsumerWidget {
               flex: 10,
               child: RRSurface(
                 padding:
-                    defaultPadding.copyWith(bottom: defaultPadding.vertical),
+                    dPadding.copyWith(bottom: dPadding.vertical),
                 child: Padding(
-                  padding: EdgeInsets.only(top: defaultPadding.top),
+                  padding: EdgeInsets.only(top: dPadding.top),
                   child: LayoutBuilder(builder: (context, constraints) {
                     return ListView.builder(
                         itemCount: dietList.length,
@@ -58,7 +58,7 @@ class DietListPage extends ConsumerWidget {
                                   foregroundDecoration: index == 0
                                       ? BoxDecoration(
                                           borderRadius: BorderRadius.circular(
-                                              borderRadius),
+                                              dBorderRadius),
                                           border: Border.all(
                                               width: 4,
                                               color: Color.alphaBlend(

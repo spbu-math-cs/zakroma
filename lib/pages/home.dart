@@ -31,7 +31,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -53,7 +53,7 @@ class HomePage extends ConsumerWidget {
                 DisplayBarType.viandStatus,
                 text: 'Дома полно продуктов',
                 textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: headlineTextAlignment,
+                textAlign: dHeadlineTextAlignment,
                 image: Image.asset(
                     'assets/images/fridge_status_pancakes_full.png'),
               ),
@@ -66,14 +66,14 @@ class HomePage extends ConsumerWidget {
                 text: 'Доставка не ожидается',
                 image: Image.asset('assets/images/delivery.png'),
                 textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: headlineTextAlignment,
+                textAlign: dHeadlineTextAlignment,
               ),
             ),
             // Сегодняшнее меню
             Expanded(
               flex: 6,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: defaultPadding.bottom),
+                  padding: EdgeInsets.only(bottom: dPadding.bottom),
                   child: RRSurface(
                     child: Column(
                       children: [
@@ -156,7 +156,7 @@ class HomePage extends ConsumerWidget {
                                                                       ClipRRect(
                                                                     borderRadius:
                                                                         BorderRadius.circular(
-                                                                            borderRadius),
+                                                                            dBorderRadius),
                                                                     child: Image
                                                                         .asset(
                                                                       'assets/images/${todayMeals[index - 1].getDish(dishIndex).name}.jpg',
@@ -322,7 +322,7 @@ SlidingSheetDialog createSlidingSheet(context,
   return SlidingSheetDialog(
     headerBuilder: (context, sheetState) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: defaultPadding.top),
+        padding: EdgeInsets.symmetric(vertical: dPadding.top),
         child: GestureDetector(
           onDoubleTap: () {
             headlineOnDoubleTap(context);
@@ -357,12 +357,12 @@ SlidingSheetDialog createSlidingSheet(context,
       return SizedBox(
         height: screenHeight,
         child: Padding(
-          padding: defaultPadding.copyWith(top: 0),
+          padding: dPadding.copyWith(top: 0),
           child: body,
         ),
       );
     },
-    cornerRadius: borderRadius,
+    cornerRadius: dBorderRadius,
     color: Theme.of(context).colorScheme.primaryContainer,
     snapSpec: SnapSpec(
         snap: true,

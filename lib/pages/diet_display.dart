@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/text.dart';
@@ -37,7 +38,7 @@ class _DietPageState extends State<DietPage> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -59,25 +60,12 @@ class _DietPageState extends State<DietPage> {
                     children: List.generate(
                         weekDays.length,
                         (index) => RRSurface(
-                                child: Column(
-                              children: [
-                                Expanded(
-                                    child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: defaultPadding.left),
-                                    child: StyledHeadline(
-                                      text: weekDays[index],
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .headlineLarge,
-                                    ),
-                                  ),
-                                )),
-                                const Expanded(flex: 10, child: Placeholder())
-                              ],
-                            )))))
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return Placeholder();
+                                  }
+                                )
+                        ))))
           ],
         ),
       ),
