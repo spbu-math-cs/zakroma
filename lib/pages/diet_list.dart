@@ -16,7 +16,6 @@ class DietListPage extends ConsumerWidget {
     final diets = ref.watch(dietListProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(

@@ -23,7 +23,6 @@ class HomePage extends ConsumerWidget {
             : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: [

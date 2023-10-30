@@ -46,8 +46,7 @@ class FlatList extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         child: Container(
                           height: dDividerHeight,
-                          color: dividerColor ??
-                              Theme.of(context).colorScheme.surface,
+                          color: dividerColor ?? Theme.of(context).dividerColor,
                         ),
                       ),
                     ),

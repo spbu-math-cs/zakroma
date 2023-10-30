@@ -32,11 +32,11 @@ class _DietPageState extends State<DietPage> {
     ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
-            // Заголовок
+            // Заголовок: название рациона
             Expanded(
               flex: 1,
               child: Padding(
@@ -96,9 +96,8 @@ class _DietPageState extends State<DietPage> {
                                           clipBehavior: Clip.antiAlias,
                                           child: Container(
                                             height: dDividerHeight,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
+                                            color:
+                                                Theme.of(context).dividerColor,
                                           ),
                                         ),
                                       ),
@@ -175,8 +174,8 @@ class _DietPageState extends State<DietPage> {
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () => setState(() {
-                editMode = !editMode;
-              }),
+              editMode = !editMode;
+            }),
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,

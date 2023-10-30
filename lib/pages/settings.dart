@@ -27,7 +27,6 @@ class _SettingsPageState extends State<SettingsPage> {
     ];
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Column(
           children: [
