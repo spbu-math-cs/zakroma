@@ -85,7 +85,7 @@ class _DietPageState extends State<DietPage> {
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () {
-              // TODO: изменять текущий под редактирование рациона или переходить в новый экран редактирования
+              // TODO: изменять текущий экран под редактирование рациона
             },
           ),
           nav_bar.NavigationDestination(

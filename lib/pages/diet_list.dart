@@ -87,7 +87,6 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
                             name: text,
                             days: []);
                         Navigator.of(context).pop();
-                        // TODO: прейти к редактированию только что созданного рациона
                         Navigator.push(
                             context,
                             MaterialPageRoute(

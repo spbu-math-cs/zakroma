@@ -2,60 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 
 class FlatList extends StatelessWidget {
+  final bool addSeparator;
   final List<Widget> children;
   final Alignment childAlignment;
   final Color? dividerColor;
+  final EdgeInsets padding;
   final ScrollPhysics? scrollPhysics;
-  final bool addSeparator;
 
-  const FlatList(
-      {super.key,
-      this.childAlignment = Alignment.bottomLeft,
-      this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
-      this.dividerColor,
-      required this.children,
-      this.addSeparator = true});
+  const FlatList({
+    super.key,
+    this.addSeparator = true,
+    this.childAlignment = Alignment.bottomLeft,
+    this.dividerColor,
+    this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
+    this.padding = dPadding,
+    required this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (addSeparator) {
-      return LayoutBuilder(builder: (context, constraints) {
-        final dividerPadding = constraints.maxWidth / 10;
-        return ListView.separated(
-            padding: EdgeInsets.zero,
-            physics: scrollPhysics,
-            itemBuilder: (BuildContext context, int index) => Padding(
-              padding: EdgeInsets.only(left: dividerPadding * 1.5),
-              child: Align(
-                  alignment: childAlignment, child: children[index]),
-            ),
-            separatorBuilder: (BuildContext context, int index) => Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: dividerPadding),
-                child: Material(
-                  borderRadius: BorderRadius.circular(dBorderRadius),
-                  clipBehavior: Clip.antiAlias,
-                  child: Container(
-                    height: dDividerHeight,
-                    color: dividerColor,
-                  ),
+    return Padding(
+      padding: padding,
+      child: addSeparator ? ListView.separated(
+          padding: EdgeInsets.zero,
+          physics: scrollPhysics,
+          itemBuilder: (BuildContext context, int index) => Padding(
+            padding: EdgeInsets.only(left: dPadding.horizontal),
+            child: Align(alignment: childAlignment, child: children[index]),
+          ),
+          separatorBuilder: (BuildContext context, int index) => Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: dPadding.left),
+              child: Material(
+                borderRadius: BorderRadius.circular(dBorderRadius),
+                clipBehavior: Clip.antiAlias,
+                child: Container(
+                  height: dDividerHeight,
+                  color: dividerColor,
                 ),
               ),
             ),
-            itemCount: children.length);
-      });
-    }
-    return LayoutBuilder(builder: (context, constraints) {
-      return ListView.builder(
+          ),
+          itemCount: children.length)
+      : ListView.builder(
           padding: EdgeInsets.zero,
           physics: scrollPhysics ?? const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: Align(
-                alignment: childAlignment, child: children[index]),
+            child: Align(alignment: childAlignment, child: children[index]),
           ),
-          itemCount: children.length);
-    });
+          itemCount: children.length),
+    );
   }
 }

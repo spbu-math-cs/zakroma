@@ -129,6 +129,7 @@ class HomePage extends ConsumerWidget {
                                                       (context, constraints) {
                                                 return FlatList(
                                                   addSeparator: false,
+                                                  padding: EdgeInsets.zero,
                                                   children: List.generate(
                                                       todayMeals[index - 1]
                                                           .dishesCount(),
