@@ -1,20 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
+import 'package:zakroma_frontend/pages/meal_display.dart';
+import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
+import 'diet.dart';
 
 class Meal {
+  final String id;
+
   /// Название приёма пищи, задаётся пользователем.
-  String name;
+  final String name;
 
   /// Список блюд, запланированных на данный приём пищи.
-  List<Dish> dishes;
+  final List<Dish> dishes;
 
-  Meal({required this.name, required this.dishes});
+  const Meal({required this.id, required this.name, required this.dishes});
 
   int get dishesCount => dishes.length;
 
   Dish getDish(int index) => dishes[index];
+
+  static void showAddMealDialog(BuildContext context, WidgetRef ref,
+          String dietId, int dayIndex) =>
+      showDialog(
+          context: context,
+          builder: (_) => AlertTextPrompt(
+                title: 'Введите название приёма пищи',
+                hintText: '',
+                actions: [
+                  (
+                    buttonText: 'Назад',
+                    needsValidation: false,
+                    onTap: (text) {
+                      Navigator.of(context).pop();
+                    }
+                  ),
+                  (
+                    buttonText: 'Продолжить',
+                    needsValidation: true,
+                    onTap: (text) {
+
+                      ref.read(dietListProvider.notifier).addMeal(
+                          dietId: dietId,
+                          dayIndex: dayIndex,
+                      newMeal: Meal(id: '', name: text, dishes: []));
+                      Navigator.of(context).pop();
+                      ref.read(pathProvider.notifier).update((state) => state.copyWith(dayIndex: dayIndex, mealId: ref.read(dietListProvider.notifier)
+                          .getDietById(dietId: dietId)!.days[dayIndex].meals.last.id));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MealPage())
+                      );
+                    }
+                  ),
+                ],
+              ));
 
   FlatList getDishesList(BuildContext context,
           {bool dishMiniatures = false, bool scrollable = true}) =>

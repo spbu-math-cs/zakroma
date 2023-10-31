@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/data_cls/meal.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
 
-class DietPage extends StatefulWidget {
-  final Diet diet;
+final editModeProvider = StateProvider((ref) => false);  // TODO: при переходе на другую страницу устанавливать в false
 
-  const DietPage({super.key, required this.diet});
-
-  @override
-  State<DietPage> createState() => _DietPageState();
-}
-
-class _DietPageState extends State<DietPage> {
-  int currentPageIndex = 0;
-  bool editMode = false;
+class DietPage extends ConsumerWidget {
+  const DietPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final diet = ref.watch(dietListProvider.notifier).getDietById(dietId: ref.read(pathProvider).dietId!)!;
+    final editMode = ref.watch(editModeProvider);
     const weekDays = [
       'Понедельник',
       'Вторник',
@@ -30,6 +27,7 @@ class _DietPageState extends State<DietPage> {
       'Суббота',
       'Воскресенье',
     ];
+    final pageController = PageController();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -45,7 +43,7 @@ class _DietPageState extends State<DietPage> {
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
                     builder: (context, constraints) => StyledHeadline(
-                        text: widget.diet.name,
+                        text: diet.name,
                         textStyle:
                             Theme.of(context).textTheme.displaySmall!.copyWith(
                                   fontSize: 3 * constraints.maxHeight / 4,
@@ -58,7 +56,7 @@ class _DietPageState extends State<DietPage> {
             Expanded(
                 flex: 10,
                 child: PageView(
-                    controller: PageController(),
+                    controller: pageController,
                     children: List.generate(
                         weekDays.length,
                         (index) => RRSurface(
@@ -69,6 +67,7 @@ class _DietPageState extends State<DietPage> {
                                 // День недели (название) + разделитель
                                 Expanded(
                                     child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     // Название дня недели
                                     Padding(
@@ -104,26 +103,14 @@ class _DietPageState extends State<DietPage> {
                                     )
                                   ],
                                 )),
-                                // Список всех приёмов пищи
+                                // Список приёмов пищи
                                 Expanded(
-                                  flex: 10,
+                                  flex: 9,
                                   child: FlatList(
                                       padding: dPadding.copyWith(top: 0),
                                       children:
-                                          // кнопка добавления сверху листа
-                                          // <Widget>[
-                                          //       DottedRRButton(
-                                          //           padding: dPadding.copyWith(left: 0),
-                                          //           child: Icon(
-                                          //             Icons.add,
-                                          //             color: Theme.of(context)
-                                          //                 .colorScheme
-                                          //                 .onSurfaceVariant,
-                                          //             size: 60,
-                                          //           ))
-                                          //     ] +
                                           List<Widget>.generate(
-                                              widget.diet
+                                              diet
                                                   .getDay(index)
                                                   .meals
                                                   .length,
@@ -134,7 +121,7 @@ class _DietPageState extends State<DietPage> {
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         child: StyledHeadline(
-                                                            text: widget.diet
+                                                            text: diet
                                                                 .getDay(index)
                                                                 .meals[
                                                                     mealIndex]
@@ -145,7 +132,7 @@ class _DietPageState extends State<DietPage> {
                                                                 .headlineMedium),
                                                       ),
                                                       // Список блюд в данном приёме
-                                                      widget.diet
+                                                      diet
                                                           .getDay(index)
                                                           .meals[mealIndex]
                                                           .getDishesList(
@@ -173,9 +160,9 @@ class _DietPageState extends State<DietPage> {
           nav_bar.NavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
-            onTap: () => setState(() {
-              editMode = !editMode;
-            }),
+            onTap: () {
+              ref.read(editModeProvider.notifier).update((state) => !state);
+            },
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,
@@ -187,17 +174,25 @@ class _DietPageState extends State<DietPage> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Visibility(
-        visible: editMode,
-        child: FloatingActionButton.extended(
-            backgroundColor: Theme.of(context).colorScheme.onPrimary,
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            // shape: const CircleBorder(),
-            onPressed: () {
-              debugPrint('+');
-            },
-            label: const Text('Добавить приём'),
-            icon: const Icon(Icons.add)),
+      floatingActionButton: AnimatedOpacity(
+        opacity: editMode ? 1 : 0,
+        duration: fabAnimationDuration ~/ 2,
+        child: AnimatedSlide(
+          offset: editMode ? Offset.zero : const Offset(0, 1.3),
+          duration: fabAnimationDuration,
+          child: AnimatedScale(
+            scale: editMode ? 1 : 0,
+            duration: fabAnimationDuration,
+            child: FloatingActionButton.extended(
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  Meal.showAddMealDialog(context, ref, diet.id, pageController.page!.toInt());
+                },
+                label: const Text('Добавить приём'),
+                icon: const Icon(Icons.add)),
+          ),
+        ),
       ),
     );
   }

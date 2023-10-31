@@ -34,38 +34,41 @@ class FunctionalBottomBar extends StatelessWidget {
                 blurRadius: dElevation,
                 offset: const Offset(0, -1))
           ]),
-      height: height,
-      child: Row(
-        children: List<Widget>.generate(
-            navigationBarIcons.length,
-            (index) => Expanded(
-                    child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
-                  // а если и то, и другое == null, то просто ничего не делаем
-                  onTap: () => navigationBarIcons[index].onTap != null
-                      ? navigationBarIcons[index].onTap!()
-                      : onDestinationSelected != null
-                          ? onDestinationSelected!(index)
-                          : {},
-                  child: NavigationDestination(
-                    icon: navigationBarIcons[index].icon,
-                    label: navigationBarIcons[index].label,
-                    color: navigationBarIcons[index].color ??
-                        buttonColor ??
-                        Theme.of(context).colorScheme.onSecondaryContainer,
-                    selectedIcon: navigationBarIcons[index].selectedIcon,
-                    selectedColor: navigationBarIcons[index].selectedColor ??
-                        selectedButtonColor ??
-                        Theme.of(context).colorScheme.primary,
-                    onTap: navigationBarIcons[index].onTap,
-                    labelStyle: navigationBarIcons[index].labelStyle ??
-                        labelStyle ??
-                        Theme.of(context).textTheme.labelSmall,
-                    isSelected: navigationBarIcons[index].isSelected ??
-                        selectedIndex == index,
-                  ),
-                ))),
+      height: height + MediaQuery.of(context).padding.bottom / 2,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom / 2),
+        child: Row(
+          children: List<Widget>.generate(
+              navigationBarIcons.length,
+              (index) => Expanded(
+                      child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
+                    // а если и то, и другое == null, то просто ничего не делаем
+                    onTap: () => navigationBarIcons[index].onTap != null
+                        ? navigationBarIcons[index].onTap!()
+                        : onDestinationSelected != null
+                            ? onDestinationSelected!(index)
+                            : {},
+                    child: NavigationDestination(
+                      icon: navigationBarIcons[index].icon,
+                      label: navigationBarIcons[index].label,
+                      color: navigationBarIcons[index].color ??
+                          buttonColor ??
+                          Theme.of(context).colorScheme.onSecondaryContainer,
+                      selectedIcon: navigationBarIcons[index].selectedIcon,
+                      selectedColor: navigationBarIcons[index].selectedColor ??
+                          selectedButtonColor ??
+                          Theme.of(context).colorScheme.primary,
+                      onTap: navigationBarIcons[index].onTap,
+                      labelStyle: navigationBarIcons[index].labelStyle ??
+                          labelStyle ??
+                          Theme.of(context).textTheme.labelSmall,
+                      isSelected: navigationBarIcons[index].isSelected ??
+                          selectedIndex == index,
+                    ),
+                  ))),
+        ),
       ),
     );
   }

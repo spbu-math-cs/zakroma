@@ -3,6 +3,8 @@ import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/data_cls/tag.dart';
 
 class Dish {
+  String id;
+
   /// Название блюда.
   String name;
 
@@ -20,7 +22,8 @@ class Dish {
   Map<Ingredient, int> ingredients;
 
   Dish(
-      {required this.name,
+      {required this.id,
+      required this.name,
       this.miniature,
       required this.recipe,
       required this.tags,

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/pages/diet_display.dart';
-import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
@@ -89,10 +89,11 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
             )
           : null,
       onTap: () {
+        ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: diets[index].id));
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => DietPage(diet: diets[index])));
+                builder: (context) => const DietPage()));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
