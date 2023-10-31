@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 
-final editModeProvider = StateProvider((ref) => false);  // TODO: при переходе на другую страницу устанавливать в false
-
-class MealPage extends ConsumerWidget {
+class MealPage extends ConsumerStatefulWidget {
   const MealPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState createState() => _MealPageState();
+}
+
+class _MealPageState extends ConsumerState<MealPage> {
+  bool editMode = false;
+  @override
+  Widget build(BuildContext context) {
     final path = ref.read(pathProvider);
     final meal = ref.watch(dietListProvider.notifier).getMealById(dietId: path.dietId!, dayIndex: path.dayIndex!, mealId: path.mealId!)!;
-    final editMode = ref.watch(editModeProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

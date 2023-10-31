@@ -9,15 +9,19 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
 
-final editModeProvider = StateProvider((ref) => false);  // TODO: при переходе на другую страницу устанавливать в false
-
-class DietPage extends ConsumerWidget {
+class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState createState() => _DietPageState();
+}
+
+class _DietPageState extends ConsumerState<DietPage> {
+  bool editMode = false;
+  @override
+  Widget build(BuildContext context) {
     final diet = ref.watch(dietListProvider.notifier).getDietById(dietId: ref.read(pathProvider).dietId!)!;
-    final editMode = ref.watch(editModeProvider);
+    // final editMode = ref.watch(editModeProvider);
     const weekDays = [
       'Понедельник',
       'Вторник',
@@ -45,9 +49,9 @@ class DietPage extends ConsumerWidget {
                     builder: (context, constraints) => StyledHeadline(
                         text: diet.name,
                         textStyle:
-                            Theme.of(context).textTheme.displaySmall!.copyWith(
-                                  fontSize: 3 * constraints.maxHeight / 4,
-                                )),
+                        Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: 3 * constraints.maxHeight / 4,
+                        )),
                   ),
                 ),
               ),
@@ -59,87 +63,87 @@ class DietPage extends ConsumerWidget {
                     controller: pageController,
                     children: List.generate(
                         weekDays.length,
-                        (index) => RRSurface(
+                            (index) => RRSurface(
                             padding:
-                                dPadding.copyWith(bottom: dPadding.vertical),
+                            dPadding.copyWith(bottom: dPadding.vertical),
                             child: Column(
                               children: [
                                 // День недели (название) + разделитель
                                 Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // Название дня недели
-                                    Padding(
-                                      padding: dPadding +
-                                          EdgeInsets.only(left: dPadding.left),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: StyledHeadline(
-                                          text: weekDays[index],
-                                          textStyle: Theme.of(context)
-                                              .textTheme
-                                              .headlineLarge,
-                                        ),
-                                      ),
-                                    ),
-                                    // Разделитель
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: dPadding.left),
-                                        child: Material(
-                                          borderRadius: BorderRadius.circular(
-                                              dBorderRadius),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Container(
-                                            height: dDividerHeight,
-                                            color:
-                                                Theme.of(context).dividerColor,
+                                      children: [
+                                        // Название дня недели
+                                        Padding(
+                                          padding: dPadding +
+                                              EdgeInsets.only(left: dPadding.left),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: StyledHeadline(
+                                              text: weekDays[index],
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineLarge,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                  ],
-                                )),
+                                        // Разделитель
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: dPadding.left),
+                                            child: Material(
+                                              borderRadius: BorderRadius.circular(
+                                                  dBorderRadius),
+                                              clipBehavior: Clip.antiAlias,
+                                              child: Container(
+                                                height: dDividerHeight,
+                                                color:
+                                                Theme.of(context).dividerColor,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )),
                                 // Список приёмов пищи
                                 Expanded(
                                   flex: 9,
                                   child: FlatList(
                                       padding: dPadding.copyWith(top: 0),
                                       children:
-                                          List<Widget>.generate(
+                                      List<Widget>.generate(
+                                          diet
+                                              .getDay(index)
+                                              .meals
+                                              .length,
+                                              (mealIndex) => Column(
+                                            children: [
+                                              // Название приёма пищи
+                                              Align(
+                                                alignment: Alignment
+                                                    .centerLeft,
+                                                child: StyledHeadline(
+                                                    text: diet
+                                                        .getDay(index)
+                                                        .meals[
+                                                    mealIndex]
+                                                        .name,
+                                                    textStyle: Theme.of(
+                                                        context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                              // Список блюд в данном приёме
                                               diet
                                                   .getDay(index)
-                                                  .meals
-                                                  .length,
-                                              (mealIndex) => Column(
-                                                    children: [
-                                                      // Название приёма пищи
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: StyledHeadline(
-                                                            text: diet
-                                                                .getDay(index)
-                                                                .meals[
-                                                                    mealIndex]
-                                                                .name,
-                                                            textStyle: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineMedium),
-                                                      ),
-                                                      // Список блюд в данном приёме
-                                                      diet
-                                                          .getDay(index)
-                                                          .meals[mealIndex]
-                                                          .getDishesList(
-                                                              context,
-                                                              scrollable: false)
-                                                    ],
-                                                  ))),
+                                                  .meals[mealIndex]
+                                                  .getDishesList(
+                                                  context,
+                                                  scrollable: false)
+                                            ],
+                                          ))),
                                 ),
                               ],
                             )))))
@@ -161,7 +165,9 @@ class DietPage extends ConsumerWidget {
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () {
-              ref.read(editModeProvider.notifier).update((state) => !state);
+              setState(() {
+                editMode = !editMode;
+              });
             },
           ),
           nav_bar.NavigationDestination(
@@ -195,5 +201,11 @@ class DietPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    editMode = false;
+    super.dispose();
   }
 }
