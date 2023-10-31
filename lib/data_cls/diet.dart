@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zakroma_frontend/data_cls/diet_day.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
-import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/pages/diet_display.dart';
@@ -19,7 +18,6 @@ class Diet {
   /// Длиной рациона считается количество дней в нём.
   final List<DietDay> days;
 
-  // TODO: сделать проверку на то, что в days не встречается нескольких дней с одним и тем же индексом
   const Diet(
       {required this.id,
       required this.name,
@@ -42,6 +40,26 @@ class Diet {
 
   void addDay(DietDay day) => days.add(day);
 
+  Diet copyWith({String? id, String? name, List<DietDay>? days}) =>
+      Diet(id: id ?? this.id, name: name ?? this.name, days: days ?? this.days);
+
+  Meal? getMealById(
+      {required int dayIndex,
+        required String mealId}) =>
+      getDay(dayIndex)
+          .meals
+          .where((element) => element.id == mealId)
+          .firstOrNull;
+
+  Dish? getDishById(
+      {required int dayIndex,
+        required String mealId,
+        required String dishId}) =>
+      getMealById(dayIndex: dayIndex, mealId: mealId)
+          ?.dishes
+          .where((element) => element.id == dishId)
+          .firstOrNull;
+
   static void showAddDietDialog(BuildContext context, WidgetRef ref) =>
       showDialog(
           context: context,
@@ -62,20 +80,27 @@ class Diet {
                     onTap: (text) {
                       // TODO: получить с сервера новый id
                       final newDietId = const Uuid().v4();
-                      ref.read(dietListProvider.notifier).add(
-                          dietId: newDietId,
-                          name: text);
-                      ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: newDietId));
+                      ref
+                          .read(dietListProvider.notifier)
+                          .add(dietId: newDietId, name: text);
+                      ref
+                          .read(pathProvider.notifier)
+                          .update((state) => state.copyWith(dietId: newDietId));
                       Navigator.of(context).pop();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const DietPage()));
+                              builder: (context) => const DietPage()));
                     }
                   ),
                 ],
               ));
+}
+
+extension DietGetter on List<Diet> {
+  Diet? getDietById(String dietId) {
+    return where((element) => element.id == dietId).first;
+  }
 }
 
 class DietList extends Notifier<List<Diet>> {
@@ -113,35 +138,44 @@ class DietList extends Notifier<List<Diet>> {
   Diet? getDietById({required String dietId}) =>
       state.where((element) => element.id == dietId).firstOrNull;
 
-  Meal? getMealById(
-          {required String dietId,
-          required int dayIndex,
-          required String mealId}) =>
-      getDietById(dietId: dietId)
-          ?.getDay(dayIndex)
-          .meals
-          .where((element) => element.id == mealId)
-          .firstOrNull;
-
-  void setDays({required String dietId, required List<DietDay> newDays}) {
-    state = [
-      for (final diet in state)
-        if (diet.id == dietId)
-          Diet(id: diet.id, name: diet.name, days: newDays)
-        else
-          diet,
-    ];
-  }
-
   void addMeal(
       {required String dietId, required int dayIndex, required Meal newMeal}) {
     state = [
       for (final diet in state)
         if (diet.id == dietId)
-          Diet(id: diet.id, name: diet.name, days: [
+          diet.copyWith(days: [
             for (final day in diet.days)
               if (day.index == dayIndex)
                 DietDay(index: dayIndex, meals: [...day.meals, newMeal])
+              else
+                day
+          ])
+        else
+          diet,
+    ];
+  }
+
+  void addDish(
+      {required String dietId,
+      required int dayIndex,
+      required String mealId,
+      required Dish newDish}) {
+    state = [
+      for (final diet in state)
+        if (diet.id == dietId)
+          diet.copyWith(days: [
+            for (final day in diet.days)
+              if (day.index == dayIndex)
+                DietDay(index: dayIndex, meals: [
+                  for (final meal in day.meals)
+                    if (meal.id == mealId)
+                      Meal(
+                          id: meal.id,
+                          name: meal.name,
+                          dishes: [...meal.dishes, newDish])
+                    else
+                      meal
+                ])
               else
                 day
           ])

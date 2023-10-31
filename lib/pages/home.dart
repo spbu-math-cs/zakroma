@@ -24,6 +24,7 @@ class HomePage extends ConsumerWidget {
             : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -141,8 +142,7 @@ class HomePage extends ConsumerWidget {
                                             if (currentDiet == null) {
                                               // TODO: переделать виджет под добавление рациона
                                             } else {
-                                              ref.read(pathProvider.notifier).update((state) => state.copyWith(dayIndex: DateTime.now().weekday - 1, mealId: ref.read(dietListProvider.notifier)
-                                                  .getDietById(dietId: currentDiet.id)!.days[DateTime.now().weekday - 1].meals.last.id));
+                                              Meal.showAddMealDialog(context, ref, currentDiet.id, DateTime.now().weekday - 1);
                                             }
                                           },
                                           child: Icon(

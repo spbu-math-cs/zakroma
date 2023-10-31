@@ -16,7 +16,7 @@ class FlatList extends StatelessWidget {
     this.childAlignment = Alignment.bottomLeft,
     this.childPadding = dPadding,
     this.dividerColor,
-    this.scrollPhysics = const AlwaysScrollableScrollPhysics(),
+    this.scrollPhysics = const ClampingScrollPhysics(),
     this.padding = dPadding,
     required this.children,
   });

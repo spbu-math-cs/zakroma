@@ -31,7 +31,7 @@ class AlertTextPrompt extends StatelessWidget {
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             hintText: hintText,
-            errorBorder: const OutlineInputBorder(),
+            // errorBorder: const OutlineInputBorder(),
           ),
           controller: textController,
           validator: (value) {

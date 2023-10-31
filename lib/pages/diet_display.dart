@@ -20,8 +20,7 @@ class _DietPageState extends ConsumerState<DietPage> {
   bool editMode = false;
   @override
   Widget build(BuildContext context) {
-    final diet = ref.watch(dietListProvider.notifier).getDietById(dietId: ref.read(pathProvider).dietId!)!;
-    // final editMode = ref.watch(editModeProvider);
+    final diet = ref.watch(dietListProvider).getDietById(ref.read(pathProvider).dietId!)!;
     const weekDays = [
       'Понедельник',
       'Вторник',

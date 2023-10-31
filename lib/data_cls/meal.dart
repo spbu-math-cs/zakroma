@@ -7,6 +7,7 @@ import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/pages/meal_display.dart';
 import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
+
 import 'diet.dart';
 
 class Meal {
@@ -24,8 +25,8 @@ class Meal {
 
   Dish getDish(int index) => dishes[index];
 
-  static void showAddMealDialog(BuildContext context, WidgetRef ref,
-          String dietId, int dayIndex) =>
+  static void showAddMealDialog(
+          BuildContext context, WidgetRef ref, String dietId, int dayIndex) =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -46,29 +47,38 @@ class Meal {
                       ref.read(dietListProvider.notifier).addMeal(
                           dietId: dietId,
                           dayIndex: dayIndex,
-                      // TODO: исправить id
-                      newMeal: Meal(id: const Uuid().v4(), name: text, dishes: []));
+                          // TODO: исправить id
+                          newMeal: Meal(
+                              id: const Uuid().v4(), name: text, dishes: []));
                       Navigator.of(context).pop();
-                      ref.read(pathProvider.notifier).update((state) => state.copyWith(dayIndex: dayIndex, mealId: ref.read(dietListProvider.notifier)
-                          .getDietById(dietId: dietId)!.days[dayIndex].meals.last.id));
+                      final mealId = ref
+                          .read(dietListProvider.notifier)
+                          .getDietById(dietId: dietId)!
+                          .days[dayIndex]
+                          .meals
+                          .last
+                          .id;
+                      ref.read(pathProvider.notifier).update((state) =>
+                          state.copyWith(dayIndex: dayIndex, mealId: mealId));
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MealPage())
-                      );
+                              builder: (context) => const MealPage()));
                     }
+
                   ),
                 ],
               ));
 
   FlatList getDishesList(BuildContext context,
-          {bool dishMiniatures = false, bool scrollable = true}) =>
+          {bool dishMiniatures = false, bool scrollable = true,
+          EdgeInsets? padding}) =>
       FlatList(
         scrollPhysics: scrollable
-            ? const AlwaysScrollableScrollPhysics()
+            ? const ClampingScrollPhysics()
             : const NeverScrollableScrollPhysics(),
-        addSeparator: false,
-        padding: EdgeInsets.zero,
+        addSeparator: dishMiniatures,
+        padding: padding ?? dPadding.copyWith(left: 0, right: 0),
         childPadding: dPadding.copyWith(left: 0),
         children: List.generate(
             dishesCount,
