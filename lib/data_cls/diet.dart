@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:zakroma_frontend/data_cls/diet_day.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
@@ -59,10 +60,10 @@ class Diet {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) {
-                      // TODO: получить с сервера/самостоятельно сгенерировать новый id
-                      const newDietId = '10';
+                      // TODO: получить с сервера новый id
+                      final newDietId = const Uuid().v4();
                       ref.read(dietListProvider.notifier).add(
-                          dietId: newDietId, // TODO: получить нормальный ид
+                          dietId: newDietId,
                           name: text);
                       ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: newDietId));
                       Navigator.of(context).pop();

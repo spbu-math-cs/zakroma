@@ -187,7 +187,7 @@ class DietPage extends ConsumerWidget {
                 backgroundColor: Theme.of(context).colorScheme.onPrimary,
                 foregroundColor: Theme.of(context).colorScheme.primary,
                 onPressed: () {
-                  Meal.showAddMealDialog(context, ref, diet.id, pageController.page!.toInt());
+                  Meal.showAddMealDialog(context, ref, diet.id, pageController.page!.round());
                 },
                 label: const Text('Добавить приём'),
                 icon: const Icon(Icons.add)),

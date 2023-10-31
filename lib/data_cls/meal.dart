@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
@@ -42,11 +43,11 @@ class Meal {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) {
-
                       ref.read(dietListProvider.notifier).addMeal(
                           dietId: dietId,
                           dayIndex: dayIndex,
-                      newMeal: Meal(id: '', name: text, dishes: []));
+                      // TODO: исправить id
+                      newMeal: Meal(id: const Uuid().v4(), name: text, dishes: []));
                       Navigator.of(context).pop();
                       ref.read(pathProvider.notifier).update((state) => state.copyWith(dayIndex: dayIndex, mealId: ref.read(dietListProvider.notifier)
                           .getDietById(dietId: dietId)!.days[dayIndex].meals.last.id));

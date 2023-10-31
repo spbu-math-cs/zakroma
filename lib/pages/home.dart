@@ -4,6 +4,7 @@ import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
@@ -137,7 +138,12 @@ class HomePage extends ConsumerWidget {
                                       return DottedRRButton(
                                           padding: buttonsPadding,
                                           onTap: () {
-                                            debugPrint('+');
+                                            if (currentDiet == null) {
+                                              // TODO: переделать виджет под добавление рациона
+                                            } else {
+                                              ref.read(pathProvider.notifier).update((state) => state.copyWith(dayIndex: DateTime.now().weekday - 1, mealId: ref.read(dietListProvider.notifier)
+                                                  .getDietById(dietId: currentDiet.id)!.days[DateTime.now().weekday - 1].meals.last.id));
+                                            }
                                           },
                                           child: Icon(
                                             Icons.add,
