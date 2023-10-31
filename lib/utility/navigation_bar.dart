@@ -34,9 +34,9 @@ class FunctionalBottomBar extends StatelessWidget {
                 blurRadius: dElevation,
                 offset: const Offset(0, -1))
           ]),
-      height: height + MediaQuery.of(context).padding.bottom / 2,
+      height: height + MediaQuery.of(context).padding.bottom / 1.13,
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom / 2),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom / 1.13),
         child: Row(
           children: List<Widget>.generate(
               navigationBarIcons.length,

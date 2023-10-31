@@ -7,6 +7,7 @@ import 'package:zakroma_frontend/pages/settings.dart';
 import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 
+
 // TODO: доделать главный экран
 // TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
 // TODO: продукт развёрнутый (раскрывается при нажатии? нужен где??)
