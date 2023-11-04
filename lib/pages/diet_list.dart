@@ -96,7 +96,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
                 builder: (context) => const DietPage()));
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: EdgeInsets.symmetric(horizontal: dPadding.top),
         child: StyledHeadline(
           text: diets[index].name,
           textStyle: Theme.of(context).textTheme.headlineMedium,

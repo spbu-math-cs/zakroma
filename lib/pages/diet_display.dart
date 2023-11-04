@@ -4,6 +4,7 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
+import 'package:zakroma_frontend/utility/animated_fab.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
@@ -69,7 +70,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                                   padding: dPadding,
                                   child: Column(
                                     children: [
-                                      // День недели (название) + разделитель
+                                      // День недели + разделитель
                                       Expanded(
                                           child: Column(
                                         mainAxisAlignment:
@@ -121,19 +122,27 @@ class _DietPageState extends ConsumerState<DietPage> {
                                                 (mealIndex) => Column(
                                                       children: [
                                                         // Название приёма пищи
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: StyledHeadline(
-                                                              text: diet
-                                                                  .getDay(index)
-                                                                  .meals[
-                                                                      mealIndex]
-                                                                  .name,
-                                                              textStyle: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .headlineMedium),
+                                                        GestureDetector(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              StyledHeadline(
+                                                                  text: diet
+                                                                      .getDay(
+                                                                          index)
+                                                                      .meals[
+                                                                          mealIndex]
+                                                                      .name,
+                                                                  textStyle: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .headlineMedium),
+                                                              const Icon(Icons
+                                                                  .arrow_forward_ios)
+                                                            ],
+                                                          ),
                                                         ),
                                                         // Список блюд в данном приёме
                                                         diet
@@ -143,7 +152,9 @@ class _DietPageState extends ConsumerState<DietPage> {
                                                                 context,
                                                                 scrollable:
                                                                     false,
-                                                        padding: EdgeInsets.zero)
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero)
                                                       ],
                                                     ))),
                                       ),
@@ -153,7 +164,8 @@ class _DietPageState extends ConsumerState<DietPage> {
                     // Индикатор дней недели
                     Expanded(
                         child: Padding(
-                      padding: dPadding.copyWith(top: 0, bottom: 0) * 2 + EdgeInsets.only(bottom: dPadding.bottom),
+                      padding: dPadding.copyWith(top: 0, bottom: 0) * 2 +
+                          EdgeInsets.only(bottom: dPadding.bottom),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +173,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                             weekDaysShort.length,
                             (index) => Expanded(
                                     child: GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
+                                  behavior: HitTestBehavior.opaque,
                                   onTap: () => setState(() {
                                     pageController.animateToPage(index,
                                         duration: fabAnimationDuration,
@@ -222,27 +234,14 @@ class _DietPageState extends ConsumerState<DietPage> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: AnimatedOpacity(
-        opacity: editMode ? 1 : 0,
-        duration: fabAnimationDuration ~/ 2,
-        child: AnimatedSlide(
-          offset: editMode ? Offset.zero : const Offset(0, 1.3),
-          duration: fabAnimationDuration,
-          child: AnimatedScale(
-            scale: editMode ? 1 : 0,
-            duration: fabAnimationDuration,
-            child: FloatingActionButton.extended(
-                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  Meal.showAddMealDialog(
-                      context, ref, diet.id, pageController.page!.round());
-                },
-                label: const Text('Добавить приём'),
-                icon: const Icon(Icons.add)),
-          ),
-        ),
-      ),
+      floatingActionButton: AnimatedFAB(
+          text: 'Добавить приём',
+          icon: Icons.add,
+          visible: editMode,
+          onPressed: () {
+            Meal.showAddMealDialog(
+                context, ref, diet.id, pageController.page!.round());
+          }),
     );
   }
 

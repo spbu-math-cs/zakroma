@@ -4,6 +4,7 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/pages/dish_search.dart';
+import 'package:zakroma_frontend/utility/animated_fab.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
@@ -95,44 +96,16 @@ class _MealPageState extends ConsumerState<MealPage> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: AnimatedOpacity(
-        opacity: editMode ? 1 : 0,
-        duration: fabAnimationDuration ~/ 2,
-        child: AnimatedSlide(
-          offset: editMode ? Offset.zero : const Offset(0, 1.3),
-          duration: fabAnimationDuration,
-          child: AnimatedScale(
-            scale: editMode ? 1 : 0,
-            duration: fabAnimationDuration,
-            child: FloatingActionButton.extended(
-                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  // final dishId = ref
-                  //     .read(dietListProvider.notifier)
-                  //     .getMealById(
-                  //         dietId: path.dietId!,
-                  //         dayIndex: path.dayIndex!,
-                  //         mealId: path.mealId!)!
-                  //     .dishes
-                  //     .last
-                  //     .id;
-                  // ref
-                  //     .read(pathProvider.notifier)
-                  //     .update((state) => state.copyWith(dishId: dishId));
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DishSearchPage()))
-                      // .then((value) => setState(() {}))
-                      ;
-                  // TODO: убрать костыль с .then(...)
-                },
-                label: const Text('Добавить блюдо'),
-                icon: const Icon(Icons.add)),
-          ),
-        ),
-      ),
+      floatingActionButton: AnimatedFAB(
+          text: 'Добавить блюдо',
+          icon: Icons.add,
+          visible: editMode,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const DishSearchPage()));
+          }),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart' as constants;
 import 'package:zakroma_frontend/constants.dart';
 
 class RRButton extends StatelessWidget {
@@ -21,10 +20,10 @@ class RRButton extends StatelessWidget {
       required this.child,
       this.childAlignment = Alignment.center,
       this.backgroundColor,
-      this.borderRadius = constants.dBorderRadius,
+      this.borderRadius = dBorderRadius,
       this.decoration,
       this.foregroundDecoration,
-      this.padding = constants.dPadding,
+      this.padding = dPadding,
       this.elevation = dElevation,
       this.onTap,
       this.onDoubleTap,
@@ -64,9 +63,9 @@ class DottedRRButton extends RRButton {
       super.childAlignment = Alignment.center,
       super.backgroundColor,
       this.borderColor,
-      super.borderRadius = constants.dBorderRadius,
+      super.borderRadius = dBorderRadius,
       super.decoration,
-      super.padding = constants.dPadding,
+      super.padding = dPadding,
       super.onTap,
       super.onDoubleTap,
       super.onLongPress});
