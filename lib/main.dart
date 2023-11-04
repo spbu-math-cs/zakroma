@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/home.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
@@ -62,14 +63,21 @@ class _ZakromaState extends State<Zakroma> {
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Colors.transparent));
 
+    final pageController = PageController();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
         height: MediaQuery.of(context).size.height / 17,
-        onDestinationSelected: (index) => setState(() {
-          currentPageIndex = index;
-        }),
+        onDestinationSelected: (index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+          pageController.animateToPage(index,
+              duration: fabAnimationDuration,
+              curve: Curves.ease);
+        },
         selectedIndex: currentPageIndex,
         navigationBarIcons: const [
           nav_bar.NavigationDestination(
@@ -89,11 +97,17 @@ class _ZakromaState extends State<Zakroma> {
           ),
         ],
       ),
-      body: <Widget>[
-        const HomePage(),
-        const DietListPage(),
-        const SettingsPage(),
-      ][currentPageIndex],
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) => setState(() {
+          currentPageIndex = index;
+        }),
+        children: const [
+          HomePage(),
+          DietListPage(),
+          SettingsPage(),
+        ],
+      ),
     );
   }
 }
