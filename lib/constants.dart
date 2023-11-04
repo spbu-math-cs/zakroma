@@ -6,3 +6,28 @@ const dElevation = 4.0;
 const dDividerHeight = 4.0;
 const dHeadlineTextAlignment = TextAlign.center;
 const fabAnimationDuration = Duration(milliseconds: 200);
+
+const months = [
+  'января',
+  'февраля',
+  'марта',
+  'апреля',
+  'мая',
+  'июня',
+  'июля',
+  'августа',
+  'сентября',
+  'октября',
+  'ноября',
+  'декабря',
+];
+
+const weekDays = [
+  'пн',
+  'вт',
+  'ср',
+  'чт',
+  'пт',
+  'сб',
+  'вс',
+];
