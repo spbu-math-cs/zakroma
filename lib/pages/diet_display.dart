@@ -21,15 +21,6 @@ class _DietPageState extends ConsumerState<DietPage> {
   @override
   Widget build(BuildContext context) {
     final diet = ref.watch(dietListProvider).getDietById(ref.read(pathProvider).dietId!)!;
-    const weekDays = [
-      'Понедельник',
-      'Вторник',
-      'Среда',
-      'Четверг',
-      'Пятница',
-      'Суббота',
-      'Воскресенье',
-    ];
     final pageController = PageController();
 
     return Scaffold(
