@@ -66,7 +66,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                           children: List.generate(
                               weekDays.length,
                               (index) => RRSurface(
-                                  padding: dPadding.copyWith(bottom: 0),
+                                  padding: dPadding,
                                   child: Column(
                                     children: [
                                       // День недели (название) + разделитель
@@ -150,37 +150,40 @@ class _DietPageState extends ConsumerState<DietPage> {
                                   )))),
                     ),
                     // Индикатор дней недели
-                    // TODO: пофиксить тени (индикатор перекрывает собой тень от RRSurface)
                     Expanded(
                         child: Padding(
-                      padding: dPadding.copyWith(top: 0, bottom: 0) * 2,
+                      padding: dPadding.copyWith(top: 0, bottom: 0) * 2 + EdgeInsets.only(bottom: dPadding.bottom),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List<Widget>.generate(
                             weekDaysShort.length,
                             (index) => Expanded(
                                     child: GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
                                   onTap: () => setState(() {
                                     pageController.animateToPage(index,
                                         duration: fabAnimationDuration,
                                         curve: Curves.ease);
                                   }),
-                                  child: Text(
-                                    weekDaysShort[index][0].toUpperCase() +
-                                        weekDaysShort[index][1],
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                          color: index == selectedDay
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .onSecondaryContainer,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      weekDaysShort[index][0].toUpperCase() +
+                                          weekDaysShort[index][1],
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                            color: index == selectedDay
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .onSecondaryContainer,
+                                          ),
+                                    ),
                                   ),
                                 ))),
                       ),
