@@ -142,7 +142,8 @@ class _DietPageState extends ConsumerState<DietPage> {
                                                             .getDishesList(
                                                                 context,
                                                                 scrollable:
-                                                                    false)
+                                                                    false,
+                                                        padding: EdgeInsets.zero)
                                                       ],
                                                     ))),
                                       ),

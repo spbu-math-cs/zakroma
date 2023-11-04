@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 
 class FlatList extends StatelessWidget {
-  final bool addSeparator;
+  final bool addDivider;
   final List<Widget> children;
   final Alignment childAlignment;
   final EdgeInsets childPadding;
   final Color? dividerColor;
+  final double dividerThickness;
   final EdgeInsets padding;
   final ScrollPhysics scrollPhysics;
 
   const FlatList({
     super.key,
-    this.addSeparator = true,
+    this.addDivider = true,
     this.childAlignment = Alignment.bottomLeft,
     this.childPadding = dPadding,
     this.dividerColor,
+    this.dividerThickness = 1.0,
     this.scrollPhysics = const ClampingScrollPhysics(),
     this.padding = dPadding,
     required this.children,
@@ -25,7 +27,7 @@ class FlatList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: addSeparator
+      child: addDivider
           ? ListView.separated(
               // вариант с разделителями
               shrinkWrap: true,
@@ -45,7 +47,7 @@ class FlatList extends StatelessWidget {
                         borderRadius: BorderRadius.circular(dBorderRadius),
                         clipBehavior: Clip.antiAlias,
                         child: Container(
-                          height: dDividerHeight,
+                          height: dDividerHeight * dividerThickness,
                           color: dividerColor ?? Theme.of(context).dividerColor,
                         ),
                       ),
