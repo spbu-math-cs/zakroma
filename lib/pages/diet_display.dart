@@ -4,11 +4,12 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/utility/animated_fab.dart';
+import 'package:zakroma_frontend/pages/meal_display.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
+import 'package:zakroma_frontend/utility/animated_fab.dart';
 
 class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});
@@ -18,16 +19,26 @@ class DietPage extends ConsumerStatefulWidget {
 }
 
 class _DietPageState extends ConsumerState<DietPage> {
-  bool editMode = false;
   int selectedDay = 0;
 
   @override
   Widget build(BuildContext context) {
+    final path = ref.watch(pathProvider);
     final diet = ref
         .watch(dietListProvider)
-        .getDietById(ref.read(pathProvider).dietId!)!;
+        .getDietById(path.dietId!)!;
     final pageController = PageController(initialPage: selectedDay);
+    // TODO(fix): лист не ребилдится при добавлении приёма пищи в диету
+    var mealModes = List.generate(
+        diet.days.length,
+        (index) => Map.fromIterable(List<bool>.generate(
+            diet.getDay(index).meals.length, (mealIndex) => false)));
+    // ref.listen(dietListProvider, (previous, next) {
+    //   mealModes = [...mealModes, ];
+    // });
+    // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
+    debugPrint('diet_display, path.editMode = ${path.editMode}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -66,7 +77,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                           controller: pageController,
                           children: List.generate(
                               weekDays.length,
-                              (index) => RRSurface(
+                              (dayIndex) => RRSurface(
                                   padding: dPadding,
                                   child: Column(
                                     children: [
@@ -84,7 +95,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: StyledHeadline(
-                                                text: weekDays[index],
+                                                text: weekDays[dayIndex],
                                                 textStyle: Theme.of(context)
                                                     .textTheme
                                                     .headlineLarge,
@@ -118,45 +129,75 @@ class _DietPageState extends ConsumerState<DietPage> {
                                         child: FlatList(
                                             padding: dPadding.copyWith(top: 0),
                                             children: List<Widget>.generate(
-                                                diet.getDay(index).meals.length,
-                                                (mealIndex) => Column(
+                                                diet
+                                                    .getDay(dayIndex)
+                                                    .meals
+                                                    .length, (mealIndex) {
+                                              var expanded = mealModes[dayIndex]
+                                                      [diet
+                                                          .getDay(dayIndex)
+                                                          .meals[mealIndex]] ??
+                                                  false;
+                                              return Column(
+                                                children: [
+                                                  // Название приёма пищи
+                                                  GestureDetector(
+                                                    behavior:
+                                                        HitTestBehavior.opaque,
+                                                    onTap: () {
+                                                      ref.read(pathProvider.notifier).update((state) => state.copyWith(
+                                                        dayIndex: dayIndex, mealId: diet
+                                                          .getDay(
+                                                          dayIndex)
+                                                          .meals[
+                                                      mealIndex]
+                                                          .id
+                                                      ));
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const MealPage()));
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // Название приёма пищи
-                                                        GestureDetector(
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              StyledHeadline(
-                                                                  text: diet
-                                                                      .getDay(
-                                                                          index)
-                                                                      .meals[
-                                                                          mealIndex]
-                                                                      .name,
-                                                                  textStyle: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .headlineMedium),
-                                                              const Icon(Icons
-                                                                  .arrow_forward_ios)
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        // Список блюд в данном приёме
-                                                        diet
-                                                            .getDay(index)
-                                                            .meals[mealIndex]
-                                                            .getDishesList(
-                                                                context,
-                                                                scrollable:
-                                                                    false,
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .zero)
+                                                        StyledHeadline(
+                                                            text: diet
+                                                                .getDay(
+                                                                    dayIndex)
+                                                                .meals[
+                                                                    mealIndex]
+                                                                .name,
+                                                            textStyle: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headlineMedium),
+                                                        expanded
+                                                            ? const Icon(Icons
+                                                                .expand_more)
+                                                            : const Icon(Icons
+                                                                .chevron_right)
                                                       ],
-                                                    ))),
+                                                    ),
+                                                  ),
+                                                  // Список блюд в данном приёме
+                                                  Visibility(
+                                                      visible: true,
+                                                      child: diet
+                                                          .getDay(dayIndex)
+                                                          .meals[mealIndex]
+                                                          .getDishesList(
+                                                              context,
+                                                              scrollable: false,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero))
+                                                ],
+                                              );
+                                            })),
                                       ),
                                     ],
                                   )))),
@@ -220,9 +261,7 @@ class _DietPageState extends ConsumerState<DietPage> {
           nav_bar.NavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
-            onTap: () => setState(() {
-              editMode = !editMode;
-            }),
+            onTap: () => ref.read(pathProvider.notifier).update((state) => state.copyWith(editMode: !state.editMode)),
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,
@@ -237,17 +276,11 @@ class _DietPageState extends ConsumerState<DietPage> {
       floatingActionButton: AnimatedFAB(
           text: 'Добавить приём',
           icon: Icons.add,
-          visible: editMode,
+          visible: path.editMode,
           onPressed: () {
             Meal.showAddMealDialog(
                 context, ref, diet.id, pageController.page!.round());
           }),
     );
-  }
-
-  @override
-  void dispose() {
-    editMode = false;
-    super.dispose();
   }
 }

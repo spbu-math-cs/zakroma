@@ -19,11 +19,9 @@ class MealPage extends ConsumerStatefulWidget {
 }
 
 class _MealPageState extends ConsumerState<MealPage> {
-  bool editMode = false;
-
   @override
   Widget build(BuildContext context) {
-    final path = ref.read(pathProvider);
+    final path = ref.watch(pathProvider);
     final meal = ref
         .watch(dietListProvider)
         .getDietById(path.dietId!)!
@@ -80,11 +78,9 @@ class _MealPageState extends ConsumerState<MealPage> {
           nav_bar.NavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
-            onTap: () {
-              setState(() {
-                editMode = !editMode;
-              });
-            },
+            onTap: () => ref
+                .read(pathProvider.notifier)
+                .update((state) => path.copyWith(editMode: !state.editMode)),
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,
@@ -99,7 +95,7 @@ class _MealPageState extends ConsumerState<MealPage> {
       floatingActionButton: AnimatedFAB(
           text: 'Добавить блюдо',
           icon: Icons.add,
-          visible: editMode,
+          visible: path.editMode,
           onPressed: () {
             Navigator.push(
                 context,
