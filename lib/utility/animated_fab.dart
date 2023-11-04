@@ -32,8 +32,33 @@ class AnimatedFAB extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               foregroundColor: Theme.of(context).colorScheme.primary,
               onPressed: onPressed,
-              label: Text(text),
-              icon: Icon(icon)),
+              label: AnimatedOpacity(
+                  opacity: visible ? 1 : 0,
+                  duration: fabAnimationDuration ~/ 2,
+                  curve: Curves.easeInCubic,
+                  child: AnimatedSlide(
+                      offset: visible ? Offset.zero : const Offset(0, 1),
+                      duration: fabAnimationDuration,
+                      curve: Curves.ease,
+                      child: AnimatedScale(
+                        scale: visible ? 1 : 0,
+                        duration: fabAnimationDuration,
+                        curve: Curves.ease,
+                        child: Text(text),
+                      ))),
+              icon: AnimatedOpacity(
+                  opacity: visible ? 1 : 0,
+                  duration: fabAnimationDuration ~/ 2,
+                  curve: Curves.easeInCubic,
+                  child: AnimatedSlide(
+                      offset: visible ? Offset.zero : const Offset(0, 1),
+                      duration: fabAnimationDuration,
+                      curve: Curves.ease,
+                      child: AnimatedScale(
+                          scale: visible ? 1 : 0,
+                          duration: fabAnimationDuration,
+                          curve: Curves.ease,
+                          child: Icon(icon))))),
         ),
       ),
     );
