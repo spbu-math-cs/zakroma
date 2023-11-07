@@ -17,6 +17,8 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 // TODO: окно входа
 // TODO: холодильник
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 void main() {
   runApp(const ProviderScope(child: MainPage()));
 }
@@ -34,6 +36,7 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       theme: ref.watch(themes.themeProvider).getThemeData(),
       home: const Zakroma(),
+      navigatorObservers: [routeObserver],
     );
   }
 }

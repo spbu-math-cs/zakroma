@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
+import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/pages/dish_search.dart';
 import 'package:zakroma_frontend/utility/animated_fab.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
@@ -12,13 +13,16 @@ import 'package:zakroma_frontend/utility/styled_headline.dart';
 class MealPage extends ConsumerStatefulWidget {
   final bool initialEdit;
 
-  const MealPage({super.key, this.initialEdit = false});
+  const MealPage({super.key, required this.initialEdit});
 
   @override
   ConsumerState createState() => _MealPageState();
 }
 
-class _MealPageState extends ConsumerState<MealPage> {
+class _MealPageState extends ConsumerState<MealPage> with RouteAware {
+  bool animateFAB = true;
+  bool editMode = false;
+
   @override
   Widget build(BuildContext context) {
     final path = ref.watch(pathProvider);
@@ -26,6 +30,8 @@ class _MealPageState extends ConsumerState<MealPage> {
         .watch(dietListProvider)
         .getDietById(path.dietId!)!
         .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
+
+    debugPrint('meal_display');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -78,9 +84,9 @@ class _MealPageState extends ConsumerState<MealPage> {
           nav_bar.NavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
-            onTap: () => ref
-                .read(pathProvider.notifier)
-                .update((state) => path.copyWith(editMode: !state.editMode)),
+            onTap: () => setState(() {
+              editMode = !editMode;
+            }),
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,
@@ -95,7 +101,8 @@ class _MealPageState extends ConsumerState<MealPage> {
       floatingActionButton: AnimatedFAB(
           text: 'Добавить блюдо',
           icon: Icons.add,
-          visible: path.editMode,
+          animate: animateFAB,
+          visible: editMode,
           onPressed: () {
             Navigator.push(
                 context,
@@ -103,5 +110,50 @@ class _MealPageState extends ConsumerState<MealPage> {
                     builder: (context) => const DishSearchPage()));
           }),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPop() {
+    debugPrint('meal_display dipPop');
+    setState(() {
+      animateFAB = false;
+    });
+  }
+
+  @override
+  void didPush() {
+    debugPrint('meal_display dipPush');
+    setState(() {
+      editMode = widget.initialEdit;
+      animateFAB = true;
+    });
+  }
+
+  @override
+  void didPopNext() {
+    debugPrint('meal_display dipPopNext');
+    setState(() {
+      animateFAB = true;
+    });
+  }
+
+  @override
+  void didPushNext() {
+    debugPrint('meal_display dipPushNext');
+    setState(() {
+      animateFAB = false;
+    });
   }
 }

@@ -26,7 +26,8 @@ class Meal {
   Dish getDish(int index) => dishes[index];
 
   static void showAddMealDialog(
-          BuildContext context, WidgetRef ref, String dietId, int dayIndex) =>
+          BuildContext context, WidgetRef ref, String dietId, int dayIndex,
+      {bool editMode = false,}) =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -63,7 +64,7 @@ class Meal {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MealPage()));
+                              builder: (context) => MealPage(initialEdit: editMode,)));
                     }
 
                   ),

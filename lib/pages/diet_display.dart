@@ -4,6 +4,7 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
+import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/pages/meal_display.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
@@ -18,17 +19,18 @@ class DietPage extends ConsumerStatefulWidget {
   ConsumerState createState() => _DietPageState();
 }
 
-class _DietPageState extends ConsumerState<DietPage> {
+class _DietPageState extends ConsumerState<DietPage> with RouteAware {
   int selectedDay = 0;
+  bool animateFAB = true;
+  bool editMode = false;
 
   @override
   Widget build(BuildContext context) {
-    final path = ref.watch(pathProvider);
     final diet = ref
         .watch(dietListProvider)
-        .getDietById(path.dietId!)!;
+        .getDietById(ref.read(pathProvider).dietId!)!;
     final pageController = PageController(initialPage: selectedDay);
-    // TODO(fix): лист не ребилдится при добавлении приёма пищи в диету
+    // TODO(fix): лист не обновляется при добавлении приёма пищи в диету
     var mealModes = List.generate(
         diet.days.length,
         (index) => Map.fromIterable(List<bool>.generate(
@@ -38,7 +40,7 @@ class _DietPageState extends ConsumerState<DietPage> {
     // });
     // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
-    debugPrint('diet_display, path.editMode = ${path.editMode}');
+    debugPrint('diet_display');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -157,7 +159,7 @@ class _DietPageState extends ConsumerState<DietPage> {
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  const MealPage()));
+                                                                  MealPage(initialEdit: editMode,)));
                                                     },
                                                     child: Row(
                                                       mainAxisAlignment:
@@ -261,7 +263,9 @@ class _DietPageState extends ConsumerState<DietPage> {
           nav_bar.NavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
-            onTap: () => ref.read(pathProvider.notifier).update((state) => state.copyWith(editMode: !state.editMode)),
+            onTap: () => setState(() {
+              editMode = !editMode;
+            }),
           ),
           nav_bar.NavigationDestination(
             icon: Icons.more_horiz,
@@ -276,11 +280,56 @@ class _DietPageState extends ConsumerState<DietPage> {
       floatingActionButton: AnimatedFAB(
           text: 'Добавить приём',
           icon: Icons.add,
-          visible: path.editMode,
+          animate: animateFAB,
+          visible: editMode,
           onPressed: () {
             Meal.showAddMealDialog(
-                context, ref, diet.id, pageController.page!.round());
+                context, ref, diet.id, pageController.page!.round(), editMode: editMode);
           }),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPop() {
+    debugPrint('diet_display dipPop');
+    setState(() {
+      editMode = false;
+    });
+  }
+
+  @override
+  void didPush() {
+    debugPrint('diet_display dipPush');
+    setState(() {
+      animateFAB = true;
+    });
+  }
+
+  @override
+  void didPopNext() {
+    debugPrint('diet_display dipPopNext');
+    setState(() {
+      animateFAB = true;
+    });
+  }
+
+  @override
+  void didPushNext() {
+    debugPrint('diet_display dipPushNext');
+    setState(() {
+      animateFAB = false;
+    });
   }
 }

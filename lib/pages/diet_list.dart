@@ -89,7 +89,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
             )
           : null,
       onTap: () {
-        ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: diets[index].id));
+        ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: diets[index].id,));
         Navigator.push(
             context,
             MaterialPageRoute(
