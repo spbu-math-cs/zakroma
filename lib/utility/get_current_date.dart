@@ -2,5 +2,5 @@ import '../constants.dart';
 
 String getCurrentDate() {
   final date = DateTime.now();
-  return '${date.day} ${months[date.month - 1]} — ${weekDaysShort[date.weekday - 1]}';
+  return '${date.day} ${Constants.months[date.month - 1]} — ${Constants.weekDaysShort[date.weekday - 1]}';
 }

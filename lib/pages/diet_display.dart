@@ -77,7 +77,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                               }),
                           controller: pageController,
                           children: List.generate(
-                              weekDays.length,
+                              Constants.weekDays.length,
                               (dayIndex) => RRSurface(
                                   padding: dPadding,
                                   child: Column(
@@ -96,7 +96,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: StyledHeadline(
-                                                text: weekDays[dayIndex]
+                                                text: Constants.weekDays[dayIndex]
                                                     .capitalize(),
                                                 textStyle: Theme.of(context)
                                                     .textTheme
@@ -222,18 +222,18 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List<Widget>.generate(
-                            weekDaysShort.length,
+                            Constants.weekDaysShort.length,
                             (index) => Expanded(
                                     child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () => setState(() {
                                     pageController.animateToPage(index,
-                                        duration: dAnimationDuration,
+                                        duration: Constants.dAnimationDuration,
                                         curve: Curves.ease);
                                   }),
                                   child: Center(
                                     child: Text(
-                                      weekDaysShort[index].capitalize(),
+                                      Constants.weekDaysShort[index].capitalize(),
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context)
                                           .textTheme

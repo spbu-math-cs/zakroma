@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'constants.dart';
 import 'pages/diet_list.dart';
 import 'pages/home.dart';
 import 'pages/settings.dart';
@@ -35,19 +36,20 @@ class MainPage extends ConsumerWidget {
   }
 }
 
-class Zakroma extends StatefulWidget {
+class Zakroma extends ConsumerStatefulWidget {
   const Zakroma({super.key});
 
   @override
-  State<Zakroma> createState() => _ZakromaState();
+  ConsumerState<Zakroma> createState() => _ZakromaState();
 }
 
-class _ZakromaState extends State<Zakroma> {
+class _ZakromaState extends ConsumerState<Zakroma> {
   int currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    Future(() => calculateConstants(ref, MediaQuery.of(context).size.width));
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
@@ -94,16 +96,18 @@ class _ZakromaState extends State<Zakroma> {
           ),
         ],
       ),
-      body: PageView(
-        controller: pageController,
-        onPageChanged: (index) => setState(() {
-          currentPageIndex = index;
-        }),
-        children: const [
-          HomePage(),
-          DietListPage(),
-          SettingsPage(),
-        ],
+      body: SafeArea(
+        child: PageView(
+          controller: pageController,
+          onPageChanged: (index) => setState(() {
+            currentPageIndex = index;
+          }),
+          children: const [
+            HomePage(),
+            DietListPage(),
+            SettingsPage(),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+
 import '../constants.dart';
 import '../utility/get_current_date.dart';
 import '../utility/rr_buttons.dart';
@@ -14,6 +15,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     const groupMembersDisplayCount = 3;
+    final constants = ref.watch(constantsProvider);
     // final currentDiet = ref.watch(dietListProvider).firstOrNull;
     // final List<Meal> todayMeals = currentDiet == null
     //     ? []
@@ -23,310 +25,309 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Отступ над заголовком приложения
-            Expanded(
-                flex: 30,
-                child: Container(
-                  color: Colors.transparent,
-                )),
-            // Заголовок приложения: «Закрома»
-            Expanded(
-              flex: 71,
-              child: Padding(
-                padding: dAppHeadlinePadding,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => StyledHeadline(
-                      text: 'Закрома',
-                      textStyle:
-                          Theme.of(context).textTheme.displaySmall!.copyWith(
-                                fontSize: 3 * constraints.maxHeight / 4,
-                              ),
-                    ),
+      body: Column(
+        children: [
+          // Отступ над заголовком приложения
+          Expanded(
+              flex: 30,
+              child: Container(
+                color: Colors.transparent,
+              )),
+          // Заголовок приложения: «Закрома»
+          Expanded(
+            flex: 71,
+            child: Padding(
+              padding: constants.dAppHeadlinePadding,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: LayoutBuilder(
+                  builder: (context, constraints) => StyledHeadline(
+                    text: 'Закрома',
+                    textStyle:
+                        Theme.of(context).textTheme.displaySmall!.copyWith(
+                              fontSize: 3 * constraints.maxHeight / 4,
+                            ),
                   ),
                 ),
               ),
             ),
-            // Пользователи в группе
-            Expanded(
-                flex: 100,
-                child: Padding(
-                  padding: dBlockPadding - dCardPaddingHalf,
-                  child: Row(
-                    children: List<Widget>.generate(
-                        groupMembersDisplayCount + 1, // +1 для плюса слева
-                        (index) => const Expanded(
-                              child: Padding(
-                                padding: dCardPaddingHalf,
-                                child: Material(
-                                  shape: CircleBorder(),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Placeholder(),
-                                ),
+          ),
+          // Пользователи в группе
+          Expanded(
+              flex: 100,
+              child: Padding(
+                padding: constants.dBlockPadding - constants.dCardPaddingHalf,
+                child: Row(
+                  children: List<Widget>.generate(
+                      groupMembersDisplayCount + 1, // +1 для плюса слева
+                      (index) => Expanded(
+                            child: Padding(
+                              padding: constants.dCardPaddingHalf,
+                              child: const Material(
+                                shape: CircleBorder(),
+                                clipBehavior: Clip.antiAlias,
+                                child: Placeholder(),
                               ),
-                            )),
-                  ),
-                )),
-            // Статус холодильника/доставки + корзина
-            Expanded(
-                flex: 116,
-                child: Padding(
-                  padding: dBlockPadding,
-                  child: Row(
-                    children: [
-                      // Статус холодильника/доставки
-                      // TODO: сделать листание + индикаторы снизу
-                      Expanded(
-                          flex: 2,
-                          child: RRButton(
-                              onTap: () {},
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              child: const Placeholder())),
-                      // Корзина
-                      Expanded(
-                          child: RRButton(
-                              onTap: () {},
-                              padding: EdgeInsets.only(left: dBlockPadding.left),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              child: const Placeholder())),
-                    ],
-                  ),
-                )),
-            // Приёмы пищи на сегодня
-            Expanded(
-                flex: 183,
-                child: Padding(
-                  padding: dBlockPadding,
-                  child: RRSurface(
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          // Заголовок: сегодняшняя дата и день недели
-                          Expanded(
-                              child: Padding(
-                            padding: dHeadingPadding,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: StyledHeadline(
-                                  text: getCurrentDate(),
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(fontWeight: FontWeight.bold)),
                             ),
                           )),
-                          // Перечисление приёмов пищи на сегодня
-                          // TODO: реализовать листание + индикаторы снизу
-                          Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: dBlockPadding - dCardPadding,
-                                // TODO: заменить Row на PageView
-                                child: Row(
-                                  // TODO: заменить хардкод-приёмы на генератор приёмов
-                                  children: [
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            padding: dCardPadding,
-                                            child: StyledHeadline(
-                                                text: 'Завтрак',
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall))),
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            padding: dCardPadding,
-                                            child: StyledHeadline(
-                                                text: 'Обед',
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall))),
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            padding: dCardPadding,
-                                            child: StyledHeadline(
-                                                text: 'Ужин',
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall))),
-                                  ],
-                                ),
-                              ))
-                        ],
-                      )),
-                )),
-            // Мои рецепты
-            Expanded(
-                flex: 218,
-                child: Padding(
-                  padding: dBlockPadding,
-                  child: RRSurface(
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          // Заголовок: «Мои рецепты»
-                          Expanded(
-                              child: Padding(
-                            padding: dHeadingPadding,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: StyledHeadline(
-                                  text: 'Мои рецепты',
-                                  textStyle: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(fontWeight: FontWeight.bold)),
-                            ),
-                          )),
-                          // Перечисление приёмов пищи на сегодня
-                          // TODO: реализовать листание + индикаторы снизу
-                          Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: dBlockPadding - dCardPadding,
-                                // TODO: заменить Row на PageView
-                                child: Row(
-                                  // TODO: заменить хардкод-приёмы на генератор приёмов
-                                  children: [
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            foregroundDecoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      dInnerRadius),
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surface),
-                                            ),
-                                            padding: dCardPadding,
-                                            child: Column(
-                                              children: [
-                                                const Expanded(
-                                                    flex: 3,
-                                                    child: Placeholder()),
-                                                Expanded(
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: dLabelPadding,
-                                                      child: StyledHeadline(
-                                                          text: 'Борщ',
-                                                          textStyle: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .headlineSmall),
-                                                    ),
+                ),
+              )),
+          // Статус холодильника/доставки + корзина
+          Expanded(
+              flex: 116,
+              child: Padding(
+                padding: constants.dBlockPadding,
+                child: Row(
+                  children: [
+                    // Статус холодильника/доставки
+                    // TODO: сделать листание + индикаторы снизу
+                    Expanded(
+                        flex: 2,
+                        child: RRButton(
+                            onTap: () {},
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer,
+                            child: const Placeholder())),
+                    // Корзина
+                    Expanded(
+                        child: RRButton(
+                            onTap: () {},
+                            padding:
+                                EdgeInsets.only(left: dBlockPadding.left),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer,
+                            child: const Placeholder())),
+                  ],
+                ),
+              )),
+          // Приёмы пищи на сегодня
+          Expanded(
+              flex: 183,
+              child: Padding(
+                padding: constants.dBlockPadding,
+                child: RRSurface(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        // Заголовок: сегодняшняя дата и день недели
+                        Expanded(
+                            child: Padding(
+                          padding: constants.dHeadingPadding,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: StyledHeadline(
+                                text: getCurrentDate(),
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium!
+                                    .copyWith(fontWeight: FontWeight.bold)),
+                          ),
+                        )),
+                        // Перечисление приёмов пищи на сегодня
+                        // TODO: реализовать листание + индикаторы снизу
+                        Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: constants.dBlockPadding - constants.dCardPadding,
+                              // TODO: заменить Row на PageView
+                              child: Row(
+                                // TODO: заменить хардкод-приёмы на генератор приёмов
+                                children: [
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          padding: constants.dCardPadding,
+                                          child: StyledHeadline(
+                                              text: 'Завтрак',
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          padding: constants.dCardPadding,
+                                          child: StyledHeadline(
+                                              text: 'Обед',
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          padding: constants.dCardPadding,
+                                          child: StyledHeadline(
+                                              text: 'Ужин',
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall))),
+                                ],
+                              ),
+                            ))
+                      ],
+                    )),
+              )),
+          // Мои рецепты
+          Expanded(
+              flex: 218,
+              child: Padding(
+                padding: constants.dBlockPadding,
+                child: RRSurface(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        // Заголовок: «Мои рецепты»
+                        Expanded(
+                            child: Padding(
+                          padding: constants.dHeadingPadding,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: StyledHeadline(
+                                text: 'Мои рецепты',
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium!
+                                    .copyWith(fontWeight: FontWeight.bold)),
+                          ),
+                        )),
+                        // Перечисление приёмов пищи на сегодня
+                        // TODO: реализовать листание + индикаторы снизу
+                        Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: constants.dBlockPadding - constants.dCardPadding,
+                              // TODO: заменить Row на PageView
+                              child: Row(
+                                // TODO: заменить хардкод-приёмы на генератор приёмов
+                                children: [
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          foregroundDecoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    dInnerRadius),
+                                            border: Border.all(
+                                                width: 2,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surface),
+                                          ),
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              const Expanded(
+                                                  flex: 3,
+                                                  child: Placeholder()),
+                                              Expanded(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding: constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text: 'Борщ',
+                                                        textStyle: Theme.of(
+                                                                context)
+                                                            .textTheme
+                                                            .headlineSmall),
                                                   ),
                                                 ),
-                                              ],
-                                            ))),
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            foregroundDecoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      dInnerRadius),
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surface),
-                                            ),
-                                            padding: dCardPadding,
-                                            child: Column(
-                                              children: [
-                                                const Expanded(
-                                                    flex: 3,
-                                                    child: Placeholder()),
-                                                Expanded(
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: dLabelPadding,
-                                                      child: StyledHeadline(
-                                                          text:
-                                                              'Пюре с отбивной',
-                                                          textStyle: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .headlineSmall),
-                                                    ),
+                                              ),
+                                            ],
+                                          ))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          foregroundDecoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    dInnerRadius),
+                                            border: Border.all(
+                                                width: 2,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surface),
+                                          ),
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              const Expanded(
+                                                  flex: 3,
+                                                  child: Placeholder()),
+                                              Expanded(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding: constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text:
+                                                            'Пюре с отбивной',
+                                                        textStyle: Theme.of(
+                                                                context)
+                                                            .textTheme
+                                                            .headlineSmall),
                                                   ),
                                                 ),
-                                              ],
-                                            ))),
-                                    Expanded(
-                                        child: RRButton(
-                                            onTap: () {},
-                                            borderRadius: dInnerRadius,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            foregroundDecoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      dInnerRadius),
-                                              border: Border.all(
-                                                  width: 2,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surface),
-                                            ),
-                                            padding: dCardPadding,
-                                            child: Column(
-                                              children: [
-                                                const Expanded(
-                                                    flex: 3,
-                                                    child: Placeholder()),
-                                                Expanded(
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: dLabelPadding,
-                                                      child: StyledHeadline(
-                                                          text:
-                                                              'Цезарь с курицей',
-                                                          textStyle: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .headlineSmall),
-                                                    ),
+                                              ),
+                                            ],
+                                          ))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          borderRadius: dInnerRadius,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          foregroundDecoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    dInnerRadius),
+                                            border: Border.all(
+                                                width: 2,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surface),
+                                          ),
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              const Expanded(
+                                                  flex: 3,
+                                                  child: Placeholder()),
+                                              Expanded(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding: constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text:
+                                                            'Цезарь с курицей',
+                                                        textStyle: Theme.of(
+                                                                context)
+                                                            .textTheme
+                                                            .headlineSmall),
                                                   ),
                                                 ),
-                                              ],
-                                            ))),
-                                  ],
-                                ),
-                              ))
-                        ],
-                      )),
-                )),
-          ],
-        ),
+                                              ),
+                                            ],
+                                          ))),
+                                ],
+                              ),
+                            ))
+                      ],
+                    )),
+              )),
+        ],
       ),
     );
   }

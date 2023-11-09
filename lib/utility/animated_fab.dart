@@ -22,14 +22,14 @@ class AnimatedFAB extends StatelessWidget {
     if (animate) {
       return AnimatedOpacity(
         opacity: visible ? 1 : 0,
-        duration: dAnimationDuration,
+        duration: Constants.dAnimationDuration,
         child: AnimatedSlide(
           offset: visible ? Offset.zero : const Offset(0, 1),
-          duration: dAnimationDuration,
+          duration: Constants.dAnimationDuration,
           curve: animationCurve,
           child: AnimatedScale(
             scale: visible ? 1 : 0,
-            duration: dAnimationDuration,
+            duration: Constants.dAnimationDuration,
             curve: animationCurve,
             child: FloatingActionButton.extended(
                 elevation: visible ? null : 0,
@@ -38,13 +38,13 @@ class AnimatedFAB extends StatelessWidget {
                 onPressed: onPressed,
                 label: AnimatedSlide(
                   offset: visible ? Offset.zero : const Offset(0, 1) ~/ 2,
-                  duration: dAnimationDuration,
+                  duration: Constants.dAnimationDuration,
                   curve: animationCurve,
                   child: Text(text),
                 ),
                 icon: AnimatedSlide(
                     offset: visible ? Offset.zero : const Offset(0, 1) ~/ 2,
-                    duration: dAnimationDuration,
+                    duration: Constants.dAnimationDuration,
                     curve: animationCurve,
                     child: Icon(icon))),
           ),

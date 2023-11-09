@@ -17,48 +17,46 @@ class DietListPage extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Заголовок
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.only(left: dPadding.horizontal),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => StyledHeadline(
-                      text: 'Рационы',
-                      textStyle:
-                          Theme.of(context).textTheme.displaySmall!.copyWith(
-                                fontSize: 3 * constraints.maxHeight / 4,
-                              ),
-                    ),
+      body: Column(
+        children: [
+          // Заголовок
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.only(left: dPadding.horizontal),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: LayoutBuilder(
+                  builder: (context, constraints) => StyledHeadline(
+                    text: 'Рационы',
+                    textStyle:
+                        Theme.of(context).textTheme.displaySmall!.copyWith(
+                              fontSize: 3 * constraints.maxHeight / 4,
+                            ),
                   ),
                 ),
               ),
             ),
-            // Список всех рационов
-            Expanded(
-              flex: 10,
-              child: RRSurface(
-                padding: dPadding.copyWith(bottom: dPadding.vertical),
-                child: Padding(
-                  padding: EdgeInsets.only(top: dPadding.top),
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return ListView.builder(
-                        itemCount: diets.length + 1,
-                        itemBuilder: (context, index) => SizedBox(
-                              height: constraints.maxHeight / 5,
-                              child: getDietDisplay(context, ref, index),
-                            ));
-                  }),
-                ),
+          ),
+          // Список всех рационов
+          Expanded(
+            flex: 10,
+            child: RRSurface(
+              padding: dPadding.copyWith(bottom: dPadding.vertical),
+              child: Padding(
+                padding: EdgeInsets.only(top: dPadding.top),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return ListView.builder(
+                      itemCount: diets.length + 1,
+                      itemBuilder: (context, index) => SizedBox(
+                            height: constraints.maxHeight / 5,
+                            child: getDietDisplay(context, ref, index),
+                          ));
+                }),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
