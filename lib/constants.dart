@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void calculateConstants(WidgetRef ref, double screenWidth) {
 
-  final double paddingUnit = screenWidth / 54;
+  final double paddingUnit = screenWidth / 48;
   debugPrint('paddingUnit = $paddingUnit');
 
   /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).

@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
         children: [
           // Заголовок приложения: «Закрома»
           Expanded(
-            flex: 37,
+            flex: 9,
             child: Padding(
               padding: constants.dAppHeadlinePadding,
               child: Align(
@@ -43,7 +43,7 @@ class HomePage extends ConsumerWidget {
           ),
           // Пользователи в группе
           Expanded(
-              flex: 50,
+              flex: 12,
               child: Padding(
                 padding: constants.dBlockPadding - constants.dCardPaddingHalf,
                 child: Row(
@@ -63,7 +63,7 @@ class HomePage extends ConsumerWidget {
               )),
           // Статус холодильника/доставки + корзина
           Expanded(
-              flex: 57,
+              flex: 14,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: Row(
@@ -94,7 +94,7 @@ class HomePage extends ConsumerWidget {
               )),
           // Приёмы пищи на сегодня
           Expanded(
-              flex: 91,
+              flex: 23,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: RRSurface(
@@ -103,7 +103,7 @@ class HomePage extends ConsumerWidget {
                       children: [
                         // Заголовок: сегодняшняя дата и день недели
                         Expanded(
-                            flex: 6,
+                            flex: 7,
                             child: Padding(
                               padding: constants.dHeadingPadding,
                               child: LayoutBuilder(
@@ -130,7 +130,7 @@ class HomePage extends ConsumerWidget {
                         // Перечисление приёмов пищи на сегодня
                         // TODO: реализовать листание + индикаторы снизу
                         Expanded(
-                            flex: 15,
+                            flex: 14,
                             child: Padding(
                               padding: constants.dBlockPadding -
                                   constants.dCardPadding,
@@ -170,13 +170,13 @@ class HomePage extends ConsumerWidget {
                                                   .headlineSmall))),
                                 ],
                               ),
-                            ))
+                            )),
                       ],
                     )),
               )),
           // Мои рецепты
           Expanded(
-              flex: 109,
+              flex: 27,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: RRSurface(
@@ -185,7 +185,7 @@ class HomePage extends ConsumerWidget {
                       children: [
                         // Заголовок: «Мои рецепты»
                         Expanded(
-                          flex: 6,
+                          flex: 7,
                             child: Padding(
                           padding: constants.dHeadingPadding,
                           child: LayoutBuilder(
@@ -208,10 +208,10 @@ class HomePage extends ConsumerWidget {
                             }
                           ),
                         )),
-                        // Перечисление приёмов пищи на сегодня
+                        // Перечисление рецептов
                         // TODO: реализовать листание + индикаторы снизу
                         Expanded(
-                            flex: 19,
+                            flex: 18,
                             child: Padding(
                               padding: constants.dBlockPadding -
                                   constants.dCardPadding,
@@ -239,9 +239,10 @@ class HomePage extends ConsumerWidget {
                                           child: Column(
                                             children: [
                                               const Expanded(
-                                                  flex: 3,
+                                                  flex: 49,
                                                   child: Placeholder()),
                                               Expanded(
+                                                flex: 23,
                                                 child: Center(
                                                   child: Padding(
                                                     padding:
@@ -251,7 +252,7 @@ class HomePage extends ConsumerWidget {
                                                         textStyle:
                                                             Theme.of(context)
                                                                 .textTheme
-                                                                .headlineSmall),
+                                                                .headlineSmall!.copyWith(height: 1)),
                                                   ),
                                                 ),
                                               ),
@@ -277,9 +278,10 @@ class HomePage extends ConsumerWidget {
                                           child: Column(
                                             children: [
                                               const Expanded(
-                                                  flex: 3,
+                                                  flex: 49,
                                                   child: Placeholder()),
                                               Expanded(
+                                                flex: 23,
                                                 child: Center(
                                                   child: Padding(
                                                     padding:
@@ -315,9 +317,10 @@ class HomePage extends ConsumerWidget {
                                           child: Column(
                                             children: [
                                               const Expanded(
-                                                  flex: 3,
+                                                  flex: 49,
                                                   child: Placeholder()),
                                               Expanded(
+                                                flex: 23,
                                                 child: Center(
                                                   child: Padding(
                                                     padding:

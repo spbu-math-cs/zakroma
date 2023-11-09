@@ -104,7 +104,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Padding(
-              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 86 * ref.read(constantsProvider).dAppHeadlinePadding.bottom)),
+              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 85 * ref.read(constantsProvider).dAppHeadlinePadding.bottom)),
               child: PageView(
                 controller: pageController,
                 onPageChanged: (index) => setState(() {
