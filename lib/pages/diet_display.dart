@@ -237,7 +237,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                                     .secondary
                                                 : Theme.of(context)
                                                     .colorScheme
-                                                    .onSecondaryContainer,
+                                                    .onPrimaryContainer,
                                           ),
                                     ),
                                   ),

@@ -64,7 +64,9 @@ class _ZakromaState extends State<Zakroma> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Theme.of(context).colorScheme.background));
+        // TODO: закомментированный вариант не затемняется на андроиде при затемнении всего экрана (slidingSheet, prompt'ы с текстом)
+        // statusBarColor: Theme.of(context).colorScheme.primary));
+        statusBarColor: Colors.transparent));
 
     final pageController = PageController();
 

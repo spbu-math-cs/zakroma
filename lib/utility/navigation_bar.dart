@@ -27,7 +27,7 @@ class FunctionalBottomBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           color: backgroundColor ??
-              Theme.of(context).colorScheme.secondaryContainer,
+              Theme.of(context).colorScheme.primaryContainer,
           boxShadow: [
             BoxShadow(
                 color: Theme.of(context).colorScheme.shadow,
@@ -55,7 +55,7 @@ class FunctionalBottomBar extends StatelessWidget {
                       label: navigationBarIcons[index].label,
                       color: navigationBarIcons[index].color ??
                           buttonColor ??
-                          Theme.of(context).colorScheme.onSecondaryContainer,
+                          Theme.of(context).colorScheme.onPrimaryContainer,
                       selectedIcon: navigationBarIcons[index].selectedIcon,
                       selectedColor: navigationBarIcons[index].selectedColor ??
                           selectedButtonColor ??
