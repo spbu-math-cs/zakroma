@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
-import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/styled_headline.dart';
+import '../constants.dart';
+import '../utility/flat_list.dart';
+import '../utility/rr_surface.dart';
+import '../utility/styled_headline.dart';
 
 // TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
 

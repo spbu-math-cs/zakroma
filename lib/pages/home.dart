@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/get_current_date.dart';
-import 'package:zakroma_frontend/utility/rr_buttons.dart';
-import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/styled_headline.dart';
+import '../constants.dart';
+import '../utility/get_current_date.dart';
+import '../utility/rr_buttons.dart';
+import '../utility/rr_surface.dart';
+import '../utility/styled_headline.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {

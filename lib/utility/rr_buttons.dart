@@ -1,6 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart';
+import '../constants.dart';
 
 class RRButton extends StatelessWidget {
   final Color? backgroundColor;

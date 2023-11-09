@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart';
+import '../constants.dart';
 
 class RRSurface extends StatelessWidget {
   final Widget child;

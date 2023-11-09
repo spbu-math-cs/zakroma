@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/dish.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/pages/meal_display.dart';
-import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
+import '../constants.dart';
+import '../data_cls/dish.dart';
+import '../data_cls/path.dart';
+import '../pages/meal_display.dart';
+import '../utility/alert_text_prompt.dart';
+import '../utility/flat_list.dart';
 
 import 'diet.dart';
 

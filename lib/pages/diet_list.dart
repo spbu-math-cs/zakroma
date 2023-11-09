@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/pages/diet_display.dart';
-import 'package:zakroma_frontend/utility/rr_buttons.dart';
-import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/styled_headline.dart';
+import '../constants.dart';
+import '../data_cls/diet.dart';
+import '../data_cls/path.dart';
+import '../pages/diet_display.dart';
+import '../utility/rr_buttons.dart';
+import '../utility/rr_surface.dart';
+import '../utility/styled_headline.dart';
 
 class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});

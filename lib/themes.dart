@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import '../utility/color_manipulator.dart';
 
 class ThemeSettings {
   final ThemeData _themeData;

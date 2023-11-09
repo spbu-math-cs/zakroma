@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:http/http.dart' as http;
-import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/diet_day.dart';
+import '../data_cls/diet.dart';
+import '../data_cls/diet_day.dart';
 
 // TODO: доделать
 

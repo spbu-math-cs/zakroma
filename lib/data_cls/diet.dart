@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:zakroma_frontend/data_cls/diet_day.dart';
-import 'package:zakroma_frontend/data_cls/dish.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/pages/diet_display.dart';
-import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
+import '../data_cls/diet_day.dart';
+import '../data_cls/dish.dart';
+import '../data_cls/meal.dart';
+import '../data_cls/path.dart';
+import '../pages/diet_display.dart';
+import '../utility/alert_text_prompt.dart';
 
 @immutable
 class Diet {

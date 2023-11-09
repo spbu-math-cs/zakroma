@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/pages/diet_list.dart';
-import 'package:zakroma_frontend/pages/home.dart';
-import 'package:zakroma_frontend/pages/settings.dart';
-import 'package:zakroma_frontend/themes.dart' as themes;
-import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
+import 'pages/diet_list.dart';
+import 'pages/home.dart';
+import 'pages/settings.dart';
+import 'themes.dart' as themes;
+import 'utility/navigation_bar.dart' as nav_bar;
 
-
-// TODO: доделать главный экран
-// TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
-// TODO: продукт развёрнутый (раскрывается при нажатии? нужен где??)
-// TODO: страница составления рациона (список блюд)
 // TODO: корзина (список продуктов для покупки)
 // TODO: окно входа
 // TODO: холодильник

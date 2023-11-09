@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/main.dart';
-import 'package:zakroma_frontend/pages/meal_display.dart';
-import 'package:zakroma_frontend/utility/animated_fab.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
-import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
-import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/styled_headline.dart';
+import '../constants.dart';
+import '../data_cls/diet.dart';
+import '../data_cls/meal.dart';
+import '../data_cls/path.dart';
+import '../main.dart';
+import '../pages/meal_display.dart';
+import '../utility/animated_fab.dart';
+import '../utility/flat_list.dart';
+import '../utility/navigation_bar.dart' as nav_bar;
+import '../utility/rr_surface.dart';
+import '../utility/styled_headline.dart';
 
 class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});
