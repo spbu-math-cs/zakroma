@@ -79,9 +79,7 @@ class _ZakromaState extends State<Zakroma> {
           setState(() {
             currentPageIndex = index;
           });
-          pageController.animateToPage(index,
-              duration: dAnimationDuration,
-              curve: Curves.ease);
+          pageController.jumpToPage(index);
         },
         selectedIndex: currentPageIndex,
         navigationBarIcons: const [
