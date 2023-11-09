@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +51,8 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   void initState() {
     super.initState();
+    // считаем константы для текущего устройства
+    // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
     Future(() => calculateConstants(ref, MediaQuery.of(context).size.width));
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -97,16 +101,23 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         ],
       ),
       body: SafeArea(
-        child: PageView(
-          controller: pageController,
-          onPageChanged: (index) => setState(() {
-            currentPageIndex = index;
-          }),
-          children: const [
-            HomePage(),
-            DietListPage(),
-            SettingsPage(),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Padding(
+              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 86 * ref.read(constantsProvider).dAppHeadlinePadding.bottom)),
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (index) => setState(() {
+                  currentPageIndex = index;
+                }),
+                children: const [
+                  HomePage(),
+                  DietListPage(),
+                  SettingsPage(),
+                ],
+              ),
+            );
+          }
         ),
       ),
     );

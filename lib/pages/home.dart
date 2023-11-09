@@ -27,34 +27,23 @@ class HomePage extends ConsumerWidget {
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
-          // Отступ над заголовком приложения
-          Expanded(
-              flex: 30,
-              child: Container(
-                color: Colors.transparent,
-              )),
           // Заголовок приложения: «Закрома»
           Expanded(
-            flex: 71,
+            flex: 37,
             child: Padding(
               padding: constants.dAppHeadlinePadding,
               child: Align(
-                alignment: Alignment.centerLeft,
-                child: LayoutBuilder(
-                  builder: (context, constraints) => StyledHeadline(
-                    text: 'Закрома',
-                    textStyle:
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
-                  ),
+                alignment: Alignment.topLeft,
+                child: StyledHeadline(
+                  text: 'Закрома',
+                  textStyle: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
             ),
           ),
           // Пользователи в группе
           Expanded(
-              flex: 100,
+              flex: 50,
               child: Padding(
                 padding: constants.dBlockPadding - constants.dCardPaddingHalf,
                 child: Row(
@@ -74,7 +63,7 @@ class HomePage extends ConsumerWidget {
               )),
           // Статус холодильника/доставки + корзина
           Expanded(
-              flex: 116,
+              flex: 57,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: Row(
@@ -82,30 +71,30 @@ class HomePage extends ConsumerWidget {
                     // Статус холодильника/доставки
                     // TODO: сделать листание + индикаторы снизу
                     Expanded(
-                        flex: 2,
                         child: RRButton(
                             onTap: () {},
                             padding: EdgeInsets.zero,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primaryContainer,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primaryContainer,
                             child: const Placeholder())),
                     // Корзина
-                    Expanded(
-                        child: RRButton(
-                            onTap: () {},
-                            padding:
-                                EdgeInsets.only(left: dBlockPadding.left),
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primaryContainer,
-                            child: const Placeholder())),
+                    Padding(
+                      padding: EdgeInsets.only(left: dBlockPadding.left),
+                      child: SizedBox(
+                        width: 12 * constants.dAppHeadlinePadding.bottom,
+                          child: RRButton(
+                              onTap: () {},
+                              padding: EdgeInsets.zero,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primaryContainer,
+                              child: const Placeholder())),
+                    ),
                   ],
                 ),
               )),
           // Приёмы пищи на сегодня
           Expanded(
-              flex: 183,
+              flex: 91,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: RRSurface(
@@ -114,24 +103,37 @@ class HomePage extends ConsumerWidget {
                       children: [
                         // Заголовок: сегодняшняя дата и день недели
                         Expanded(
+                            flex: 6,
                             child: Padding(
-                          padding: constants.dHeadingPadding,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: StyledHeadline(
-                                text: getCurrentDate(),
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium!
-                                    .copyWith(fontWeight: FontWeight.bold)),
-                          ),
-                        )),
+                              padding: constants.dHeadingPadding,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Align(
+                                    alignment: Alignment.topLeft,
+                                    child: StyledHeadline(
+                                        text: getCurrentDate(),
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15 * constraints.maxHeight / 16,
+                                              height: 1,
+                                              leadingDistribution:
+                                                  TextLeadingDistribution
+                                                      .proportional,
+                                            )),
+                                  );
+                                }
+                              ),
+                            )),
                         // Перечисление приёмов пищи на сегодня
                         // TODO: реализовать листание + индикаторы снизу
                         Expanded(
-                            flex: 2,
+                            flex: 15,
                             child: Padding(
-                              padding: constants.dBlockPadding - constants.dCardPadding,
+                              padding: constants.dBlockPadding -
+                                  constants.dCardPadding,
                               // TODO: заменить Row на PageView
                               child: Row(
                                 // TODO: заменить хардкод-приёмы на генератор приёмов
@@ -174,7 +176,7 @@ class HomePage extends ConsumerWidget {
               )),
           // Мои рецепты
           Expanded(
-              flex: 218,
+              flex: 109,
               child: Padding(
                 padding: constants.dBlockPadding,
                 child: RRSurface(
@@ -183,24 +185,36 @@ class HomePage extends ConsumerWidget {
                       children: [
                         // Заголовок: «Мои рецепты»
                         Expanded(
+                          flex: 6,
                             child: Padding(
                           padding: constants.dHeadingPadding,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: StyledHeadline(
-                                text: 'Мои рецепты',
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium!
-                                    .copyWith(fontWeight: FontWeight.bold)),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Align(
+                                alignment: Alignment.topLeft,
+                                child: StyledHeadline(
+                                    text: 'Мои рецепты',
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15 * constraints.maxHeight / 16,
+                                          height: 1,
+                                          leadingDistribution:
+                                              TextLeadingDistribution.proportional,
+                                        )),
+                              );
+                            }
                           ),
                         )),
                         // Перечисление приёмов пищи на сегодня
                         // TODO: реализовать листание + индикаторы снизу
                         Expanded(
-                            flex: 2,
+                            flex: 19,
                             child: Padding(
-                              padding: constants.dBlockPadding - constants.dCardPadding,
+                              padding: constants.dBlockPadding -
+                                  constants.dCardPadding,
                               // TODO: заменить Row на PageView
                               child: Row(
                                 // TODO: заменить хардкод-приёмы на генератор приёмов
@@ -213,9 +227,8 @@ class HomePage extends ConsumerWidget {
                                               .colorScheme
                                               .primaryContainer,
                                           foregroundDecoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    dInnerRadius),
+                                            borderRadius: BorderRadius.circular(
+                                                dInnerRadius),
                                             border: Border.all(
                                                 width: 2,
                                                 color: Theme.of(context)
@@ -231,13 +244,14 @@ class HomePage extends ConsumerWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: constants.dLabelPadding,
+                                                    padding:
+                                                        constants.dLabelPadding,
                                                     child: StyledHeadline(
                                                         text: 'Борщ',
-                                                        textStyle: Theme.of(
-                                                                context)
-                                                            .textTheme
-                                                            .headlineSmall),
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall),
                                                   ),
                                                 ),
                                               ),
@@ -251,9 +265,8 @@ class HomePage extends ConsumerWidget {
                                               .colorScheme
                                               .primaryContainer,
                                           foregroundDecoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    dInnerRadius),
+                                            borderRadius: BorderRadius.circular(
+                                                dInnerRadius),
                                             border: Border.all(
                                                 width: 2,
                                                 color: Theme.of(context)
@@ -269,14 +282,14 @@ class HomePage extends ConsumerWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: constants.dLabelPadding,
+                                                    padding:
+                                                        constants.dLabelPadding,
                                                     child: StyledHeadline(
-                                                        text:
-                                                            'Пюре с отбивной',
-                                                        textStyle: Theme.of(
-                                                                context)
-                                                            .textTheme
-                                                            .headlineSmall),
+                                                        text: 'Пюре с отбивной',
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall),
                                                   ),
                                                 ),
                                               ),
@@ -290,9 +303,8 @@ class HomePage extends ConsumerWidget {
                                               .colorScheme
                                               .primaryContainer,
                                           foregroundDecoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    dInnerRadius),
+                                            borderRadius: BorderRadius.circular(
+                                                dInnerRadius),
                                             border: Border.all(
                                                 width: 2,
                                                 color: Theme.of(context)
@@ -308,14 +320,15 @@ class HomePage extends ConsumerWidget {
                                               Expanded(
                                                 child: Center(
                                                   child: Padding(
-                                                    padding: constants.dLabelPadding,
+                                                    padding:
+                                                        constants.dLabelPadding,
                                                     child: StyledHeadline(
                                                         text:
                                                             'Цезарь с курицей',
-                                                        textStyle: Theme.of(
-                                                                context)
-                                                            .textTheme
-                                                            .headlineSmall),
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall),
                                                   ),
                                                 ),
                                               ),

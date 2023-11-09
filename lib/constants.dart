@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void calculateConstants(WidgetRef ref, double screenWidth) {
-  debugPrint('screenWidth = $screenWidth');
 
-  final double paddingUnit = screenWidth * 8 / 393;
+  final double paddingUnit = screenWidth / 54;
+  debugPrint('paddingUnit = $paddingUnit');
 
   /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).
   final dAppHeadlinePadding =
-  EdgeInsets.fromLTRB(paddingUnit * 3, paddingUnit, 0, paddingUnit);
+      EdgeInsets.fromLTRB(paddingUnit * 4, 0, 0, paddingUnit);
 
   /// Отступ блоков — элементов интерфейса, которые делят экран между собой.
   ///
   /// Используется для элементов, размеры которых задаются
   /// в виде дроби размер_элемента / размер_всего_экрана.
   final dBlockPadding =
-  EdgeInsets.fromLTRB(paddingUnit * 2, 0, paddingUnit * 2, paddingUnit * 2);
+      EdgeInsets.fromLTRB(paddingUnit * 2, 0, paddingUnit * 2, paddingUnit * 2);
 
   /// Отступ карточек — элементов, перечисляемых на экране.
   final dCardPadding = EdgeInsets.symmetric(horizontal: paddingUnit);
@@ -24,11 +24,12 @@ void calculateConstants(WidgetRef ref, double screenWidth) {
   final dCardPaddingHalf = EdgeInsets.symmetric(horizontal: paddingUnit / 2);
 
   /// Отступ заголовка элемента.
-  final dHeadingPadding = EdgeInsets.all(paddingUnit * 2);
+  final dHeadingPadding =
+      EdgeInsets.fromLTRB(paddingUnit * 2, paddingUnit * 2, paddingUnit * 2, paddingUnit);
 
   /// Отступ основного текста.
   final dTextPadding =
-  EdgeInsets.symmetric(vertical: paddingUnit / 2, horizontal: paddingUnit);
+      EdgeInsets.symmetric(vertical: paddingUnit / 2, horizontal: paddingUnit);
 
   /// Отступ короткого текста — пометки для другого элемента.
   ///
@@ -230,7 +231,8 @@ class ConstantsNotifier extends Notifier<Constants> {
   }
 }
 
-final constantsProvider = NotifierProvider<ConstantsNotifier, Constants>(ConstantsNotifier.new);
+final constantsProvider =
+    NotifierProvider<ConstantsNotifier, Constants>(ConstantsNotifier.new);
 
 @Deprecated(
     'Миграция в новый дизайн: каждый класс элементов теперь имеет индивидуальные отступы — см. `constants.dart`.')
