@@ -79,7 +79,7 @@ class DottedRRButton extends RRButton {
       padding: padding,
       child: DottedBorder(
         color: borderColor ?? Theme.of(context).colorScheme.surface,
-        dashPattern: const [8, 8],
+        dashPattern: const [12, 14],
         padding: EdgeInsets.zero,
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
