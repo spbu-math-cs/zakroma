@@ -61,10 +61,10 @@ class _ZakromaState extends State<Zakroma> {
   @override
   Widget build(BuildContext context) {
     // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
+        statusBarColor: Theme.of(context).colorScheme.background));
 
     final pageController = PageController();
 
