@@ -8,7 +8,7 @@ enum IngredientUnit {
 
 class Ingredient {
   /// Название продукта.
-  String name;
+  final String name;
 
   /// Единица измерения продукта: граммы, миллилитры или штуки.
   final IngredientUnit unit;
@@ -25,10 +25,10 @@ class Ingredient {
   /// Количество жиров на 100 гр/мл или 1 штуку.
   final double fats;
 
-  Ingredient(
+  const Ingredient(
       {required this.name,
       required this.unit,
-      // TODO: убрать все нули и вернуть required
+      // TODO: убрать нули и вернуть required
       this.kcal = 0,
       this.carbs = 0,
       this.proteins = 0,

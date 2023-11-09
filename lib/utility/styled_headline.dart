@@ -9,14 +9,15 @@ class StyledHeadline extends StatelessWidget {
   const StyledHeadline(
       {super.key,
       required this.text,
-      this.textStyle,
+      required this.textStyle,
       this.horizontalAlignment = TextAlign.left,
       this.overflow = TextOverflow.ellipsis});
 
   @override
   Widget build(BuildContext context) {
     var redTextEndIndex = 1;
-    while (int.tryParse(text[redTextEndIndex]) != null) {
+    while (text.length < redTextEndIndex &&
+        int.tryParse(text[redTextEndIndex]) != null) {
       redTextEndIndex++;
     }
     return RichText(

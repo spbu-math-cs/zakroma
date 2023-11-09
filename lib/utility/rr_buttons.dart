@@ -1,6 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart' as constants;
 import 'package:zakroma_frontend/constants.dart';
 
 class RRButton extends StatelessWidget {
@@ -21,11 +20,11 @@ class RRButton extends StatelessWidget {
       required this.child,
       this.childAlignment = Alignment.center,
       this.backgroundColor,
-      this.borderRadius = constants.borderRadius,
+      this.borderRadius = dBorderRadius,
       this.decoration,
       this.foregroundDecoration,
-      this.padding = constants.defaultPadding,
-      this.elevation = defaultElevation,
+      this.padding = dPadding,
+      this.elevation = dElevation,
       this.onTap,
       this.onDoubleTap,
       this.onLongPress});
@@ -49,7 +48,7 @@ class RRButton extends StatelessWidget {
                 child: Align(
                     alignment: childAlignment,
                     child: Padding(
-                      padding: defaultPadding,
+                      padding: dPadding,
                       child: child,
                     )),
               ))));
@@ -64,9 +63,9 @@ class DottedRRButton extends RRButton {
       super.childAlignment = Alignment.center,
       super.backgroundColor,
       this.borderColor,
-      super.borderRadius = constants.borderRadius,
+      super.borderRadius = dBorderRadius,
       super.decoration,
-      super.padding = constants.defaultPadding,
+      super.padding = dPadding,
       super.onTap,
       super.onDoubleTap,
       super.onLongPress});
@@ -82,13 +81,13 @@ class DottedRRButton extends RRButton {
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
         strokeWidth: 4,
-        radius: const Radius.circular(borderRadius),
+        radius: const Radius.circular(dBorderRadius),
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(
             backgroundColor: Colors.transparent,
             childAlignment: childAlignment,
-            borderRadius: borderRadius,
+            borderRadius: dBorderRadius,
             decoration: const BoxDecoration(),
             padding: EdgeInsets.zero,
             elevation: 0,

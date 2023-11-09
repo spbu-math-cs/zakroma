@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/text.dart';
-
-import '../utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
 
 // TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
 
@@ -28,8 +25,8 @@ class _SettingsPageState extends State<SettingsPage> {
       'Помощь',
       'Другое',
     ];
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -37,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -62,7 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Expanded(
                         flex: 2,
                         child: Padding(
-                          padding: EdgeInsets.all(defaultPadding.top),
+                          padding: EdgeInsets.all(dPadding.top),
                           child: Row(
                             children: [
                               Expanded(
@@ -77,9 +74,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                         child: Material(
                                           borderRadius: BorderRadius.circular(
-                                              borderRadius),
+                                              dBorderRadius),
                                           clipBehavior: Clip.antiAlias,
-                                          elevation: defaultElevation,
+                                          elevation: dElevation,
                                           child: SizedBox.square(
                                             dimension:
                                                 3 * constraints.maxHeight / 4,
@@ -102,18 +99,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         StyledHeadline(
-                                          text: "Райан Г.",
+                                          text: 'Райан Г.',
                                           textStyle: Theme.of(context)
                                               .textTheme
                                               .headlineSmall,
                                         ),
                                         StyledHeadline(
-                                            text: "185 см",
+                                            text: '185 см',
                                             textStyle: Theme.of(context)
                                                 .textTheme
                                                 .headlineSmall),
                                         StyledHeadline(
-                                          text: "80 кг",
+                                          text: '80 кг',
                                           textStyle: Theme.of(context)
                                               .textTheme
                                               .headlineSmall,
@@ -141,26 +138,26 @@ class _SettingsPageState extends State<SettingsPage> {
             Expanded(
                 flex: 6,
                 child: RRSurface(
-                    padding: defaultPadding.copyWith(
-                        bottom: defaultPadding.vertical),
+                    padding: dPadding.copyWith(bottom: dPadding.vertical),
                     child: LayoutBuilder(builder: (context, constraints) {
                       return FlatList(
                           scrollPhysics: const ClampingScrollPhysics(),
-                          childAlignment: Alignment.centerLeft,
+                          dividerColor: Theme.of(context).colorScheme.surface,
                           children: List.generate(
                             categoryList.length,
-                            (index) => Pair(
-                                StyledHeadline(
+                            (index) => Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => {
+                                  //TODO
+                                },
+                                child: StyledHeadline(
                                   text: categoryList[index],
                                   textStyle: categoryTextStyle,
                                 ),
-                                null),
-                          ),
-                          defaultChildConstraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth,
-                              maxHeight: constraints.maxHeight / 6),
-                          dividerColor: lighten(
-                              Theme.of(context).colorScheme.background));
+                              ),
+                            ),
+                          ));
                     }))),
           ],
         ),

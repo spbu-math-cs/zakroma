@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
+import 'package:zakroma_frontend/data_cls/meal.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
-import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
-import 'package:zakroma_frontend/utility/text.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {
@@ -17,11 +16,15 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final currentDiet = ref.watch(NotifierProvider<DietList, List<Diet>>(DietList.new))[0];
-    final todayMeals = currentDiet.getDay(DateTime.now().weekday - 1).meals;
+    final currentDiet = ref.watch(dietListProvider).firstOrNull;
+    final List<Meal> todayMeals = currentDiet == null
+        ? []
+        : currentDiet.isEmpty
+            ? []
+            : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -29,7 +32,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: defaultPadding.horizontal),
+                padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -51,7 +54,7 @@ class HomePage extends ConsumerWidget {
                 DisplayBarType.viandStatus,
                 text: 'Дома полно продуктов',
                 textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: headlineTextAlignment,
+                textAlign: dHeadlineTextAlignment,
                 image: Image.asset(
                     'assets/images/fridge_status_pancakes_full.png'),
               ),
@@ -64,14 +67,14 @@ class HomePage extends ConsumerWidget {
                 text: 'Доставка не ожидается',
                 image: Image.asset('assets/images/delivery.png'),
                 textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: headlineTextAlignment,
+                textAlign: dHeadlineTextAlignment,
               ),
             ),
             // Сегодняшнее меню
             Expanded(
               flex: 6,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: defaultPadding.bottom),
+                  padding: EdgeInsets.only(bottom: dPadding.bottom),
                   child: RRSurface(
                     child: Column(
                       children: [
@@ -94,17 +97,13 @@ class HomePage extends ConsumerWidget {
                             context: context,
                             removeTop: true,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: dPadding.horizontal / 2),
                               child: GridView.builder(
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    // максимум по 3 элемента на строке
-                                    // crossAxisCount: ((todayMeals.length / 4).floor() + 2).clamp(1, 3),
-                                    // максимум по 2 элемента на строке
-                                    crossAxisCount:
-                                        (todayMeals.length + 1).clamp(1, 2),
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
                                   ),
                                   itemCount: todayMeals.length + 1,
                                   // добавляем единичку для кнопки +
@@ -120,83 +119,14 @@ class HomePage extends ConsumerWidget {
                                           onTap: () {
                                             showSlidingBottomSheet(context,
                                                 builder: (context) {
-                                              return createSlidingSheet(context,
-                                                  headingText:
-                                                      todayMeals[index - 1]
-                                                          .name,
-                                                  body: LayoutBuilder(builder:
-                                                      (context, constraints) {
-                                                return FlatList(
-                                                  addSeparator: false,
-                                                  childAlignment:
-                                                      Alignment.centerLeft,
-                                                  defaultChildConstraints:
-                                                      constraints.copyWith(
-                                                          maxHeight: constraints
-                                                                  .maxHeight /
-                                                              10),
-                                                  dividerColor: Colors.white,
-                                                  children: List.generate(
-                                                      todayMeals[index - 1]
-                                                          .dishesCount(),
-                                                      (dishIndex) => Pair(
-                                                          SizedBox(
-                                                            width: constraints
-                                                                .maxWidth,
-                                                            child: Row(
-                                                              children: [
-                                                                SizedBox.square(
-                                                                  dimension:
-                                                                      (constraints.maxWidth -
-                                                                              16) /
-                                                                          5,
-                                                                  child:
-                                                                      ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            borderRadius),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      'assets/images/${todayMeals[index - 1].getDish(dishIndex).name}.jpg',
-                                                                      fit: BoxFit
-                                                                          .fitHeight,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              10.0),
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 4 *
-                                                                        (constraints.maxWidth -
-                                                                            10) /
-                                                                        5,
-                                                                    child: Text(
-                                                                        todayMeals[index -
-                                                                                1]
-                                                                            .getDish(
-                                                                                dishIndex)
-                                                                            .name,
-                                                                        overflow:
-                                                                            TextOverflow
-                                                                                .ellipsis,
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .titleLarge,
-                                                                        textAlign:
-                                                                            TextAlign.left),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          null)),
-                                                );
-                                              }));
+                                              return createSlidingSheet(
+                                                context,
+                                                headingText:
+                                                    todayMeals[index - 1].name,
+                                                body: todayMeals[index - 1]
+                                                    .getDishesList(context,
+                                                        dishMiniatures: true),
+                                              );
                                             });
                                           },
                                           child: StyledHeadline(
@@ -209,15 +139,17 @@ class HomePage extends ConsumerWidget {
                                       return DottedRRButton(
                                           padding: buttonsPadding,
                                           onTap: () {
-                                            debugPrint('+');
+                                            if (currentDiet == null) {
+                                              // TODO: переделать виджет под добавление рациона
+                                            } else {
+                                              Meal.showAddMealDialog(context, ref, currentDiet.id, DateTime.now().weekday - 1);
+                                            }
                                           },
                                           child: Icon(
                                             Icons.add,
-                                            color: lighten(
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .background,
-                                                15),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
                                             size: 60,
                                           ));
                                     }
@@ -320,7 +252,7 @@ SlidingSheetDialog createSlidingSheet(context,
   return SlidingSheetDialog(
     headerBuilder: (context, sheetState) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: defaultPadding.top),
+        padding: EdgeInsets.symmetric(vertical: dPadding.top),
         child: GestureDetector(
           onDoubleTap: () {
             headlineOnDoubleTap(context);
@@ -355,12 +287,12 @@ SlidingSheetDialog createSlidingSheet(context,
       return SizedBox(
         height: screenHeight,
         child: Padding(
-          padding: defaultPadding.copyWith(top: 0),
+          padding: dPadding.copyWith(top: 0),
           child: body,
         ),
       );
     },
-    cornerRadius: borderRadius,
+    cornerRadius: dBorderRadius,
     color: Theme.of(context).colorScheme.primaryContainer,
     snapSpec: SnapSpec(
         snap: true,

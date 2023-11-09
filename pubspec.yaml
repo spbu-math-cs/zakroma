@@ -38,6 +38,7 @@ dependencies:
   dotted_border: ^2.1.0
   wtf_sliding_sheet: ^1.1.2
   flutter_riverpod: ^2.4.4
+  uuid: ^4.0.0
 
 dev_dependencies:
   flutter_test:

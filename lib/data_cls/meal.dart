@@ -1,15 +1,132 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/data_cls/dish.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
+import 'package:zakroma_frontend/pages/meal_display.dart';
+import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
+import 'package:zakroma_frontend/utility/flat_list.dart';
 
+import 'diet.dart';
+
+@immutable
 class Meal {
+  final String id;
+
   /// Название приёма пищи, задаётся пользователем.
-  String name;
+  final String name;
 
   /// Список блюд, запланированных на данный приём пищи.
-  List<Dish> dishes;
+  final List<Dish> dishes;
 
-  Meal({required this.name, required this.dishes});
+  const Meal({required this.id, required this.name, required this.dishes});
 
-  int dishesCount() => dishes.length;
+  int get dishesCount => dishes.length;
 
   Dish getDish(int index) => dishes[index];
+
+  static void showAddMealDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String dietId,
+    int dayIndex, {
+    bool editMode = false,
+  }) =>
+      showDialog(
+          context: context,
+          builder: (_) => AlertTextPrompt(
+                title: 'Введите название приёма пищи',
+                hintText: '',
+                actions: [
+                  (
+                    buttonText: 'Назад',
+                    needsValidation: false,
+                    onTap: (text) {
+                      Navigator.of(context).pop();
+                    }
+                  ),
+                  (
+                    buttonText: 'Продолжить',
+                    needsValidation: true,
+                    onTap: (text) {
+                      ref.read(dietListProvider.notifier).addMeal(
+                          dietId: dietId,
+                          dayIndex: dayIndex,
+                          // TODO: исправить id
+                          newMeal: Meal(
+                              id: const Uuid().v4(),
+                              name: text,
+                              dishes: const []));
+                      Navigator.of(context).pop();
+                      final mealId = ref
+                          .read(dietListProvider.notifier)
+                          .getDietById(dietId: dietId)!
+                          .days[dayIndex]
+                          .meals
+                          .last
+                          .id;
+                      ref.read(pathProvider.notifier).update((state) =>
+                          state.copyWith(dayIndex: dayIndex, mealId: mealId));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MealPage(
+                                    initialEdit: editMode,
+                                  )));
+                    }
+                  ),
+                ],
+              ));
+
+  FlatList getDishesList(BuildContext context,
+          {bool dishMiniatures = false,
+          bool scrollable = true,
+          EdgeInsets? padding}) =>
+      FlatList(
+        scrollPhysics: scrollable
+            ? const ClampingScrollPhysics()
+            : const NeverScrollableScrollPhysics(),
+        addDivider: dishMiniatures,
+        padding: padding ?? dPadding.copyWith(left: 0, right: 0),
+        childPadding: dPadding.copyWith(left: 0),
+        children: List.generate(
+            dishesCount,
+            (dishIndex) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: (dishMiniatures
+                          ? <Widget>[
+                              Expanded(
+                                child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                  return SizedBox.square(
+                                    dimension: constraints.maxWidth,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(dBorderRadius),
+                                      child: Image.asset(
+                                        'assets/images/${getDish(dishIndex).name}.jpg',
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              )
+                            ]
+                          : <Widget>[]) +
+                      <Widget>[
+                        Expanded(
+                          flex: 4,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: dPadding.left),
+                            child: Text(
+                                '${dishMiniatures ? '' : '- '}${getDish(dishIndex).name}',
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleLarge,
+                                textAlign: TextAlign.left),
+                          ),
+                        ),
+                      ],
+                )),
+      );
 }

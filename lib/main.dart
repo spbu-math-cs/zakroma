@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/pages/diet_list.dart';
 import 'package:zakroma_frontend/pages/home.dart';
 import 'package:zakroma_frontend/pages/settings.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/themes.dart' as themes;
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
+
 
 // TODO: доделать главный экран
 // TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
@@ -15,60 +17,26 @@ import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 // TODO: окно входа
 // TODO: холодильник
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 void main() {
   runApp(const ProviderScope(child: MainPage()));
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
   static const serverIP = '';
   static const serverPort = '';
 
   @override
-  Widget build(BuildContext context) {
-    // const backgroundColor = Color(0xFFFFBA6C);
-    const backgroundColor = Color(0xFFFFB96C);
+  Widget build(BuildContext context, ref) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorScheme: const ColorScheme.light().copyWith(
-          primary: backgroundColor,
-          primaryContainer: Colors.white,
-          onPrimaryContainer: Colors.black,
-          // secondary: const Color(0xFFA14524),
-          // secondary: const Color(0xFFE36942),
-          secondary: const Color(0xFFA93500),
-          background: backgroundColor,
-          surface: lighten(backgroundColor, 55),
-          surfaceTint: Colors.white,
-          onSurface: Colors.black,
-        ),
-        splashColor: Colors.black26,
-        highlightColor: Colors.black12,
-        splashFactory: InkSplash.splashFactory,
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(fontFamily: 'Preslav'),
-          displayMedium: TextStyle(fontFamily: 'Preslav'),
-          displaySmall: TextStyle(fontFamily: 'Preslav'),
-          headlineLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          headlineSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          titleLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          titleMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          titleSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          labelLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          labelMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          labelSmall: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyLarge: TextStyle(fontFamily: 'TinkoffSans'),
-          bodyMedium: TextStyle(fontFamily: 'TinkoffSans'),
-          bodySmall: TextStyle(fontFamily: 'TinkoffSans'),
-        ),
-      ),
+      theme: ref.watch(themes.themeProvider).getThemeData(),
       home: const Zakroma(),
+      navigatorObservers: [routeObserver],
     );
   }
 }
@@ -98,41 +66,50 @@ class _ZakromaState extends State<Zakroma> {
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: Theme.of(context).colorScheme.background));
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        bottomNavigationBar: nav_bar.FunctionalBottomBar(
-          // height: 49,
-          height: MediaQuery.of(context).size.height / 17,
-          buttonColor: Colors.black38,
-          selectedButtonColor: Theme.of(context).colorScheme.background,
-          onDestinationSelected: (index) => setState(() {
+    final pageController = PageController();
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+        height: MediaQuery.of(context).size.height / 17,
+        onDestinationSelected: (index) {
+          setState(() {
             currentPageIndex = index;
-          }),
-          selectedIndex: currentPageIndex,
-          navigationBarIcons: const [
-            nav_bar.NavigationDestination(
-              icon: Icons.home_outlined,
-              label: 'Главная',
-              selectedIcon: Icons.home,
-            ),
-            nav_bar.NavigationDestination(
-              icon: Icons.restaurant_menu,
-              label: 'Рационы',
-              selectedIcon: Icons.restaurant_menu,
-            ),
-            nav_bar.NavigationDestination(
-              icon: Icons.settings_outlined,
-              label: 'Настройки',
-              selectedIcon: Icons.settings,
-            ),
-          ],
-        ),
-        body: <Widget>[
-          const HomePage(),
-          const DietListPage(),
-          const SettingsPage(),
-        ][currentPageIndex],
+          });
+          pageController.animateToPage(index,
+              duration: fabAnimationDuration,
+              curve: Curves.ease);
+        },
+        selectedIndex: currentPageIndex,
+        navigationBarIcons: const [
+          nav_bar.NavigationDestination(
+            icon: Icons.home_outlined,
+            label: 'Главная',
+            selectedIcon: Icons.home,
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.restaurant_menu,
+            label: 'Рационы',
+            selectedIcon: Icons.restaurant_menu,
+          ),
+          nav_bar.NavigationDestination(
+            icon: Icons.settings_outlined,
+            label: 'Настройки',
+            selectedIcon: Icons.settings,
+          ),
+        ],
+      ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) => setState(() {
+          currentPageIndex = index;
+        }),
+        children: const [
+          HomePage(),
+          DietListPage(),
+          SettingsPage(),
+        ],
       ),
     );
   }
