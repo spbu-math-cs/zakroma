@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/utility/get_current_date.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 import 'package:zakroma_frontend/utility/rr_surface.dart';
@@ -15,23 +13,30 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final currentDiet = ref.watch(dietListProvider).firstOrNull;
-    final List<Meal> todayMeals = currentDiet == null
-        ? []
-        : currentDiet.isEmpty
-            ? []
-            : currentDiet.getDay(DateTime.now().weekday - 1).meals;
+    const groupMembersDisplayCount = 3;
+    // final currentDiet = ref.watch(dietListProvider).firstOrNull;
+    // final List<Meal> todayMeals = currentDiet == null
+    //     ? []
+    //     : currentDiet.isEmpty
+    //         ? []
+    //         : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
-            // Заголовок
+            // Отступ над заголовком приложения
             Expanded(
-              flex: 1,
+                flex: 30,
+                child: Container(
+                  color: Colors.transparent,
+                )),
+            // Заголовок приложения: «Закрома»
+            Expanded(
+              flex: 71,
               child: Padding(
-                padding: EdgeInsets.only(left: dPadding.horizontal),
+                padding: appHeadlinePadding,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -46,120 +51,272 @@ class HomePage extends ConsumerWidget {
                 ),
               ),
             ),
-            // Количество имеющихся продуктов
+            // Пользователи в группе
             Expanded(
-              flex: 2,
-              child: DisplayBar(
-                DisplayBarType.viandStatus,
-                text: 'Дома полно продуктов',
-                textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: dHeadlineTextAlignment,
-                image: Image.asset(
-                    'assets/images/fridge_status_pancakes_full.png'),
-              ),
-            ),
-            // Статус доставки
+                flex: 100,
+                child: Padding(
+                  padding: blockPadding - cardPaddingHalf,
+                  child: Row(
+                    children: List<Widget>.generate(
+                        groupMembersDisplayCount + 1, // +1 для плюса слева
+                        (index) => const Expanded(
+                              child: Padding(
+                                padding: cardPaddingHalf,
+                                child: Material(
+                                  shape: CircleBorder(),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Placeholder(),
+                                ),
+                              ),
+                            )),
+                  ),
+                )),
+            // Статус холодильника/доставки + корзина
             Expanded(
-              flex: 2,
-              child: DisplayBar(
-                DisplayBarType.deliveryStatus,
-                text: 'Доставка не ожидается',
-                image: Image.asset('assets/images/delivery.png'),
-                textStyle: Theme.of(context).textTheme.headlineSmall!,
-                textAlign: dHeadlineTextAlignment,
-              ),
-            ),
-            // Сегодняшнее меню
+                flex: 116,
+                child: Padding(
+                  padding: blockPadding,
+                  child: Row(
+                    children: [
+                      // Статус холодильника/доставки
+                      // TODO: сделать листание + индикаторы снизу
+                      Expanded(
+                          flex: 2,
+                          child: RRButton(
+                              onTap: () {},
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              child: const Placeholder())),
+                      // Корзина
+                      Expanded(
+                          child: RRButton(
+                              onTap: () {},
+                              padding: EdgeInsets.only(left: blockPadding.left),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              child: const Placeholder())),
+                    ],
+                  ),
+                )),
+            // Приёмы пищи на сегодня
             Expanded(
-              flex: 6,
-              child: Padding(
-                  padding: EdgeInsets.only(bottom: dPadding.bottom),
+                flex: 183,
+                child: Padding(
+                  padding: blockPadding,
                   child: RRSurface(
-                    child: Column(
-                      children: [
-                        // Сегодняшнее число и день недели
-                        // TODO: при нажатии на заголовок, открывается детальное представление сегодняшних приёмов пищи
-                        Expanded(
-                          flex: 1,
-                          child: Align(
-                              alignment: Alignment.center,
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          // Заголовок: сегодняшняя дата и день недели
+                          Expanded(
+                              child: Padding(
+                            padding: headlinePadding,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
                               child: StyledHeadline(
                                   text: getCurrentDate(),
                                   textStyle: Theme.of(context)
                                       .textTheme
-                                      .headlineMedium)),
-                        ),
-                        // Список приёмов пищи на сегодня
-                        Expanded(
-                          flex: 6,
-                          child: MediaQuery.removePadding(
-                            context: context,
-                            removeTop: true,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: dPadding.horizontal / 2),
-                              child: GridView.builder(
-                                  padding: EdgeInsets.zero,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                  ),
-                                  itemCount: todayMeals.length + 1,
-                                  // добавляем единичку для кнопки +
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    // TODO: добавить в кнопки картинки-миниатюры блюд
-                                    const buttonsPadding = EdgeInsets.all(10.0);
-                                    if (index > 0) {
-                                      // просмотр приёма пищи
-                                      return RRButton(
-                                          padding: buttonsPadding,
-                                          // TODO: вынести этот огромный кусок в отдельный метод
-                                          onTap: () {
-                                            showSlidingBottomSheet(context,
-                                                builder: (context) {
-                                              return createSlidingSheet(
-                                                context,
-                                                headingText:
-                                                    todayMeals[index - 1].name,
-                                                body: todayMeals[index - 1]
-                                                    .getDishesList(context,
-                                                        dishMiniatures: true),
-                                              );
-                                            });
-                                          },
-                                          child: StyledHeadline(
-                                              text: todayMeals[index - 1].name,
-                                              textStyle: Theme.of(context)
-                                                  .textTheme
-                                                  .headlineSmall));
-                                    } else {
-                                      // добавление приёма пищи на сегодня
-                                      return DottedRRButton(
-                                          padding: buttonsPadding,
-                                          onTap: () {
-                                            if (currentDiet == null) {
-                                              // TODO: переделать виджет под добавление рациона
-                                            } else {
-                                              Meal.showAddMealDialog(context, ref, currentDiet.id, DateTime.now().weekday - 1);
-                                            }
-                                          },
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                            size: 60,
-                                          ));
-                                    }
-                                  }),
+                                      .headlineMedium!
+                                      .copyWith(fontWeight: FontWeight.bold)),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-            ),
+                          )),
+                          // Перечисление приёмов пищи на сегодня
+                          // TODO: реализовать листание + индикаторы снизу
+                          Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: blockPadding - cardPadding,
+                                // TODO: заменить Row на PageView
+                                child: Row(
+                                  // TODO: заменить хардкод-приёмы на генератор приёмов
+                                  children: [
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            padding: cardPadding,
+                                            child: StyledHeadline(
+                                                text: 'Завтрак',
+                                                textStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineSmall))),
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            padding: cardPadding,
+                                            child: StyledHeadline(
+                                                text: 'Обед',
+                                                textStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineSmall))),
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            padding: cardPadding,
+                                            child: StyledHeadline(
+                                                text: 'Ужин',
+                                                textStyle: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineSmall))),
+                                  ],
+                                ),
+                              ))
+                        ],
+                      )),
+                )),
+            // Мои рецепты
+            Expanded(
+                flex: 218,
+                child: Padding(
+                  padding: blockPadding,
+                  child: RRSurface(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          // Заголовок: «Мои рецепты»
+                          Expanded(
+                              child: Padding(
+                            padding: headlinePadding,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: StyledHeadline(
+                                  text: 'Мои рецепты',
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(fontWeight: FontWeight.bold)),
+                            ),
+                          )),
+                          // Перечисление приёмов пищи на сегодня
+                          // TODO: реализовать листание + индикаторы снизу
+                          Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: blockPadding - cardPadding,
+                                // TODO: заменить Row на PageView
+                                child: Row(
+                                  // TODO: заменить хардкод-приёмы на генератор приёмов
+                                  children: [
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer,
+                                            foregroundDecoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      dBorderRadius),
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface),
+                                            ),
+                                            padding: cardPadding,
+                                            child: Column(
+                                              children: [
+                                                const Expanded(
+                                                    flex: 3,
+                                                    child: Placeholder()),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: textPadding,
+                                                      child: StyledHeadline(
+                                                          text: 'Борщ',
+                                                          textStyle: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headlineSmall),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ))),
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer,
+                                            foregroundDecoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      dBorderRadius),
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface),
+                                            ),
+                                            padding: cardPadding,
+                                            child: Column(
+                                              children: [
+                                                const Expanded(
+                                                    flex: 3,
+                                                    child: Placeholder()),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: textPadding,
+                                                      child: StyledHeadline(
+                                                          text: 'Пюре с отбивной',
+                                                          textStyle: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headlineSmall),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ))),
+                                    Expanded(
+                                        child: RRButton(
+                                            onTap: () {},
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer,
+                                            foregroundDecoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      dBorderRadius),
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface),
+                                            ),
+                                            padding: cardPadding,
+                                            child: Column(
+                                              children: [
+                                                const Expanded(
+                                                    flex: 3,
+                                                    child: Placeholder()),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: textPadding,
+                                                      child: StyledHeadline(
+                                                          text: 'Цезарь с курицей',
+                                                          textStyle: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headlineSmall),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ))),
+                                  ],
+                                ),
+                              ))
+                        ],
+                      )),
+                )),
           ],
         ),
       ),

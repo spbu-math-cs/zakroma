@@ -119,7 +119,7 @@ class NavigationDestination extends StatelessWidget {
                 textAlign: TextAlign.end,
                 style: labelStyle?.copyWith(
                   fontSize: 2 * constraints.maxHeight / 8,
-                  color: (isSelected ?? false) ? selectedColor : color,
+                  color: color,
                 ),
               ),
             ),

@@ -7,6 +7,7 @@ class RRButton extends StatelessWidget {
   final double borderRadius;
   final Widget child;
   final Alignment childAlignment;
+  final EdgeInsets childPadding;
   final Decoration? decoration;
   final Decoration? foregroundDecoration;
   final EdgeInsets padding;
@@ -17,17 +18,19 @@ class RRButton extends StatelessWidget {
 
   const RRButton(
       {super.key,
-      required this.child,
       this.childAlignment = Alignment.center,
+      this.childPadding = EdgeInsets.zero,
       this.backgroundColor,
       this.borderRadius = dBorderRadius,
       this.decoration,
       this.foregroundDecoration,
       this.padding = dPadding,
       this.elevation = dElevation,
-      this.onTap,
+      required this.onTap,
       this.onDoubleTap,
-      this.onLongPress});
+      this.onLongPress,
+      required this.child,
+      });
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -48,7 +51,7 @@ class RRButton extends StatelessWidget {
                 child: Align(
                     alignment: childAlignment,
                     child: Padding(
-                      padding: dPadding,
+                      padding: childPadding,
                       child: child,
                     )),
               ))));
