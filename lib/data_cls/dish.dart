@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/data_cls/tag.dart';
 
+@immutable
 class Dish {
-  String id;
+  final String id;
 
   /// Название блюда.
-  String name;
+  final String name;
 
   /// Иконка блюда, отображающаяся в списке блюд
-  Image? miniature;
+  final Image? miniature;
 
   /// Список шагов в рецепте блюда.
-  List<String> recipe;
+  final List<String> recipe;
 
   /// Список тэгов блюда.
-  List<Tag> tags;
+  final List<Tag> tags;
 
   /// Словарь (ингредиент, количество), в котором записаны все ингредиенты,
   /// из которых состоит блюдо.
-  Map<Ingredient, int> ingredients;
+ final Map<Ingredient, int> ingredients;
 
-  Dish(
+  const Dish(
       {required this.id,
       required this.name,
       this.miniature,

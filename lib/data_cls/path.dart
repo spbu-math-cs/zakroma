@@ -1,10 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+@immutable
 class Path {
-  String? dietId, mealId, dishId;
-  int? dayIndex;
+  final String? dietId, mealId, dishId;
+  final int? dayIndex;
 
-  Path({
+  const Path({
     this.dietId,
     this.dayIndex,
     this.mealId,
@@ -18,12 +20,12 @@ class Path {
     int? dayIndex,
   }) {
     return Path(
-        dietId: dietId ?? this.dietId,
-        dayIndex: dayIndex ?? this.dayIndex,
-        mealId: mealId ?? this.mealId,
-        dishId: dishId ?? this.dishId,
+      dietId: dietId ?? this.dietId,
+      dayIndex: dayIndex ?? this.dayIndex,
+      mealId: mealId ?? this.mealId,
+      dishId: dishId ?? this.dishId,
     );
   }
 }
 
-final pathProvider = StateProvider((ref) => Path());
+final pathProvider = StateProvider((ref) => const Path());

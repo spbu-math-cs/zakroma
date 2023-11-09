@@ -18,18 +18,7 @@ class Diet {
   /// Длиной рациона считается количество дней в нём.
   final List<DietDay> days;
 
-  const Diet(
-      {required this.id,
-      required this.name,
-      this.days = const [
-        DietDay(index: 0, meals: []),
-        DietDay(index: 1, meals: []),
-        DietDay(index: 2, meals: []),
-        DietDay(index: 3, meals: []),
-        DietDay(index: 4, meals: []),
-        DietDay(index: 5, meals: []),
-        DietDay(index: 6, meals: []),
-      ]})
+  const Diet({required this.id, required this.name, required this.days})
       : assert(days.length == 7);
 
   int get length => days.length;
@@ -43,18 +32,16 @@ class Diet {
   Diet copyWith({String? id, String? name, List<DietDay>? days}) =>
       Diet(id: id ?? this.id, name: name ?? this.name, days: days ?? this.days);
 
-  Meal? getMealById(
-      {required int dayIndex,
-        required String mealId}) =>
+  Meal? getMealById({required int dayIndex, required String mealId}) =>
       getDay(dayIndex)
           .meals
           .where((element) => element.id == mealId)
           .firstOrNull;
 
   Dish? getDishById(
-      {required int dayIndex,
-        required String mealId,
-        required String dishId}) =>
+          {required int dayIndex,
+          required String mealId,
+          required String dishId}) =>
       getMealById(dayIndex: dayIndex, mealId: mealId)
           ?.dishes
           .where((element) => element.id == dishId)
@@ -112,15 +99,22 @@ class DietList extends Notifier<List<Diet>> {
       {required String dietId, required String name, List<DietDay>? days}) {
     state = state.isEmpty
         ? [
-            days == null
-                ? Diet(id: dietId, name: name)
-                : Diet(id: dietId, name: name, days: days),
+            Diet(
+                id: dietId,
+                name: name,
+                days: days ??
+                    List<DietDay>.generate(
+                        7, (index) => DietDay(index: index, meals: const []))),
           ]
         : [
+            // добавляем на второе место: первое занимает текущий рацион
             state.first,
-            days == null
-                ? Diet(id: dietId, name: name)
-                : Diet(id: dietId, name: name, days: days),
+            Diet(
+                id: dietId,
+                name: name,
+                days: days ??
+                    List<DietDay>.generate(
+                        7, (index) => DietDay(index: index, meals: const []))),
             ...state.sublist(1),
           ];
   }

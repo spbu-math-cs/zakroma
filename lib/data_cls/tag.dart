@@ -1,7 +1,11 @@
 //TODO: написать нормальный класс, который будет помогать в поиске
-class Tag {
-  Tag parent;
-  List<Tag> children;
 
-  Tag({required this.parent, required this.children});
+import 'package:flutter/cupertino.dart';
+
+@immutable
+class Tag {
+  final Tag parent;
+  final List<Tag> children;
+
+  const Tag({required this.parent, required this.children});
 }

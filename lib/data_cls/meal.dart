@@ -10,6 +10,7 @@ import 'package:zakroma_frontend/utility/flat_list.dart';
 
 import 'diet.dart';
 
+@immutable
 class Meal {
   final String id;
 
@@ -26,8 +27,12 @@ class Meal {
   Dish getDish(int index) => dishes[index];
 
   static void showAddMealDialog(
-          BuildContext context, WidgetRef ref, String dietId, int dayIndex,
-      {bool editMode = false,}) =>
+    BuildContext context,
+    WidgetRef ref,
+    String dietId,
+    int dayIndex, {
+    bool editMode = false,
+  }) =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -50,7 +55,9 @@ class Meal {
                           dayIndex: dayIndex,
                           // TODO: исправить id
                           newMeal: Meal(
-                              id: const Uuid().v4(), name: text, dishes: []));
+                              id: const Uuid().v4(),
+                              name: text,
+                              dishes: const []));
                       Navigator.of(context).pop();
                       final mealId = ref
                           .read(dietListProvider.notifier)
@@ -64,15 +71,17 @@ class Meal {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MealPage(initialEdit: editMode,)));
+                              builder: (context) => MealPage(
+                                    initialEdit: editMode,
+                                  )));
                     }
-
                   ),
                 ],
               ));
 
   FlatList getDishesList(BuildContext context,
-          {bool dishMiniatures = false, bool scrollable = true,
+          {bool dishMiniatures = false,
+          bool scrollable = true,
           EdgeInsets? padding}) =>
       FlatList(
         scrollPhysics: scrollable
