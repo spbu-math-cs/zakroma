@@ -18,19 +18,18 @@ class AnimatedFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('fab rebuilds with animate = $animate, visible = $visible');
     const animationCurve = Curves.easeIn;
     if (animate) {
       return AnimatedOpacity(
         opacity: visible ? 1 : 0,
-        duration: fabAnimationDuration,
+        duration: dAnimationDuration,
         child: AnimatedSlide(
           offset: visible ? Offset.zero : const Offset(0, 1),
-          duration: fabAnimationDuration,
+          duration: dAnimationDuration,
           curve: animationCurve,
           child: AnimatedScale(
             scale: visible ? 1 : 0,
-            duration: fabAnimationDuration,
+            duration: dAnimationDuration,
             curve: animationCurve,
             child: FloatingActionButton.extended(
                 elevation: visible ? null : 0,
@@ -39,13 +38,13 @@ class AnimatedFAB extends StatelessWidget {
                 onPressed: onPressed,
                 label: AnimatedSlide(
                   offset: visible ? Offset.zero : const Offset(0, 1) ~/ 2,
-                  duration: fabAnimationDuration,
+                  duration: dAnimationDuration,
                   curve: animationCurve,
                   child: Text(text),
                 ),
                 icon: AnimatedSlide(
                     offset: visible ? Offset.zero : const Offset(0, 1) ~/ 2,
-                    duration: fabAnimationDuration,
+                    duration: dAnimationDuration,
                     curve: animationCurve,
                     child: Icon(icon))),
           ),

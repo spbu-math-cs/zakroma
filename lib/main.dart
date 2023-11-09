@@ -80,7 +80,7 @@ class _ZakromaState extends State<Zakroma> {
             currentPageIndex = index;
           });
           pageController.animateToPage(index,
-              duration: fabAnimationDuration,
+              duration: dAnimationDuration,
               curve: Curves.ease);
         },
         selectedIndex: currentPageIndex,

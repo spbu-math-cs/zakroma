@@ -6,11 +6,11 @@ import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/pages/meal_display.dart';
+import 'package:zakroma_frontend/utility/animated_fab.dart';
 import 'package:zakroma_frontend/utility/flat_list.dart';
 import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
 import 'package:zakroma_frontend/utility/rr_surface.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
-import 'package:zakroma_frontend/utility/animated_fab.dart';
 
 class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});
@@ -40,7 +40,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
     // });
     // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
-    debugPrint('diet_display');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -97,7 +96,8 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: StyledHeadline(
-                                                text: weekDays[dayIndex],
+                                                text: weekDays[dayIndex]
+                                                    .capitalize(),
                                                 textStyle: Theme.of(context)
                                                     .textTheme
                                                     .headlineLarge,
@@ -113,7 +113,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                               child: Material(
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        dBorderRadius),
+                                                        dOuterRadius),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Container(
                                                   height: dDividerHeight,
@@ -147,19 +147,28 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                                     behavior:
                                                         HitTestBehavior.opaque,
                                                     onTap: () {
-                                                      ref.read(pathProvider.notifier).update((state) => state.copyWith(
-                                                        dayIndex: dayIndex, mealId: diet
-                                                          .getDay(
-                                                          dayIndex)
-                                                          .meals[
-                                                      mealIndex]
-                                                          .id
-                                                      ));
+                                                      ref
+                                                          .read(pathProvider
+                                                              .notifier)
+                                                          .update((state) =>
+                                                              state.copyWith(
+                                                                  dayIndex:
+                                                                      dayIndex,
+                                                                  mealId: diet
+                                                                      .getDay(
+                                                                          dayIndex)
+                                                                      .meals[
+                                                                          mealIndex]
+                                                                      .id));
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  MealPage(initialEdit: editMode,)));
+                                                              builder:
+                                                                  (context) =>
+                                                                      MealPage(
+                                                                        initialEdit:
+                                                                            editMode,
+                                                                      )));
                                                     },
                                                     child: Row(
                                                       mainAxisAlignment:
@@ -219,13 +228,12 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () => setState(() {
                                     pageController.animateToPage(index,
-                                        duration: fabAnimationDuration,
+                                        duration: dAnimationDuration,
                                         curve: Curves.ease);
                                   }),
                                   child: Center(
                                     child: Text(
-                                      weekDaysShort[index][0].toUpperCase() +
-                                          weekDaysShort[index][1],
+                                      weekDaysShort[index].capitalize(),
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context)
                                           .textTheme
@@ -284,7 +292,8 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
           visible: editMode,
           onPressed: () {
             Meal.showAddMealDialog(
-                context, ref, diet.id, pageController.page!.round(), editMode: editMode);
+                context, ref, diet.id, pageController.page!.round(),
+                editMode: editMode);
           }),
     );
   }
@@ -303,7 +312,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   void didPop() {
-    debugPrint('diet_display dipPop');
     setState(() {
       editMode = false;
     });
@@ -311,7 +319,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   void didPush() {
-    debugPrint('diet_display dipPush');
     setState(() {
       animateFAB = true;
     });
@@ -319,7 +326,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   void didPopNext() {
-    debugPrint('diet_display dipPopNext');
     setState(() {
       animateFAB = true;
     });
@@ -327,7 +333,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   void didPushNext() {
-    debugPrint('diet_display dipPushNext');
     setState(() {
       animateFAB = false;
     });

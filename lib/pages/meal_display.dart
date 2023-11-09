@@ -31,8 +31,6 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
         .getDietById(path.dietId!)!
         .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
 
-    debugPrint('meal_display');
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -126,7 +124,6 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
 
   @override
   void didPop() {
-    debugPrint('meal_display dipPop');
     setState(() {
       animateFAB = false;
     });
@@ -134,7 +131,6 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
 
   @override
   void didPush() {
-    debugPrint('meal_display dipPush');
     setState(() {
       editMode = widget.initialEdit;
       animateFAB = true;
@@ -143,7 +139,6 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
 
   @override
   void didPopNext() {
-    debugPrint('meal_display dipPopNext');
     setState(() {
       animateFAB = true;
     });
@@ -151,7 +146,6 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
 
   @override
   void didPushNext() {
-    debugPrint('meal_display dipPushNext');
     setState(() {
       animateFAB = false;
     });

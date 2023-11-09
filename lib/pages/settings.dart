@@ -74,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                         child: Material(
                                           borderRadius: BorderRadius.circular(
-                                              dBorderRadius),
+                                              dOuterRadius),
                                           clipBehavior: Clip.antiAlias,
                                           elevation: dElevation,
                                           child: SizedBox.square(

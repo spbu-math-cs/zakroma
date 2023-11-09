@@ -44,7 +44,7 @@ class FlatList extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: dPadding.left),
                       child: Material(
-                        borderRadius: BorderRadius.circular(dBorderRadius),
+                        borderRadius: BorderRadius.circular(dOuterRadius),
                         clipBehavior: Clip.antiAlias,
                         child: Container(
                           height: dDividerHeight * dividerThickness,

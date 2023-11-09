@@ -36,7 +36,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
               flex: 71,
               child: Padding(
-                padding: appHeadlinePadding,
+                padding: dAppHeadlinePadding,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: LayoutBuilder(
@@ -55,13 +55,13 @@ class HomePage extends ConsumerWidget {
             Expanded(
                 flex: 100,
                 child: Padding(
-                  padding: blockPadding - cardPaddingHalf,
+                  padding: dBlockPadding - dCardPaddingHalf,
                   child: Row(
                     children: List<Widget>.generate(
                         groupMembersDisplayCount + 1, // +1 для плюса слева
                         (index) => const Expanded(
                               child: Padding(
-                                padding: cardPaddingHalf,
+                                padding: dCardPaddingHalf,
                                 child: Material(
                                   shape: CircleBorder(),
                                   clipBehavior: Clip.antiAlias,
@@ -75,7 +75,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
                 flex: 116,
                 child: Padding(
-                  padding: blockPadding,
+                  padding: dBlockPadding,
                   child: Row(
                     children: [
                       // Статус холодильника/доставки
@@ -93,7 +93,7 @@ class HomePage extends ConsumerWidget {
                       Expanded(
                           child: RRButton(
                               onTap: () {},
-                              padding: EdgeInsets.only(left: blockPadding.left),
+                              padding: EdgeInsets.only(left: dBlockPadding.left),
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .primaryContainer,
@@ -105,7 +105,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
                 flex: 183,
                 child: Padding(
-                  padding: blockPadding,
+                  padding: dBlockPadding,
                   child: RRSurface(
                       padding: EdgeInsets.zero,
                       child: Column(
@@ -113,7 +113,7 @@ class HomePage extends ConsumerWidget {
                           // Заголовок: сегодняшняя дата и день недели
                           Expanded(
                               child: Padding(
-                            padding: headlinePadding,
+                            padding: dHeadingPadding,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: StyledHeadline(
@@ -129,7 +129,7 @@ class HomePage extends ConsumerWidget {
                           Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: blockPadding - cardPadding,
+                                padding: dBlockPadding - dCardPadding,
                                 // TODO: заменить Row на PageView
                                 child: Row(
                                   // TODO: заменить хардкод-приёмы на генератор приёмов
@@ -137,7 +137,8 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
-                                            padding: cardPadding,
+                                            borderRadius: dInnerRadius,
+                                            padding: dCardPadding,
                                             child: StyledHeadline(
                                                 text: 'Завтрак',
                                                 textStyle: Theme.of(context)
@@ -146,7 +147,8 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
-                                            padding: cardPadding,
+                                            borderRadius: dInnerRadius,
+                                            padding: dCardPadding,
                                             child: StyledHeadline(
                                                 text: 'Обед',
                                                 textStyle: Theme.of(context)
@@ -155,7 +157,8 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
-                                            padding: cardPadding,
+                                            borderRadius: dInnerRadius,
+                                            padding: dCardPadding,
                                             child: StyledHeadline(
                                                 text: 'Ужин',
                                                 textStyle: Theme.of(context)
@@ -171,7 +174,7 @@ class HomePage extends ConsumerWidget {
             Expanded(
                 flex: 218,
                 child: Padding(
-                  padding: blockPadding,
+                  padding: dBlockPadding,
                   child: RRSurface(
                       padding: EdgeInsets.zero,
                       child: Column(
@@ -179,7 +182,7 @@ class HomePage extends ConsumerWidget {
                           // Заголовок: «Мои рецепты»
                           Expanded(
                               child: Padding(
-                            padding: headlinePadding,
+                            padding: dHeadingPadding,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: StyledHeadline(
@@ -195,7 +198,7 @@ class HomePage extends ConsumerWidget {
                           Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: blockPadding - cardPadding,
+                                padding: dBlockPadding - dCardPadding,
                                 // TODO: заменить Row на PageView
                                 child: Row(
                                   // TODO: заменить хардкод-приёмы на генератор приёмов
@@ -203,20 +206,21 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
+                                            borderRadius: dInnerRadius,
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
                                                 .primaryContainer,
                                             foregroundDecoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      dBorderRadius),
+                                                      dInnerRadius),
                                               border: Border.all(
                                                   width: 2,
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .surface),
                                             ),
-                                            padding: cardPadding,
+                                            padding: dCardPadding,
                                             child: Column(
                                               children: [
                                                 const Expanded(
@@ -225,7 +229,7 @@ class HomePage extends ConsumerWidget {
                                                 Expanded(
                                                   child: Center(
                                                     child: Padding(
-                                                      padding: textPadding,
+                                                      padding: dLabelPadding,
                                                       child: StyledHeadline(
                                                           text: 'Борщ',
                                                           textStyle: Theme.of(
@@ -240,20 +244,21 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
+                                            borderRadius: dInnerRadius,
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
                                                 .primaryContainer,
                                             foregroundDecoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      dBorderRadius),
+                                                      dInnerRadius),
                                               border: Border.all(
                                                   width: 2,
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .surface),
                                             ),
-                                            padding: cardPadding,
+                                            padding: dCardPadding,
                                             child: Column(
                                               children: [
                                                 const Expanded(
@@ -262,9 +267,10 @@ class HomePage extends ConsumerWidget {
                                                 Expanded(
                                                   child: Center(
                                                     child: Padding(
-                                                      padding: textPadding,
+                                                      padding: dLabelPadding,
                                                       child: StyledHeadline(
-                                                          text: 'Пюре с отбивной',
+                                                          text:
+                                                              'Пюре с отбивной',
                                                           textStyle: Theme.of(
                                                                   context)
                                                               .textTheme
@@ -277,20 +283,21 @@ class HomePage extends ConsumerWidget {
                                     Expanded(
                                         child: RRButton(
                                             onTap: () {},
+                                            borderRadius: dInnerRadius,
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
                                                 .primaryContainer,
                                             foregroundDecoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      dBorderRadius),
+                                                      dInnerRadius),
                                               border: Border.all(
                                                   width: 2,
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .surface),
                                             ),
-                                            padding: cardPadding,
+                                            padding: dCardPadding,
                                             child: Column(
                                               children: [
                                                 const Expanded(
@@ -299,9 +306,10 @@ class HomePage extends ConsumerWidget {
                                                 Expanded(
                                                   child: Center(
                                                     child: Padding(
-                                                      padding: textPadding,
+                                                      padding: dLabelPadding,
                                                       child: StyledHeadline(
-                                                          text: 'Цезарь с курицей',
+                                                          text:
+                                                              'Цезарь с курицей',
                                                           textStyle: Theme.of(
                                                                   context)
                                                               .textTheme
@@ -448,7 +456,7 @@ SlidingSheetDialog createSlidingSheet(context,
         ),
       );
     },
-    cornerRadius: dBorderRadius,
+    cornerRadius: dOuterRadius,
     color: Theme.of(context).colorScheme.primaryContainer,
     snapSpec: SnapSpec(
         snap: true,

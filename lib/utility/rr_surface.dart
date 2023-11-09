@@ -13,7 +13,7 @@ class RRSurface extends StatelessWidget {
       {super.key,
       required this.child,
       this.backgroundColor,
-      this.borderRadius = dBorderRadius,
+      this.borderRadius = dOuterRadius,
       this.continuous = false,
       this.elevation = dElevation,
       this.padding = dPadding});

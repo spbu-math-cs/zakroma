@@ -80,7 +80,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
   return RRButton(
       foregroundDecoration: index == 0
           ? BoxDecoration(
-              borderRadius: BorderRadius.circular(dBorderRadius),
+              borderRadius: BorderRadius.circular(dOuterRadius),
               border: Border.all(
                   width: 4,
                   color: Color.alphaBlend(

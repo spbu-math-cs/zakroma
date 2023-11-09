@@ -103,7 +103,7 @@ class Meal {
                                     dimension: constraints.maxWidth,
                                     child: ClipRRect(
                                       borderRadius:
-                                          BorderRadius.circular(dBorderRadius),
+                                          BorderRadius.circular(dOuterRadius),
                                       child: Image.asset(
                                         'assets/images/${getDish(dishIndex).name}.jpg',
                                         fit: BoxFit.fitHeight,
