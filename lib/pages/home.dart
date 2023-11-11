@@ -15,7 +15,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     const groupMembersDisplayCount = 3;
-    final constants = ref.watch(constantsProvider);
+    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width / 48));
     // final currentDiet = ref.watch(dietListProvider).firstOrNull;
     // final List<Meal> todayMeals = currentDiet == null
     //     ? []

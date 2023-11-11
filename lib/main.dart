@@ -11,6 +11,8 @@ import 'themes.dart' as themes;
 import 'utility/navigation_bar.dart' as nav_bar;
 
 // TODO: корзина (список продуктов для покупки)
+// TODO: копирование списка продуктов в буфер обмена (https://stackoverflow.com/questions/55885433/flutter-dart-how-to-add-copy-to-clipboard-on-tap-to-a-app)
+// TODO: переход в приложение Алисы (https://pub.dev/packages/external_app_launcher/score)
 // TODO: окно входа
 // TODO: холодильник
 
@@ -53,7 +55,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     super.initState();
     // считаем константы для текущего устройства
     // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
-    Future(() => calculateConstants(ref, MediaQuery.of(context).size.width));
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
@@ -68,6 +69,10 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         // statusBarColor: Theme.of(context).colorScheme.primary));
         statusBarColor: Colors.transparent));
 
+    // 48 это константа, посчитанная с помощью уравнения на
+    // горизонтальный размер виджета с сегодняшними приёмами на домашнем экране
+    // ref.read(constantsProvider.notifier).set(MediaQuery.of(context).size.width / 48);
+    final constants = ref.read(constantsProvider(MediaQuery.of(context).size.width / 48));
     final pageController = PageController();
 
     return Scaffold(
@@ -104,7 +109,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Padding(
-              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 85 * ref.read(constantsProvider).dAppHeadlinePadding.bottom)),
+              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 85 * constants.dAppHeadlinePadding.bottom)),
               child: PageView(
                 controller: pageController,
                 onPageChanged: (index) => setState(() {
