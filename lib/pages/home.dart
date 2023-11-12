@@ -4,6 +4,8 @@ import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 
 import '../constants.dart';
+import '../data_cls/diet.dart';
+import '../data_cls/meal.dart';
 import '../utility/get_current_date.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
@@ -19,12 +21,10 @@ class HomePage extends ConsumerWidget {
     const groupMembersDisplayCount = 3;
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
-    // final currentDiet = ref.watch(dietListProvider).firstOrNull;
-    // final List<Meal> todayMeals = currentDiet == null
-    //     ? []
-    //     : currentDiet.isEmpty
-    //         ? []
-    //         : currentDiet.getDay(DateTime.now().weekday - 1).meals;
+    final currentDiet = ref.watch(dietListProvider).firstOrNull;
+    final List<Meal>? todayMeals =
+        currentDiet?.getDay(DateTime.now().weekday - 1).meals;
+    debugPrint('home, todayMeals = $todayMeals');
 
     return CustomScaffold(
       body: Column(
@@ -48,6 +48,7 @@ class HomePage extends ConsumerWidget {
               flex: 12,
               child: Padding(
                 padding: constants.dBlockPadding - constants.dCardPaddingHalf,
+                // TODO: добавить отображение реального списка людей и скролл
                 child: Row(
                   children: List<Widget>.generate(
                       groupMembersDisplayCount + 1, // +1 для плюса слева
@@ -88,8 +89,7 @@ class HomePage extends ConsumerWidget {
                       padding:
                           EdgeInsets.only(left: constants.dBlockPadding.left),
                       child: SizedBox(
-                          // 12 * constants.paddingUnit — это высота этого блока
-                          // (см. фигму)
+                          // 12 * constants.paddingUnit — это высота этого блока (см. фигму)
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
@@ -143,41 +143,48 @@ class HomePage extends ConsumerWidget {
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
                         // TODO: заменить Row на PageView
-                        child: Row(
-                          // TODO: заменить хардкод-приёмы на генератор приёмов
-                          children: [
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    padding: constants.dCardPadding,
-                                    child: StyledHeadline(
-                                        text: 'Завтрак',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    padding: constants.dCardPadding,
-                                    child: StyledHeadline(
-                                        text: 'Обед',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    padding: constants.dCardPadding,
-                                    child: StyledHeadline(
-                                        text: 'Ужин',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall))),
-                          ],
-                        ),
+                        child: todayMeals == null || todayMeals.isEmpty
+                            ? Center(
+                                child: TextButton.icon(
+                                    onPressed: () {
+                                      if (currentDiet == null) {
+                                        Diet.showAddDietDialog(context, ref);
+                                      } else {
+                                        Meal.showAddMealDialog(
+                                            context,
+                                            ref,
+                                            currentDiet.id,
+                                            DateTime.now().weekday - 1);
+                                      }
+                                    },
+                                    style: TextButton.styleFrom(
+                                      // padding: EdgeInsets.zero
+                                    ),
+                                    icon: const Icon(Icons.add),
+                                    label: currentDiet == null
+                                        ? const Text('Добавить рацион')
+                                        : const Text('Добавить приём')),
+                              )
+                            : Row(
+                                // TODO: заменить хардкод-приёмы на генератор приёмов
+                                children: List<Widget>.generate(
+                                    todayMeals.length,
+                                    (index) => Padding(
+                                      padding: constants.dCardPadding,
+                                      child: SizedBox.square(
+                                        // 12 — константа, взятая, опять же, из фигмы
+                                        dimension: 12 * constants.paddingUnit,
+                                          child: RRButton(
+                                              onTap: () {},
+                                              borderRadius:
+                                                  constants.dInnerRadius,
+                                              padding: EdgeInsets.zero,
+                                              child: StyledHeadline(
+                                                  text: todayMeals[index].name,
+                                                  textStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall))),
+                                    ))),
                       )),
                 ],
               ))),
