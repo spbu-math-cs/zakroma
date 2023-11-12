@@ -258,24 +258,23 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
         ),
       ),
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        height: MediaQuery.of(context).size.height / 17,
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
-        navigationBarIcons: [
-          nav_bar.NavigationDestination(
+        destinations: [
+          nav_bar.CNavigationDestination(
             icon: Icons.arrow_back,
             label: 'Назад',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
-          nav_bar.NavigationDestination(
+          nav_bar.CNavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () => setState(() {
               editMode = !editMode;
             }),
           ),
-          nav_bar.NavigationDestination(
+          nav_bar.CNavigationDestination(
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'constants.dart';
 import 'pages/diet_list.dart';
 import 'pages/home.dart';
 import 'pages/settings.dart';
@@ -56,6 +55,9 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('WidgetsBinding');
+    });
   }
 
   @override
@@ -70,13 +72,10 @@ class _ZakromaState extends ConsumerState<Zakroma> {
 
     // 48 это константа, посчитанная с помощью уравнения на
     // горизонтальный размер виджета с сегодняшними приёмами на домашнем экране
-    // ref.read(constantsProvider.notifier).set(MediaQuery.of(context).size.width / 48);
-    final constants = ref.read(constantsProvider(MediaQuery.of(context).size.width / 48));
     final pageController = PageController();
 
     return CustomScaffold(
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        height: MediaQuery.of(context).size.height / 17,
         onDestinationSelected: (index) {
           setState(() {
             currentPageIndex = index;
@@ -84,18 +83,18 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           pageController.jumpToPage(index);
         },
         selectedIndex: currentPageIndex,
-        navigationBarIcons: const [
-          nav_bar.NavigationDestination(
+        destinations: const [
+          nav_bar.CNavigationDestination(
             icon: Icons.home_outlined,
             label: 'Главная',
             selectedIcon: Icons.home,
           ),
-          nav_bar.NavigationDestination(
+          nav_bar.CNavigationDestination(
             icon: Icons.restaurant_menu,
             label: 'Рационы',
             selectedIcon: Icons.restaurant_menu,
           ),
-          nav_bar.NavigationDestination(
+          nav_bar.CNavigationDestination(
             icon: Icons.settings_outlined,
             label: 'Настройки',
             selectedIcon: Icons.settings,

@@ -14,7 +14,7 @@ class DietListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width / 48));
+    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final diets = ref.watch(dietListProvider);
 
     return CustomScaffold(

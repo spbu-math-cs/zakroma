@@ -87,7 +87,7 @@ class Meal {
         scrollPhysics: scrollable
             ? const ClampingScrollPhysics()
             : const NeverScrollableScrollPhysics(),
-        addDivider: dishMiniatures,
+        separator: FlatListSeparator.rrBorder,
         padding: padding ?? dPadding.copyWith(left: 0, right: 0),
         childPadding: dPadding.copyWith(left: 0),
         children: List.generate(

@@ -7,6 +7,12 @@ class Constants {
   /// Зависит от размеров экрана.
   final double paddingUnit;
 
+  /// Фактически используемая высота экрана (в единицах paddingUnit).
+  ///
+  /// Отсчитывается снизу, оставшееся сверху место остаётся пустым.
+  /// Высота используемой части экрана будет равна 85 * paddingUnit.
+  static const screenHeight = 85;
+
   /// Продолжительность анимаций (миллисекунды).
   static const dAnimationDuration = Duration(milliseconds: 250);
 
@@ -102,7 +108,7 @@ class Constants {
 
 class ConstantsNotifier extends FamilyNotifier<Constants, double> {
   @override
-  Constants build(double arg) => Constants(paddingUnit: arg);
+  Constants build(double arg) => Constants(paddingUnit: arg / 48);
 
   void set(double? paddingUnit) {
     state = state.copyWith(paddingUnit);
@@ -111,8 +117,10 @@ class ConstantsNotifier extends FamilyNotifier<Constants, double> {
 
 final constantsProvider = NotifierProvider.family<ConstantsNotifier, Constants, double>(() => ConstantsNotifier());
 
+final constants = Provider((ref) => ref.watch(constantsProvider(393)));
+
 @Deprecated(
-    'Миграция в новый дизайн: каждый класс элементов теперь имеет индивидуальные отступы — см. `constants.dart`.')
+    'Каждый класс элементов теперь имеет индивидуальные отступы: см. `constants.dart`.')
 const dPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 8);
 
 /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).
