@@ -39,6 +39,7 @@ dependencies:
   wtf_sliding_sheet: ^1.1.2
   flutter_riverpod: ^2.4.4
   uuid: ^4.0.0
+  external_app_launcher: ^3.1.0
 
 dev_dependencies:
   flutter_test:
