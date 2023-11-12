@@ -54,13 +54,7 @@ class Constants {
     'воскресенье',
   ];
 
-  @Deprecated(
-      'Миграция в новый дизайн: каждый класс элементов теперь имеет индивидуальные отступы — см. `constants.dart`.')
-  final EdgeInsets dPadding;
-
-  const Constants(
-      {required this.paddingUnit,
-      this.dPadding = const EdgeInsets.symmetric(horizontal: 20, vertical: 8)});
+  const Constants({required this.paddingUnit});
 
   /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).
   EdgeInsets get dAppHeadlinePadding => EdgeInsets.fromLTRB(paddingUnit * 4, 0, 0, paddingUnit);

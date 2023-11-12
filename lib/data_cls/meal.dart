@@ -89,8 +89,6 @@ class Meal {
             ? const ClampingScrollPhysics()
             : const NeverScrollableScrollPhysics(),
         separator: FlatListSeparator.rrBorder,
-        padding: padding ?? dPadding.copyWith(left: 0, right: 0),
-        childPadding: dPadding.copyWith(left: 0),
         children: List.generate(
             dishesCount,
             (dishIndex) => Row(

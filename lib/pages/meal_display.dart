@@ -7,7 +7,7 @@ import '../main.dart';
 import '../pages/dish_search.dart';
 import '../utility/animated_fab.dart';
 import '../utility/custom_scaffold.dart';
-import '../utility/navigation_bar.dart' as nav_bar;
+import '../utility/navigation_bar.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
@@ -68,24 +68,24 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
           ],
         ),
       ),
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+      bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         destinations: [
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.arrow_back,
             label: 'Назад',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () => setState(() {
               editMode = !editMode;
             }),
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {

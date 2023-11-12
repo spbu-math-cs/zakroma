@@ -32,7 +32,7 @@ class FlatList extends ConsumerWidget {
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.all(constants.paddingUnit * 2),
+          padding: padding ?? EdgeInsets.all(constants.paddingUnit * 2),
           sliver: SliverFixedExtentList(
             itemExtent: constants.paddingUnit * 11,
               delegate: SliverChildBuilderDelegate(

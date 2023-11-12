@@ -8,7 +8,7 @@ import '../data_cls/ingredient.dart';
 import '../data_cls/path.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
-import '../utility/navigation_bar.dart' as nav_bar;
+import '../utility/navigation_bar.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
@@ -99,24 +99,24 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
               )),
         ],
       )),
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+      bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         destinations: [
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.arrow_back,
             label: 'Назад',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.celebration_outlined,
             label: 'Отпраздновать',
             onTap: () {
               // TODO ???
             },
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {

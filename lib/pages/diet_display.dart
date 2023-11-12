@@ -9,7 +9,7 @@ import '../pages/meal_display.dart';
 import '../utility/animated_fab.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
-import '../utility/navigation_bar.dart' as nav_bar;
+import '../utility/navigation_bar.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
@@ -31,12 +31,12 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
     final diet = ref
         .watch(dietListProvider)
         .getDietById(ref.read(pathProvider).dietId!)!;
-    final pageController = PageController(initialPage: selectedDay);
     // TODO(fix): лист не обновляется при добавлении приёма пищи в диету
     var mealModes = List.generate(
         diet.days.length,
         (index) => Map.fromIterable(List<bool>.generate(
             diet.getDay(index).meals.length, (mealIndex) => false)));
+    final pageController = PageController(initialPage: selectedDay);
     // ref.listen(dietListProvider, (previous, next) {
     //   mealModes = [...mealModes, ];
     // });
@@ -48,7 +48,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
           children: [
             // Заголовок: название рациона
             Expanded(
-              flex: 1,
               child: Padding(
                 padding: EdgeInsets.only(left: dPadding.horizontal),
                 child: Align(
@@ -83,14 +82,9 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                   padding: dPadding,
                                   child: Column(
                                     children: [
-                                      // День недели + разделитель
+                                      // День недели
                                       Expanded(
-                                          child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          // Название дня недели
-                                          Padding(
+                                          child: Padding(
                                             padding: dPadding +
                                                 EdgeInsets.only(
                                                     left: dPadding.left),
@@ -104,28 +98,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                                     .headlineLarge,
                                               ),
                                             ),
-                                          ),
-                                          // Разделитель
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: dPadding.left),
-                                              child: Material(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        constants.dOuterRadius),
-                                                clipBehavior: Clip.antiAlias,
-                                                child: Container(
-                                                  height: constants.dDividerHeight,
-                                                  color: Theme.of(context)
-                                                      .dividerColor,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )),
+                                          )),
                                       // Список приёмов пищи
                                       Expanded(
                                         flex: 9,
@@ -196,18 +169,19 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                                     ),
                                                   ),
                                                   // Список блюд в данном приёме
-                                                  Visibility(
-                                                      visible: true,
-                                                      child: diet
-                                                          .getDay(dayIndex)
-                                                          .meals[mealIndex]
-                                                          .getDishesList(
-                                                              context,
-                                                              constants,
-                                                              scrollable: false,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero))
+                                                  // TODO: решить проблему со списком в списке
+                                                  // Visibility(
+                                                  //     visible: true,
+                                                  //     child: diet
+                                                  //         .getDay(dayIndex)
+                                                  //         .meals[mealIndex]
+                                                  //         .getDishesList(
+                                                  //             context,
+                                                  //             constants,
+                                                  //             scrollable: false,
+                                                  //             padding:
+                                                  //                 EdgeInsets
+                                                  //                     .zero))
                                                 ],
                                               );
                                             })),
@@ -259,24 +233,24 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
           ],
         ),
       ),
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+      bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         destinations: [
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.arrow_back,
             label: 'Назад',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
             onTap: () => setState(() {
               editMode = !editMode;
             }),
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {

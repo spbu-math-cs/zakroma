@@ -6,7 +6,7 @@ import 'pages/home.dart';
 import 'pages/settings.dart';
 import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
-import 'utility/navigation_bar.dart' as nav_bar;
+import 'utility/navigation_bar.dart';
 
 // TODO: корзина (список продуктов для покупки)
 // TODO: копирование списка продуктов в буфер обмена (https://stackoverflow.com/questions/55885433/flutter-dart-how-to-add-copy-to-clipboard-on-tap-to-a-app)
@@ -73,7 +73,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     final pageController = PageController();
 
     return CustomScaffold(
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
+      bottomNavigationBar: FunctionalBottomBar(
         onDestinationSelected: (index) {
           setState(() {
             currentPageIndex = index;
@@ -82,17 +82,17 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         },
         selectedIndex: currentPageIndex,
         destinations: const [
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.home_outlined,
             label: 'Главная',
             selectedIcon: Icons.home,
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.restaurant_menu,
             label: 'Рационы',
             selectedIcon: Icons.restaurant_menu,
           ),
-          nav_bar.CNavigationDestination(
+          CNavigationDestination(
             icon: Icons.settings_outlined,
             label: 'Настройки',
             selectedIcon: Icons.settings,
