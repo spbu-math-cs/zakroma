@@ -70,8 +70,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         // statusBarColor: Theme.of(context).colorScheme.primary));
         statusBarColor: Colors.transparent));
 
-    // 48 это константа, посчитанная с помощью уравнения на
-    // горизонтальный размер виджета с сегодняшними приёмами на домашнем экране
     final pageController = PageController();
 
     return CustomScaffold(

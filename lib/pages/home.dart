@@ -85,7 +85,8 @@ class HomePage extends ConsumerWidget {
                                     .headlineSmall))),
                     // Корзина
                     Padding(
-                      padding: EdgeInsets.only(left: dBlockPadding.left),
+                      padding:
+                          EdgeInsets.only(left: constants.dBlockPadding.left),
                       child: SizedBox(
                           // 12 * constants.paddingUnit — это высота этого блока
                           // (см. фигму)
@@ -148,7 +149,7 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     padding: constants.dCardPadding,
                                     child: StyledHeadline(
                                         text: 'Завтрак',
@@ -158,7 +159,7 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     padding: constants.dCardPadding,
                                     child: StyledHeadline(
                                         text: 'Обед',
@@ -168,7 +169,7 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     padding: constants.dCardPadding,
                                     child: StyledHeadline(
                                         text: 'Ужин',
@@ -223,13 +224,13 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
                                     foregroundDecoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(dInnerRadius),
+                                      borderRadius: BorderRadius.circular(
+                                          constants.dInnerRadius),
                                       border: Border.all(
                                           width: 2,
                                           color: Theme.of(context)
@@ -260,13 +261,13 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
                                     foregroundDecoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(dInnerRadius),
+                                      borderRadius: BorderRadius.circular(
+                                          constants.dInnerRadius),
                                       border: Border.all(
                                           width: 2,
                                           color: Theme.of(context)
@@ -296,13 +297,13 @@ class HomePage extends ConsumerWidget {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: dInnerRadius,
+                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
                                     foregroundDecoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(dInnerRadius),
+                                      borderRadius: BorderRadius.circular(
+                                          constants.dInnerRadius),
                                       border: Border.all(
                                           width: 2,
                                           color: Theme.of(context)
@@ -345,7 +346,7 @@ enum DisplayBarType {
   viandStatus,
 }
 
-class DisplayBar extends StatelessWidget {
+class DisplayBar extends ConsumerWidget {
   const DisplayBar(
     this.type, {
     super.key,
@@ -362,7 +363,7 @@ class DisplayBar extends StatelessWidget {
   final Image? image;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final contents = <Widget>[
       Expanded(
         flex: 2,
@@ -403,7 +404,9 @@ class DisplayBar extends StatelessWidget {
                               .copyWith(fontWeight: FontWeight.w300))
                     ],
                   ),
-                ));
+                ),
+                constants: ref.watch(
+                    constantsProvider(MediaQuery.of(context).size.width)));
           });
         },
         child: Row(
@@ -413,7 +416,9 @@ class DisplayBar extends StatelessWidget {
 }
 
 SlidingSheetDialog createSlidingSheet(context,
-    {required String headingText, required Widget body}) {
+    {required String headingText,
+    required Widget body,
+    required Constants constants}) {
   const maxSheetSize = 0.9;
   final screenHeight = MediaQuery.of(context).size.height;
   final headerHeight = screenHeight * maxSheetSize / 16;
@@ -464,7 +469,7 @@ SlidingSheetDialog createSlidingSheet(context,
         ),
       );
     },
-    cornerRadius: dOuterRadius,
+    cornerRadius: constants.dOuterRadius,
     color: Theme.of(context).colorScheme.primaryContainer,
     snapSpec: SnapSpec(
         snap: true,

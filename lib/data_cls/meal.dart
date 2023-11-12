@@ -79,10 +79,11 @@ class Meal {
                 ],
               ));
 
-  FlatList getDishesList(BuildContext context,
+  FlatList getDishesList(BuildContext context, Constants constants,
           {bool dishMiniatures = false,
           bool scrollable = true,
-          EdgeInsets? padding}) =>
+          EdgeInsets? padding,
+          }) =>
       FlatList(
         scrollPhysics: scrollable
             ? const ClampingScrollPhysics()
@@ -103,7 +104,7 @@ class Meal {
                                     dimension: constraints.maxWidth,
                                     child: ClipRRect(
                                       borderRadius:
-                                          BorderRadius.circular(dOuterRadius),
+                                          BorderRadius.circular(constants.dOuterRadius),
                                       child: Image.asset(
                                         'assets/images/${getDish(dishIndex).name}.jpg',
                                         fit: BoxFit.fitHeight,

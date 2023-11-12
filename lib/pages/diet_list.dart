@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
@@ -14,7 +15,8 @@ class DietListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final diets = ref.watch(dietListProvider);
 
     return CustomScaffold(
@@ -79,7 +81,9 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
   return RRButton(
       foregroundDecoration: index == 0
           ? BoxDecoration(
-              borderRadius: BorderRadius.circular(dOuterRadius),
+              borderRadius: BorderRadius.circular(ref
+                  .watch(constantsProvider(MediaQuery.of(context).size.width))
+                  .dOuterRadius),
               border: Border.all(
                   width: 4,
                   color: Color.alphaBlend(
@@ -88,11 +92,11 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
             )
           : null,
       onTap: () {
-        ref.read(pathProvider.notifier).update((state) => state.copyWith(dietId: diets[index].id,));
+        ref.read(pathProvider.notifier).update((state) => state.copyWith(
+              dietId: diets[index].id,
+            ));
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const DietPage()));
+            context, MaterialPageRoute(builder: (context) => const DietPage()));
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: dPadding.top),

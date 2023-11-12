@@ -64,7 +64,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
                         .getDietById(path.dietId!)!
                         .getMealById(
                             dayIndex: path.dayIndex!, mealId: path.mealId!)!
-                        .getDishesList(context, dishMiniatures: true)))
+                        .getDishesList(context, ref.read(constantsProvider(MediaQuery.of(context).size.width)), dishMiniatures: true)))
           ],
         ),
       ),

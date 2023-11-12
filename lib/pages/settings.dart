@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
+
 import '../constants.dart';
 import '../utility/flat_list.dart';
 import '../utility/rr_surface.dart';
@@ -7,16 +9,18 @@ import '../utility/styled_headline.dart';
 
 // TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final categoryTextStyle = Theme.of(context).textTheme.headlineMedium;
     final categoryList = [
       'Настройки питания',
@@ -73,10 +77,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Center(
                                       // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
                                       child: Material(
-                                        borderRadius: BorderRadius.circular(
-                                            dOuterRadius),
+                                        borderRadius:
+                                            BorderRadius.circular(constants.dOuterRadius),
                                         clipBehavior: Clip.antiAlias,
-                                        elevation: dElevation,
+                                        elevation: constants.dElevation,
                                         child: SizedBox.square(
                                           dimension:
                                               3 * constraints.maxHeight / 4,
@@ -93,8 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [

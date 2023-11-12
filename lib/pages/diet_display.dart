@@ -27,6 +27,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final diet = ref
         .watch(dietListProvider)
         .getDietById(ref.read(pathProvider).dietId!)!;
@@ -113,10 +114,10 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                               child: Material(
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                        dOuterRadius),
+                                                        constants.dOuterRadius),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: Container(
-                                                  height: dDividerHeight,
+                                                  height: constants.dDividerHeight,
                                                   color: Theme.of(context)
                                                       .dividerColor,
                                                 ),
@@ -202,6 +203,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                                           .meals[mealIndex]
                                                           .getDishesList(
                                                               context,
+                                                              constants,
                                                               scrollable: false,
                                                               padding:
                                                                   EdgeInsets

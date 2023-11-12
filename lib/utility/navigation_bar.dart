@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../constants.dart';
 
-class FunctionalBottomBar extends StatelessWidget {
+class FunctionalBottomBar extends ConsumerWidget {
   final List<CNavigationDestination> destinations;
   final int selectedIndex;
   final Color? backgroundColor;
@@ -21,22 +23,25 @@ class FunctionalBottomBar extends StatelessWidget {
       this.onDestinationSelected});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final height = MediaQuery.of(context).size.height / 17;
 
     return Container(
       decoration: BoxDecoration(
-          color: backgroundColor ??
-              Theme.of(context).colorScheme.primaryContainer,
+          color:
+              backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
           boxShadow: [
             BoxShadow(
                 color: Theme.of(context).colorScheme.shadow,
-                blurRadius: dElevation,
+                blurRadius: constants.dElevation,
                 offset: const Offset(0, -1))
           ]),
       height: height + MediaQuery.of(context).padding.bottom / 1.13,
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom / 1.13),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom / 1.13),
         child: Row(
           children: List<Widget>.generate(
               destinations.length,
