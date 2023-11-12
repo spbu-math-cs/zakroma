@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 import '../constants.dart';
 import '../utility/flat_list.dart';
 import '../utility/rr_surface.dart';
@@ -26,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
       'Другое',
     ];
 
-    return Scaffold(
+    return CustomScaffold(
       body: Column(
         children: [
           // Заголовок

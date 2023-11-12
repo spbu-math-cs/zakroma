@@ -6,6 +6,7 @@ import '../data_cls/diet.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/ingredient.dart';
 import '../data_cls/path.dart';
+import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart' as nav_bar;
 import '../utility/rr_surface.dart';
@@ -28,8 +29,7 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
         .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
     final predefinedDishes = getDishes();
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       body: SafeArea(
           child: Column(
         children: [

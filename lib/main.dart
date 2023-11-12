@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +6,7 @@ import 'pages/diet_list.dart';
 import 'pages/home.dart';
 import 'pages/settings.dart';
 import 'themes.dart' as themes;
+import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart' as nav_bar;
 
 // TODO: корзина (список продуктов для покупки)
@@ -75,9 +74,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     final constants = ref.read(constantsProvider(MediaQuery.of(context).size.width / 48));
     final pageController = PageController();
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       bottomNavigationBar: nav_bar.FunctionalBottomBar(
         height: MediaQuery.of(context).size.height / 17,
         onDestinationSelected: (index) {
@@ -108,19 +105,16 @@ class _ZakromaState extends ConsumerState<Zakroma> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            return Padding(
-              padding: EdgeInsets.only(top: max(0.0, constraints.maxHeight - 85 * constants.dAppHeadlinePadding.bottom)),
-              child: PageView(
-                controller: pageController,
-                onPageChanged: (index) => setState(() {
-                  currentPageIndex = index;
-                }),
-                children: const [
-                  HomePage(),
-                  DietListPage(),
-                  SettingsPage(),
-                ],
-              ),
+            return PageView(
+              controller: pageController,
+              onPageChanged: (index) => setState(() {
+                currentPageIndex = index;
+              }),
+              children: const [
+                HomePage(),
+                DietListPage(),
+                SettingsPage(),
+              ],
             );
           }
         ),

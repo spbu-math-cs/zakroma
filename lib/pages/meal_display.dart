@@ -6,6 +6,7 @@ import '../data_cls/path.dart';
 import '../main.dart';
 import '../pages/dish_search.dart';
 import '../utility/animated_fab.dart';
+import '../utility/custom_scaffold.dart';
 import '../utility/navigation_bar.dart' as nav_bar;
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
@@ -31,8 +32,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
         .getDietById(path.dietId!)!
         .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       body: SafeArea(
         child: Column(
           children: [

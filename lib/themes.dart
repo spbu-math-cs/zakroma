@@ -39,8 +39,6 @@ enum AppTheme {
 
   static final _themeDataList = [
     ThemeData(
-      scaffoldBackgroundColor: orangeBackground,
-      dividerColor: lighten(orangeBackground, 30),
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: const ColorScheme.light().copyWith(
@@ -57,6 +55,8 @@ enum AppTheme {
         outline: lighten(orangeBackground, 64),  // FFE6CA
         shadow: Colors.black26,
       ),
+      scaffoldBackgroundColor: orangeBackground,
+      dividerColor: lighten(orangeBackground, 30),
       splashColor: Colors.black26,
       highlightColor: Colors.black12,
       splashFactory: InkSplash.splashFactory,

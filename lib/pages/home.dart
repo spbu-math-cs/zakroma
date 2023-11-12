@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 
 import '../constants.dart';
 import '../utility/get_current_date.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
+import 'cart.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {
@@ -15,7 +17,8 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     const groupMembersDisplayCount = 3;
-    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width / 48));
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width / 48));
     // final currentDiet = ref.watch(dietListProvider).firstOrNull;
     // final List<Meal> todayMeals = currentDiet == null
     //     ? []
@@ -23,8 +26,7 @@ class HomePage extends ConsumerWidget {
     //         ? []
     //         : currentDiet.getDay(DateTime.now().weekday - 1).meals;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       body: Column(
         children: [
           // Заголовок приложения: «Закрома»
@@ -76,18 +78,23 @@ class HomePage extends ConsumerWidget {
                             padding: EdgeInsets.zero,
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
-                            child: const Placeholder())),
+                            child: StyledHeadline(text: 'Дома\nполно продуктов', textStyle: Theme.of(context).textTheme.headlineSmall))),
                     // Корзина
                     Padding(
                       padding: EdgeInsets.only(left: dBlockPadding.left),
                       child: SizedBox(
-                        width: 12 * constants.dAppHeadlinePadding.bottom,
+                          // 12 * constants.paddingUnit — это высота этого блока
+                          // (см. фигму)
+                          width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {},
                               padding: EdgeInsets.zero,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primaryContainer,
-                              child: const Placeholder())),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              child: Icon(
+                                  Icons.local_mall_outlined,
+                                  size: 7 * constants.paddingUnit))),
                     ),
                   ],
                 ),
@@ -107,25 +114,25 @@ class HomePage extends ConsumerWidget {
                             child: Padding(
                               padding: constants.dHeadingPadding,
                               child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return Align(
-                                    alignment: Alignment.topLeft,
-                                    child: StyledHeadline(
-                                        text: getCurrentDate(),
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall!
-                                            .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15 * constraints.maxHeight / 16,
-                                              height: 1,
-                                              leadingDistribution:
-                                                  TextLeadingDistribution
-                                                      .proportional,
-                                            )),
-                                  );
-                                }
-                              ),
+                                  builder: (context, constraints) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: StyledHeadline(
+                                      text: getCurrentDate(),
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                15 * constraints.maxHeight / 16,
+                                            height: 1,
+                                            leadingDistribution:
+                                                TextLeadingDistribution
+                                                    .proportional,
+                                          )),
+                                );
+                              }),
                             )),
                         // Перечисление приёмов пищи на сегодня
                         // TODO: реализовать листание + индикаторы снизу
@@ -185,29 +192,30 @@ class HomePage extends ConsumerWidget {
                       children: [
                         // Заголовок: «Мои рецепты»
                         Expanded(
-                          flex: 7,
+                            flex: 7,
                             child: Padding(
-                          padding: constants.dHeadingPadding,
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return Align(
-                                alignment: Alignment.topLeft,
-                                child: StyledHeadline(
-                                    text: 'Мои рецепты',
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15 * constraints.maxHeight / 16,
-                                          height: 1,
-                                          leadingDistribution:
-                                              TextLeadingDistribution.proportional,
-                                        )),
-                              );
-                            }
-                          ),
-                        )),
+                              padding: constants.dHeadingPadding,
+                              child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: StyledHeadline(
+                                      text: 'Мои рецепты',
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                15 * constraints.maxHeight / 16,
+                                            height: 1,
+                                            leadingDistribution:
+                                                TextLeadingDistribution
+                                                    .proportional,
+                                          )),
+                                );
+                              }),
+                            )),
                         // Перечисление рецептов
                         // TODO: реализовать листание + индикаторы снизу
                         Expanded(
@@ -252,7 +260,9 @@ class HomePage extends ConsumerWidget {
                                                         textStyle:
                                                             Theme.of(context)
                                                                 .textTheme
-                                                                .headlineSmall!.copyWith(height: 1)),
+                                                                .headlineSmall!
+                                                                .copyWith(
+                                                                    height: 1)),
                                                   ),
                                                 ),
                                               ),

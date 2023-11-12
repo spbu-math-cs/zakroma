@@ -7,6 +7,7 @@ import '../data_cls/path.dart';
 import '../main.dart';
 import '../pages/meal_display.dart';
 import '../utility/animated_fab.dart';
+import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart' as nav_bar;
 import '../utility/rr_surface.dart';
@@ -40,8 +41,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
     // });
     // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       body: SafeArea(
         child: Column(
           children: [

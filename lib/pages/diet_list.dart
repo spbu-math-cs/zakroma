@@ -4,6 +4,7 @@ import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
 import '../pages/diet_display.dart';
+import '../utility/custom_scaffold.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
@@ -16,8 +17,7 @@ class DietListPage extends ConsumerWidget {
     final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width / 48));
     final diets = ref.watch(dietListProvider);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
+    return CustomScaffold(
       body: Column(
         children: [
           // Заголовок
