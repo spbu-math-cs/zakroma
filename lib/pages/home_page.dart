@@ -2,6 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import '../data_cls/cart.dart';
+import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';
 import '../constants.dart';
 import '../data_cls/diet.dart';
@@ -122,6 +124,8 @@ class HomePage extends ConsumerWidget {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
+                                // TODO: убрать, использовалось для демо
+                                _addIngredients(ref.read(cartProvider.notifier));
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const CartPage()));
                               },
@@ -395,6 +399,20 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  // TODO: убрать, использовалось для демо
+  void _addIngredients(CartNotifier cart) {
+    cart.add(const Ingredient(
+        name: 'огурцы',
+        marketName: 'огурцы свежие',
+        unit: IngredientUnit.grams));
+    cart.add(const Ingredient(
+        name: 'помидоры', marketName: 'помидоры', unit: IngredientUnit.grams));
+    cart.add(const Ingredient(
+        name: 'лук репчатый',
+        marketName: 'лук репчатый',
+        unit: IngredientUnit.grams));
   }
 }
 

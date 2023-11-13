@@ -28,13 +28,7 @@ class _CartPageState extends ConsumerState<CartPage> {
   Widget build(BuildContext context) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
-    final cart = ref.watch(cartProvider.notifier);
-    // TODO: убрать, использовалось только для демо
-    _addIngredients(cart);
-    debugPrint('Закажи в лавке ${cart.ingredients.expand((element) => [
-          "${element.marketName} ${cart.map[element]}"
-        ]).join(', ')}.');
-
+    final cart = ref.watch(cartProvider);
     final ScrollController scrollController = ScrollController();
     scrollController.addListener(() => setState(() {
           orderButtonVisible = scrollController.position.userScrollDirection ==
@@ -42,16 +36,20 @@ class _CartPageState extends ConsumerState<CartPage> {
               ? false
               : true;
         }));
+    debugPrint('Закажи в лавке ${cart.keys.expand((element) => [
+      "${element.marketName} ${cart[element]}"
+    ]).join(', ')}.');
 
     return CustomScaffold(
       title: 'Корзина',
       body: RRSurface(
           child: Stack(children: [
         FlatList(
+            childHeight: constants.paddingUnit * 12,
             separator: FlatListSeparator.rrBorder,
             scrollController: scrollController,
-            children: List<Widget>.generate(cart.ingredientsCount,
-                (index) => IngredientTile(cart.ingredients[index]))),
+            children: List<Widget>.generate(cart.length,
+                (index) => IngredientTile(cart.keys.elementAt(index)))),
         Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox(
@@ -78,8 +76,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                                   onPressed: () async {
                                     await Clipboard.setData(ClipboardData(
                                         text:
-                                            'Закажи в лавке ${cart.ingredients.expand((element) => [
-                                                  "${element.marketName} ${cart.map[element]}"
+                                            'Закажи в лавке ${cart.entries.expand((element) => [
+                                                  "${element.key.marketName} ${cart[element.key]}"
                                                 ]).join(', ')}.'));
                                     await LaunchApp.openApp(
                                         androidPackageName:
@@ -101,8 +99,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                     'Перейти к оформлению',
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!
-                        .copyWith(fontWeight: FontWeight.bold),
+                        .titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold
+                    ),
                   )),
             ),
           ),
@@ -135,28 +134,96 @@ class _CartPageState extends ConsumerState<CartPage> {
       ),
     );
   }
-
-  void _addIngredients(CartNotifier cart) {
-    cart.add(const Ingredient(
-        name: 'огурцы',
-        marketName: 'огурцы свежие',
-        unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'помидоры', marketName: 'помидоры', unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'лук', marketName: 'лук', unit: IngredientUnit.grams));
-  }
 }
 
-class IngredientTile extends StatelessWidget {
+class IngredientTile extends ConsumerWidget {
   final Ingredient ingredient;
 
   const IngredientTile(this.ingredient, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final cart = ref.watch(cartProvider);
+
     return Center(
-      child: Text(ingredient.name.capitalize()),
+      child: Row(
+        children: [
+          Expanded(
+              child: Image.asset(
+            'assets/images/${ingredient.name}.jpeg',
+            fit: BoxFit.fill,
+          )),
+          Expanded(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.all(constants.paddingUnit * 2),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: StyledHeadline(
+                          text: ingredient.name.capitalize(),
+                          textStyle:
+                              Theme.of(context).textTheme.titleLarge),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: SizedBox(
+                        height: 3 * constants.paddingUnit,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            RRButton(
+                                onTap: () => ref.read(cartProvider.notifier).decrement(ingredient, context),
+                                borderRadius: constants.paddingUnit / 2,
+                                padding: EdgeInsets.zero,
+                                child: SizedBox.square(
+                                  dimension: constants.paddingUnit * 3,
+                                  child: Icon(Icons.remove,
+                                    size: constants.paddingUnit * 2,),
+                                )),
+                            SizedBox(
+                                width: 3 * constants.paddingUnit,
+                                child: Center(
+                                  child: Text(cart[ingredient].toString()),
+                                )),
+                            RRButton(
+                                onTap: () => ref.read(cartProvider.notifier).increment(ingredient),
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                borderRadius: constants.paddingUnit / 2,
+                                padding: EdgeInsets.zero,
+                                child: SizedBox.square(
+                                  dimension: constants.paddingUnit * 3,
+                                  child: Icon(Icons.add,
+                                    size: constants.paddingUnit * 2,),
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.bottomRight,
+                        child: SizedBox.square(
+                          dimension: constants.paddingUnit * 3,
+                          child: RRButton(
+                            elevation: 0,
+                              onTap: () => ref.read(cartProvider.notifier).remove(ingredient),
+                              backgroundColor: Colors.transparent,
+                              borderRadius: constants.paddingUnit / 2,
+                              padding: EdgeInsets.zero,
+                              child: SizedBox.square(
+                                dimension: constants.paddingUnit * 3,
+                                child: Icon(Icons.delete_outline,
+                                  size: constants.paddingUnit * 2,),
+                              )),
+                        ),)
+                  ],
+                ),
+              ))
+        ],
+      ),
     );
   }
 }

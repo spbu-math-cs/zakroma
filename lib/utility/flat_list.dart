@@ -7,6 +7,7 @@ class FlatList extends ConsumerWidget {
   final List<Widget> children;
   final Alignment childAlignment;
   final EdgeInsets? childPadding;
+  final double? childHeight;
   final Color? dividerColor;
   final double? dividerThickness;
   final EdgeInsets? padding;
@@ -18,6 +19,7 @@ class FlatList extends ConsumerWidget {
     this.separator = FlatListSeparator.none,
     this.childAlignment = Alignment.bottomLeft,
     this.childPadding,
+    this.childHeight,
     this.dividerColor,
     this.dividerThickness,
     this.padding,
@@ -42,7 +44,7 @@ class FlatList extends ConsumerWidget {
           // вычитаем, так как у нижнего элемента есть отступ снизу, равный
           // childPadding.bottom или constants.paddingUnit (по умолчанию)
           sliver: SliverFixedExtentList(
-              itemExtent: constants.paddingUnit * 11,
+              itemExtent: childHeight ?? constants.paddingUnit * 12,
               delegate: SliverChildBuilderDelegate(
                   childCount: children.length,
                   (context, index) => switch (separator) {
@@ -68,7 +70,7 @@ class FlatList extends ConsumerWidget {
                                         color: Theme.of(context)
                                             .colorScheme
                                             .outline,
-                                        width: 2)),
+                                        width: constants.borderWidth)),
                                 clipBehavior: Clip.antiAlias,
                                 child: children[index])),
                       })),
