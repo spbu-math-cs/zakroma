@@ -26,7 +26,7 @@ class CartNotifier extends Notifier<Map<Ingredient, int>> {
     if (state[ingredient] == 1) {
       await showDialog(context: context, builder: (_) => AlertDialog(
         title: const Text('Внимание!'),
-        content: Text('Продукт ${ingredient.name} будет безвозвратно удалён из корзины'),
+        content: Text('Продукт «${ingredient.name}» будет безвозвратно удалён из корзины'),
         actions: [
           TextButton(onPressed: () {
             Navigator.of(context).pop();

@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/cart.dart';
 import 'package:zakroma_frontend/utility/styled_headline.dart';
-
 import '../constants.dart';
 import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';

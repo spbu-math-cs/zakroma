@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
 import '../constants.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/path.dart';
 import '../pages/meal_page.dart';
 import '../utility/alert_text_prompt.dart';
 import '../utility/flat_list.dart';
-
 import 'diet.dart';
 
 @immutable
@@ -79,11 +79,13 @@ class Meal {
                 ],
               ));
 
-  FlatList getDishesList(BuildContext context, Constants constants,
-          {bool dishMiniatures = false,
-          bool scrollable = true,
-          EdgeInsets? padding,
-          }) =>
+  FlatList getDishesList(
+    BuildContext context,
+    Constants constants, {
+    bool dishMiniatures = false,
+    bool scrollable = true,
+    EdgeInsets? padding,
+  }) =>
       FlatList(
         scrollPhysics: scrollable
             ? const ClampingScrollPhysics()
@@ -92,17 +94,19 @@ class Meal {
         children: List.generate(
             dishesCount,
             (dishIndex) => Row(
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisSize: MainAxisSize.min,
                   children: (dishMiniatures
                           ? <Widget>[
                               Expanded(
                                 child: LayoutBuilder(
                                     builder: (context, constraints) {
                                   return SizedBox.square(
-                                    dimension: constraints.maxWidth,
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(constants.dOuterRadius),
+                                    dimension: constraints.maxHeight,
+                                    child: Material(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            constants.dInnerRadius),
+                                      ),
                                       child: Image.asset(
                                         'assets/images/${getDish(dishIndex).name}.jpg',
                                         fit: BoxFit.fitHeight,
@@ -115,9 +119,9 @@ class Meal {
                           : <Widget>[]) +
                       <Widget>[
                         Expanded(
-                          flex: 4,
+                          flex: 3,
                           child: Padding(
-                            padding: EdgeInsets.only(left: dPadding.left),
+                            padding: EdgeInsets.all(constants.paddingUnit * 2),
                             child: Text(
                                 '${dishMiniatures ? '' : '- '}${getDish(dishIndex).name}',
                                 overflow: TextOverflow.ellipsis,
