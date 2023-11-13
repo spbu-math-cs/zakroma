@@ -209,7 +209,20 @@ class HomePage extends ConsumerWidget {
                                               dimension:
                                                   12 * constants.paddingUnit,
                                               child: RRButton(
-                                                  onTap: () {},
+                                                  onTap: () {
+                                                    showSlidingBottomSheet(context,
+                                                        builder: (context) {
+                                                          return createSlidingSheet(
+                                                            context,
+                                                            headingText:
+                                                            todayMeals[index].name,
+                                                            body: todayMeals[index]
+                                                                .getDishesList(context, constants,
+                                                                dishMiniatures: true),
+                                                            constants: constants,
+                                                          );
+                                                        });
+                                                  },
                                                   borderRadius:
                                                       constants.dInnerRadius,
                                                   padding: EdgeInsets.zero,

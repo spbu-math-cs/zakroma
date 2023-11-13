@@ -77,7 +77,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                                     await Clipboard.setData(ClipboardData(
                                         text:
                                             'Закажи в лавке ${cart.entries.expand((element) => [
-                                                  "${element.key.marketName} ${cart[element.key]}"
+                                                  "${element.key.marketName} ${cart[element.key]} штуки"
                                                 ]).join(', ')}.'));
                                     await LaunchApp.openApp(
                                         androidPackageName:
