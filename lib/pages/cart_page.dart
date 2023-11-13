@@ -37,8 +37,8 @@ class _CartPageState extends ConsumerState<CartPage> {
               : true;
         }));
     debugPrint('Закажи в лавке ${cart.keys.expand((element) => [
-      "${element.marketName} ${cart[element]}"
-    ]).join(', ')}.');
+          "${element.marketName} ${cart[element]}"
+        ]).join(', ')}.');
 
     return CustomScaffold(
       title: 'Корзина',
@@ -83,9 +83,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                                         androidPackageName:
                                             'com.yandex.searchapp',
                                         iosUrlScheme:
-                                            'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
-                                        appStoreLink:
                                             'shortcuts://run-shortcut?name=яндекс',
+                                        appStoreLink:
+                                            'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
                                         openStore: true);
                                   },
                                   child: const Text('Продолжить'),
@@ -99,9 +99,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                     'Перейти к оформлению',
                     style: Theme.of(context)
                         .textTheme
-                        .titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold
-                    ),
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   )),
             ),
           ),
@@ -165,8 +164,7 @@ class IngredientTile extends ConsumerWidget {
                       alignment: Alignment.topLeft,
                       child: StyledHeadline(
                           text: ingredient.name.capitalize(),
-                          textStyle:
-                              Theme.of(context).textTheme.titleLarge),
+                          textStyle: Theme.of(context).textTheme.titleLarge),
                     ),
                     Align(
                       alignment: Alignment.bottomLeft,
@@ -176,13 +174,17 @@ class IngredientTile extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             RRButton(
-                                onTap: () => ref.read(cartProvider.notifier).decrement(ingredient, context),
+                                onTap: () => ref
+                                    .read(cartProvider.notifier)
+                                    .decrement(ingredient, context),
                                 borderRadius: constants.paddingUnit / 2,
                                 padding: EdgeInsets.zero,
                                 child: SizedBox.square(
                                   dimension: constants.paddingUnit * 3,
-                                  child: Icon(Icons.remove,
-                                    size: constants.paddingUnit * 2,),
+                                  child: Icon(
+                                    Icons.remove,
+                                    size: constants.paddingUnit * 2,
+                                  ),
                                 )),
                             SizedBox(
                                 width: 3 * constants.paddingUnit,
@@ -190,35 +192,45 @@ class IngredientTile extends ConsumerWidget {
                                   child: Text(cart[ingredient].toString()),
                                 )),
                             RRButton(
-                                onTap: () => ref.read(cartProvider.notifier).increment(ingredient),
-                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                onTap: () => ref
+                                    .read(cartProvider.notifier)
+                                    .increment(ingredient),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 borderRadius: constants.paddingUnit / 2,
                                 padding: EdgeInsets.zero,
                                 child: SizedBox.square(
                                   dimension: constants.paddingUnit * 3,
-                                  child: Icon(Icons.add,
-                                    size: constants.paddingUnit * 2,),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: constants.paddingUnit * 2,
+                                  ),
                                 )),
                           ],
                         ),
                       ),
                     ),
                     Align(
-                        alignment: Alignment.bottomRight,
-                        child: SizedBox.square(
-                          dimension: constants.paddingUnit * 3,
-                          child: RRButton(
+                      alignment: Alignment.bottomRight,
+                      child: SizedBox.square(
+                        dimension: constants.paddingUnit * 3,
+                        child: RRButton(
                             elevation: 0,
-                              onTap: () => ref.read(cartProvider.notifier).remove(ingredient),
-                              backgroundColor: Colors.transparent,
-                              borderRadius: constants.paddingUnit / 2,
-                              padding: EdgeInsets.zero,
-                              child: SizedBox.square(
-                                dimension: constants.paddingUnit * 3,
-                                child: Icon(Icons.delete_outline,
-                                  size: constants.paddingUnit * 2,),
-                              )),
-                        ),)
+                            onTap: () => ref
+                                .read(cartProvider.notifier)
+                                .remove(ingredient),
+                            backgroundColor: Colors.transparent,
+                            borderRadius: constants.paddingUnit / 2,
+                            padding: EdgeInsets.zero,
+                            child: SizedBox.square(
+                              dimension: constants.paddingUnit * 3,
+                              child: Icon(
+                                Icons.delete_outline,
+                                size: constants.paddingUnit * 2,
+                              ),
+                            )),
+                      ),
+                    )
                   ],
                 ),
               ))
