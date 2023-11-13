@@ -1,8 +1,8 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import 'package:zakroma_frontend/utility/custom_scaffold.dart';
-
+import '../utility/custom_scaffold.dart';
 import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/meal.dart';
@@ -24,7 +24,8 @@ class HomePage extends ConsumerWidget {
     final currentDiet = ref.watch(dietListProvider).firstOrNull;
     final List<Meal>? todayMeals =
         currentDiet?.getDay(DateTime.now().weekday - 1).meals;
-    debugPrint('home, todayMeals = $todayMeals');
+    debugPrint('home, size = ${41 * constants.paddingUnit / 4}');
+    const double x = 15.2;
 
     return CustomScaffold(
       title: 'Закрома',
@@ -39,15 +40,54 @@ class HomePage extends ConsumerWidget {
                 child: Row(
                   children: List<Widget>.generate(
                       groupMembersDisplayCount + 1, // +1 для плюса слева
-                      (index) => Expanded(
-                            child: Padding(
-                              padding: constants.dCardPaddingHalf,
-                              child: const Material(
-                                shape: CircleBorder(),
-                                clipBehavior: Clip.antiAlias,
-                                child: Placeholder(),
-                              ),
-                            ),
+                      (index) => Padding(
+                            padding: constants.dCardPaddingHalf,
+                            child: SizedBox.square(
+                                // размер каждого элемента равен 10 единиц (см. фигму)
+                                dimension: 41 * constants.paddingUnit / 4,
+                                child: index > 0
+                                    ? Material(
+                                        shape: const CircleBorder(),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Image.asset(
+                                          'assets/images/group_member_$index.jpeg',
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      )
+                                    : DottedBorder(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer,
+                                        // TODO: починить костыль с dashPattern'ом
+                                        dashPattern: const [
+                                          x / 2,
+                                          x, x, x, x, // 12 часов
+                                          x, x, x, x, // 3 часа
+                                          x, x, x, x, // 6 часов
+                                          x, x, x,
+                                          x / 2,
+                                        ],
+                                        padding: EdgeInsets.zero,
+                                        // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
+                                        borderPadding: const EdgeInsets.all(2),
+                                        strokeWidth: 4,
+                                        radius: Radius.circular(
+                                            constants.dOuterRadius),
+                                        strokeCap: StrokeCap.round,
+                                        borderType: BorderType.Circle,
+                                        child: RRButton(
+                                            backgroundColor: Colors.transparent,
+                                            decoration: const BoxDecoration(),
+                                            padding: EdgeInsets.zero,
+                                            elevation: 0,
+                                            onTap: () {},
+                                            child: Icon(
+                                              Icons.add,
+                                              size: constants.paddingUnit * 6,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer,
+                                            )))),
                           )),
                 ),
               )),
@@ -64,13 +104,15 @@ class HomePage extends ConsumerWidget {
                         child: RRButton(
                             onTap: () {},
                             padding: EdgeInsets.zero,
+                            childAlignment: Alignment.centerLeft,
+                            childPadding: EdgeInsets.only(left: constants.paddingUnit * 2),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
                             child: StyledHeadline(
                                 text: 'Дома\nполно продуктов',
                                 textStyle: Theme.of(context)
                                     .textTheme
-                                    .headlineSmall))),
+                                    .titleLarge))),
                     // Корзина
                     Padding(
                       padding:
@@ -145,8 +187,8 @@ class HomePage extends ConsumerWidget {
                                       }
                                     },
                                     style: TextButton.styleFrom(
-                                      // padding: EdgeInsets.zero
-                                    ),
+                                        // padding: EdgeInsets.zero
+                                        ),
                                     icon: const Icon(Icons.add),
                                     label: currentDiet == null
                                         ? const Text('Добавить рацион')
@@ -157,21 +199,24 @@ class HomePage extends ConsumerWidget {
                                 children: List<Widget>.generate(
                                     todayMeals.length,
                                     (index) => Padding(
-                                      padding: constants.dCardPadding,
-                                      child: SizedBox.square(
-                                        // 12 — константа, взятая, опять же, из фигмы
-                                        dimension: 12 * constants.paddingUnit,
-                                          child: RRButton(
-                                              onTap: () {},
-                                              borderRadius:
-                                                  constants.dInnerRadius,
-                                              padding: EdgeInsets.zero,
-                                              child: StyledHeadline(
-                                                  text: todayMeals[index].name,
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall))),
-                                    ))),
+                                          padding: constants.dCardPadding,
+                                          child: SizedBox.square(
+                                              // 12 — константа, взятая, опять же, из фигмы
+                                              dimension:
+                                                  12 * constants.paddingUnit,
+                                              child: RRButton(
+                                                  onTap: () {},
+                                                  borderRadius:
+                                                      constants.dInnerRadius,
+                                                  padding: EdgeInsets.zero,
+                                                  child: StyledHeadline(
+                                                      text: todayMeals[index]
+                                                          .name,
+                                                      textStyle:
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .headlineSmall))),
+                                        ))),
                       )),
                 ],
               ))),
@@ -234,8 +279,14 @@ class HomePage extends ConsumerWidget {
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
-                                        const Expanded(
-                                            flex: 49, child: Placeholder()),
+                                        Expanded(
+                                            flex: 49,
+                                            child: SizedBox.expand(
+                                              child: Image.asset(
+                                                'assets/images/borsch.jpeg',
+                                                fit: BoxFit.fill,
+                                              ),
+                                            )),
                                         Expanded(
                                           flex: 23,
                                           child: Center(
@@ -271,8 +322,14 @@ class HomePage extends ConsumerWidget {
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
-                                        const Expanded(
-                                            flex: 49, child: Placeholder()),
+                                        Expanded(
+                                            flex: 49,
+                                            child: SizedBox.expand(
+                                              child: Image.asset(
+                                                'assets/images/potatoes.jpeg',
+                                                fit: BoxFit.fill,
+                                              ),
+                                            )),
                                         Expanded(
                                           flex: 23,
                                           child: Center(
@@ -307,8 +364,14 @@ class HomePage extends ConsumerWidget {
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
-                                        const Expanded(
-                                            flex: 49, child: Placeholder()),
+                                        Expanded(
+                                            flex: 49,
+                                            child: SizedBox.expand(
+                                              child: Image.asset(
+                                                'assets/images/salad.jpeg',
+                                                fit: BoxFit.fill,
+                                              ),
+                                            )),
                                         Expanded(
                                           flex: 23,
                                           child: Center(

@@ -43,7 +43,7 @@ class CustomScaffold extends ConsumerWidget {
                         child: Padding(
                           padding: constants.dAppHeadlinePadding,
                           child: Align(
-                            alignment: Alignment.topLeft,
+                            alignment: Alignment.centerLeft,
                             child: StyledHeadline(
                               text: title!,
                               textStyle:

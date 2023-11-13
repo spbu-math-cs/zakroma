@@ -27,11 +27,14 @@ class StyledHeadline extends StatelessWidget {
           text: text.substring(0, redTextEndIndex),
           style: textStyle?.copyWith(
             color: Theme.of(context).colorScheme.secondary,
+            height: 1
           ),
           children: [
             TextSpan(
               text: text.substring(redTextEndIndex),
-              style: textStyle,
+              style: textStyle?.copyWith(
+                height: 1
+              ),
             )
           ]),
     );
