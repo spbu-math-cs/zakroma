@@ -32,27 +32,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ];
 
     return CustomScaffold(
+      title: 'Настройки',
       body: Column(
         children: [
-          // Заголовок
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(left: dPadding.horizontal),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: LayoutBuilder(
-                  builder: (context, constraints) => StyledHeadline(
-                    text: 'Настройки',
-                    textStyle:
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
-                  ),
-                ),
-              ),
-            ),
-          ),
           // Профиль пользователя и его группы
           Expanded(
             flex: 4,

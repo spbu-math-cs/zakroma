@@ -15,49 +15,23 @@ class DietListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final diets = ref.watch(dietListProvider);
 
     return CustomScaffold(
-      body: Column(
-        children: [
-          // Заголовок
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(left: dPadding.horizontal),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: LayoutBuilder(
-                  builder: (context, constraints) => StyledHeadline(
-                    text: 'Рационы',
-                    textStyle:
-                        Theme.of(context).textTheme.displaySmall!.copyWith(
-                              fontSize: 3 * constraints.maxHeight / 4,
-                            ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Список всех рационов
-          Expanded(
-            flex: 10,
-            child: RRSurface(
-              padding: dPadding.copyWith(bottom: dPadding.vertical),
-              child: Padding(
-                padding: EdgeInsets.only(top: dPadding.top),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return ListView.builder(
-                      itemCount: diets.length + 1,
-                      itemBuilder: (context, index) => SizedBox(
-                            height: constraints.maxHeight / 5,
-                            child: getDietDisplay(context, ref, index),
-                          ));
-                }),
-              ),
-            ),
-          ),
-        ],
+      title: 'Питание',
+      body: RRSurface(
+        child: Padding(
+          padding: EdgeInsets.only(top: dPadding.top),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return ListView.builder(
+                itemCount: diets.length + 1,
+                itemBuilder: (context, index) => SizedBox(
+                      height: constraints.maxHeight / 5,
+                      child: getDietDisplay(context, ref, index),
+                    ));
+          }),
+        ),
       ),
     );
   }

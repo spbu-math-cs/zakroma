@@ -27,22 +27,9 @@ class HomePage extends ConsumerWidget {
     debugPrint('home, todayMeals = $todayMeals');
 
     return CustomScaffold(
+      title: 'Закрома',
       body: Column(
         children: [
-          // Заголовок приложения: «Закрома»
-          Expanded(
-            flex: 9,
-            child: Padding(
-              padding: constants.dAppHeadlinePadding,
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: StyledHeadline(
-                  text: 'Закрома',
-                  textStyle: Theme.of(context).textTheme.displayLarge,
-                ),
-              ),
-            ),
-          ),
           // Пользователи в группе
           Expanded(
               flex: 12,

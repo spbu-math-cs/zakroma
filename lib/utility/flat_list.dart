@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../constants.dart';
 
 class FlatList extends ConsumerWidget {
@@ -9,8 +8,9 @@ class FlatList extends ConsumerWidget {
   final Alignment childAlignment;
   final EdgeInsets? childPadding;
   final Color? dividerColor;
-  final double dividerThickness;
+  final double? dividerThickness;
   final EdgeInsets? padding;
+  final ScrollController? scrollController;
   final ScrollPhysics scrollPhysics;
 
   const FlatList({
@@ -19,9 +19,10 @@ class FlatList extends ConsumerWidget {
     this.childAlignment = Alignment.bottomLeft,
     this.childPadding,
     this.dividerColor,
-    this.dividerThickness = 1.0,
-    this.scrollPhysics = const ClampingScrollPhysics(),
+    this.dividerThickness,
     this.padding,
+    this.scrollPhysics = const ClampingScrollPhysics(),
+    this.scrollController,
     required this.children,
   });
 
@@ -29,12 +30,19 @@ class FlatList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+
     return CustomScrollView(
+      controller: scrollController,
       slivers: [
         SliverPadding(
-          padding: padding ?? EdgeInsets.all(constants.paddingUnit * 2),
+          padding: padding ??
+              EdgeInsets.all(constants.paddingUnit * 2) -
+                  EdgeInsets.only(
+                      bottom: childPadding?.bottom ?? constants.paddingUnit),
+          // вычитаем, так как у нижнего элемента есть отступ снизу, равный
+          // childPadding.bottom или constants.paddingUnit (по умолчанию)
           sliver: SliverFixedExtentList(
-            itemExtent: constants.paddingUnit * 11,
+              itemExtent: constants.paddingUnit * 11,
               delegate: SliverChildBuilderDelegate(
                   childCount: children.length,
                   (context, index) => switch (separator) {
@@ -57,7 +65,10 @@ class FlatList extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(
                                         constants.dInnerRadius),
                                     side: BorderSide(
-                                        color: Theme.of(context).colorScheme.outline, width: 2)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                        width: 2)),
                                 clipBehavior: Clip.antiAlias,
                                 child: children[index])),
                       })),
