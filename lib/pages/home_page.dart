@@ -10,7 +10,7 @@ import '../utility/get_current_date.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
-import 'cart.dart';
+import 'cart_page.dart';
 // TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {

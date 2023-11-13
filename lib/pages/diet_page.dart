@@ -5,7 +5,7 @@ import '../data_cls/diet.dart';
 import '../data_cls/meal.dart';
 import '../data_cls/path.dart';
 import '../main.dart';
-import '../pages/meal_display.dart';
+import '../pages/meal_page.dart';
 import '../utility/animated_fab.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';

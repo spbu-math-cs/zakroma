@@ -5,7 +5,7 @@ import '../data_cls/diet_day.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/meal.dart';
 import '../data_cls/path.dart';
-import '../pages/diet_display.dart';
+import '../pages/diet_page.dart';
 import '../utility/alert_text_prompt.dart';
 
 @immutable

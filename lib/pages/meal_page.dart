@@ -4,7 +4,7 @@ import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
 import '../main.dart';
-import '../pages/dish_search.dart';
+import '../pages/dish_search_page.dart';
 import '../utility/animated_fab.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/navigation_bar.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'pages/diet_list.dart';
-import 'pages/home.dart';
-import 'pages/settings.dart';
+import 'pages/diets_page.dart';
+import 'pages/home_page.dart';
+import 'pages/settings_page.dart';
 import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart';
