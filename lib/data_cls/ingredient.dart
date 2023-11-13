@@ -10,6 +10,11 @@ class Ingredient {
   /// Название продукта.
   final String name;
 
+  /// Название продукта на торговой площадке.
+  ///
+  /// Используется при заказе доставки данного продукта.
+  final String marketName;
+
   /// Единица измерения продукта: граммы, миллилитры или штуки.
   final IngredientUnit unit;
 
@@ -27,6 +32,7 @@ class Ingredient {
 
   const Ingredient(
       {required this.name,
+        required this.marketName,
       required this.unit,
       // TODO: убрать нули и вернуть required
       this.kcal = 0,

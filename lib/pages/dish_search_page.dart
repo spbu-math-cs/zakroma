@@ -133,123 +133,123 @@ List<Dish> getDishes() => [
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Омлет с овощами',
-          recipe: [
+          recipe: const [
             'Взбейте яйца',
             'Нарежьте овощи, обжарьте их в сковороде',
             'Добавьте яйца и готовьте до затвердения'
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(Ingredient(name: 'Яйца', unit: IngredientUnit.pieces), 2),
-            MapEntry(
-                Ingredient(name: 'Помидоры', unit: IngredientUnit.grams), 50),
-            MapEntry(Ingredient(name: 'Перец', unit: IngredientUnit.grams), 50),
-            MapEntry(Ingredient(name: 'Лук', unit: IngredientUnit.grams), 20),
+            const MapEntry(Ingredient(name: 'Яйца', marketName: 'Яйца', unit: IngredientUnit.pieces), 2),
+            const MapEntry(
+                Ingredient(name: 'Помидоры', marketName: 'Помидоры', unit: IngredientUnit.grams), 50),
+            const MapEntry(Ingredient(name: 'Перец', marketName: 'Перец', unit: IngredientUnit.grams), 50),
+            const MapEntry(Ingredient(name: 'Лук', marketName: 'Лук', unit: IngredientUnit.grams), 20),
           ])),
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Фруктовый салат с орехами',
-          recipe: [
+          recipe: const [
             'Нарежьте фрукты и орехи',
             'Смешайте их в салате',
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(
-                Ingredient(name: 'Апельсины', unit: IngredientUnit.pieces), 2),
-            MapEntry(
-                Ingredient(name: 'Бананы', unit: IngredientUnit.pieces), 2),
-            MapEntry(
-                Ingredient(name: 'Грецкие орехи', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Апельсины', marketName: 'Апельсины', unit: IngredientUnit.pieces), 2),
+            const MapEntry(
+                Ingredient(name: 'Бананы', marketName: 'Бананы', unit: IngredientUnit.pieces), 2),
+            const MapEntry(
+                Ingredient(name: 'Грецкие орехи', marketName: 'Грецкие орехи', unit: IngredientUnit.grams),
                 30),
           ])),
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Лосось с картофельным пюре и шпинатом',
-          recipe: [
+          recipe: const [
             'Запеките лосось с лимонным соком',
             'Подавайте с картофельным пюре и обжаренным шпинатом',
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(
-                Ingredient(name: 'Филе лосося', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Филе лосося', marketName: 'Филе лосося', unit: IngredientUnit.grams),
                 150),
-            MapEntry(
+            const MapEntry(
                 Ingredient(
-                    name: 'Картофельное пюре', unit: IngredientUnit.grams),
+                    name: 'Картофельное пюре', marketName: 'Картофельное пюре', unit: IngredientUnit.grams),
                 150),
-            MapEntry(
-                Ingredient(name: 'Шпинат', unit: IngredientUnit.grams), 50),
-            MapEntry(
-                Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-            MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-            MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
+            const MapEntry(
+                Ingredient(name: 'Шпинат', marketName: 'Шпинат', unit: IngredientUnit.grams), 50),
+            const MapEntry(
+                Ingredient(name: 'Лимонный сок', marketName: 'Лимонный сок', unit: IngredientUnit.mils), 2),
+            const MapEntry(Ingredient(name: 'Масло', marketName: 'Масло', unit: IngredientUnit.mils), 2),
+            const MapEntry(Ingredient(name: 'Соль', marketName: 'Соль', unit: IngredientUnit.grams), 3),
           ])),
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Цезарь с курицей',
-          recipe: [
+          recipe: const [
             'Обжарьте куриную грудку, нарежьте ее',
             'Смешайте с салатом, гренками, сыром и соусом',
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(
-                Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Куриное филе', marketName: 'Куриное филе', unit: IngredientUnit.grams),
                 150),
-            MapEntry(
-                Ingredient(name: 'Салат Романо', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Салат Романо', marketName: 'Салат Романо', unit: IngredientUnit.grams),
                 50),
-            MapEntry(
-                Ingredient(name: 'Гренки', unit: IngredientUnit.grams), 40),
-            MapEntry(
-                Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-            MapEntry(
-                Ingredient(name: 'Соус Цезарь', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Гренки', marketName: 'Гренки', unit: IngredientUnit.grams), 40),
+            const MapEntry(
+                Ingredient(name: 'Пармезан', marketName: 'Пармезан', unit: IngredientUnit.grams), 30),
+            const MapEntry(
+                Ingredient(name: 'Соус Цезарь', marketName: 'Соус Цезарь', unit: IngredientUnit.grams),
                 30),
           ])),
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Курица с киноа и зеленью',
-          recipe: [
+          recipe: const [
             'Обжарьте курицу',
             'Приготовьте киноа',
             'Cмешайте с петрушкой и лимонным соком'
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(
-                Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Куриное филе', marketName: 'Куриное филе', unit: IngredientUnit.grams),
                 150),
-            MapEntry(
-                Ingredient(name: 'Киноа', unit: IngredientUnit.grams), 100),
-            MapEntry(
-                Ingredient(name: 'Петрушка', unit: IngredientUnit.grams), 30),
-            MapEntry(
-                Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-            MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-            MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
+            const MapEntry(
+                Ingredient(name: 'Киноа', marketName: 'Киноа', unit: IngredientUnit.grams), 100),
+            const MapEntry(
+                Ingredient(name: 'Петрушка', marketName: 'Петрушка', unit: IngredientUnit.grams), 30),
+            const MapEntry(
+                Ingredient(name: 'Лимонный сок', marketName: 'Лимонный сок', unit: IngredientUnit.mils), 2),
+            const MapEntry(Ingredient(name: 'Масло', marketName: 'Масло', unit: IngredientUnit.mils), 2),
+            const MapEntry(Ingredient(name: 'Соль', marketName: 'Соль', unit: IngredientUnit.grams), 3),
           ])),
       Dish(
           id: const Uuid().v4().toString(),
           name: 'Паста с томатным соусом и брокколи',
-          recipe: [
+          recipe: const [
             'Варите спагетти',
             'Приготовьте томатный соус с брокколи и смешайте с пастой',
           ],
-          tags: [],
+          tags: const [],
           ingredients: Map.fromEntries([
-            MapEntry(
-                Ingredient(name: 'Спагетти', unit: IngredientUnit.grams), 100),
-            MapEntry(
-                Ingredient(name: 'Томатный соус', unit: IngredientUnit.grams),
+            const MapEntry(
+                Ingredient(name: 'Спагетти', marketName: 'Спагетти', unit: IngredientUnit.grams), 100),
+            const MapEntry(
+                Ingredient(name: 'Томатный соус', marketName: 'Томатный соус', unit: IngredientUnit.grams),
                 150),
-            MapEntry(
-                Ingredient(name: 'Брокколи', unit: IngredientUnit.grams), 50),
-            MapEntry(
-                Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-            MapEntry(
-                Ingredient(name: 'Оливковое', unit: IngredientUnit.mils), 5),
+            const MapEntry(
+                Ingredient(name: 'Брокколи', marketName: 'Брокколи', unit: IngredientUnit.grams), 50),
+            const MapEntry(
+                Ingredient(name: 'Пармезан', marketName: 'Пармезан', unit: IngredientUnit.grams), 30),
+            const MapEntry(
+                Ingredient(name: 'Оливковое', marketName: 'Оливковое', unit: IngredientUnit.mils), 5),
           ])),
     ];

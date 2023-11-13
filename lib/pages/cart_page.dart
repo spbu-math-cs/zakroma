@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/data_cls/cart.dart';
+import 'package:zakroma_frontend/utility/styled_headline.dart';
 
 import '../constants.dart';
+import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart';
@@ -25,6 +28,13 @@ class _CartPageState extends ConsumerState<CartPage> {
   Widget build(BuildContext context) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final cart = ref.watch(cartProvider.notifier);
+    // TODO: убрать, использовалось только для демо
+    _addIngredients(cart);
+    debugPrint('Закажи в лавке ${cart.ingredients.expand((element) => [
+          "${element.marketName} ${cart.map[element]}"
+        ]).join(', ')}.');
+
     final ScrollController scrollController = ScrollController();
     scrollController.addListener(() => setState(() {
           orderButtonVisible = scrollController.position.userScrollDirection ==
@@ -40,17 +50,8 @@ class _CartPageState extends ConsumerState<CartPage> {
         FlatList(
             separator: FlatListSeparator.rrBorder,
             scrollController: scrollController,
-            children: const [
-              Center(child: Text('Огурцы')),
-              Center(child: Text('Помидоры')),
-              Center(child: Text('Лук')),
-              Center(child: Text('Огурцы')),
-              Center(child: Text('Помидоры')),
-              Center(child: Text('Лук')),
-              Center(child: Text('Огурцы')),
-              Center(child: Text('Помидоры')),
-              Center(child: Text('Лук')),
-            ]),
+            children: List<Widget>.generate(cart.ingredientsCount,
+                (index) => IngredientTile(cart.ingredients[index]))),
         Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox(
@@ -75,9 +76,11 @@ class _CartPageState extends ConsumerState<CartPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    await Clipboard.setData(const ClipboardData(
+                                    await Clipboard.setData(ClipboardData(
                                         text:
-                                            'Закажи в лавке огурцы свежие, помидоры, лук.'));
+                                            'Закажи в лавке ${cart.ingredients.expand((element) => [
+                                                  "${element.marketName} ${cart.map[element]}"
+                                                ]).join(', ')}.'));
                                     await LaunchApp.openApp(
                                         androidPackageName:
                                             'com.yandex.searchapp',
@@ -130,6 +133,30 @@ class _CartPageState extends ConsumerState<CartPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _addIngredients(CartNotifier cart) {
+    cart.add(const Ingredient(
+        name: 'огурцы',
+        marketName: 'огурцы свежие',
+        unit: IngredientUnit.grams));
+    cart.add(const Ingredient(
+        name: 'помидоры', marketName: 'помидоры', unit: IngredientUnit.grams));
+    cart.add(const Ingredient(
+        name: 'лук', marketName: 'лук', unit: IngredientUnit.grams));
+  }
+}
+
+class IngredientTile extends StatelessWidget {
+  final Ingredient ingredient;
+
+  const IngredientTile(this.ingredient, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(ingredient.name.capitalize()),
     );
   }
 }
