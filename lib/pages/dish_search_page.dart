@@ -30,75 +30,52 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
     final predefinedDishes = getDishes();
 
     return CustomScaffold(
+      title: meal.name,
       body: SafeArea(
-          child: Column(
-        children: [
-          // Заголовок: название приёма пищи
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(left: dPadding.horizontal),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: LayoutBuilder(
-                  builder: (context, constraints) => StyledHeadline(
-                      text: meal.name,
-                      // text: 'Закрома',
-                      textStyle:
-                          Theme.of(context).textTheme.displaySmall!.copyWith(
-                                fontSize: 3 * constraints.maxHeight / 4,
-                              )),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-              flex: 10,
-              child: RRSurface(
-                padding: dPadding.copyWith(bottom: dPadding.vertical),
-                child: Column(
-                  children: [
-                    Expanded(
-                        child: Padding(
-                      padding: (dPadding * 2).copyWith(bottom: 0),
-                      child: Center(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: dPadding.top),
-                              border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.search),
-                              prefixIconColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              hintText: 'поиск',),
-                        ),
-                      ),
-                    )),
-                    Expanded(
-                      flex: 8,
-                      child: FlatList(
-                          children: List<Widget>.generate(
-                              predefinedDishes.length,
-                              (index) => GestureDetector(
-                                  onTap: () {
-                                    ref.read(dietListProvider.notifier).addDish(
-                                        dietId: path.dietId!,
-                                        dayIndex: path.dayIndex!,
-                                        mealId: path.mealId!,
-                                        newDish: predefinedDishes[index]);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: StyledHeadline(
-                                    text: predefinedDishes[index].name,
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium,
-                                  )))),
+          child: RRSurface(
+            child: Column(
+              children: [
+                // Строка поиска
+                Expanded(
+                    child: Padding(
+                  padding: (dPadding * 2).copyWith(bottom: 0),
+                  child: Center(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(top: dPadding.top),
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.search),
+                          prefixIconColor:
+                              Theme.of(context).colorScheme.secondary,
+                          hintText: 'поиск',),
                     ),
-                  ],
+                  ),
+                )),
+                // Результаты поиска
+                Expanded(
+                  flex: 8,
+                  child: FlatList(
+                      children: List<Widget>.generate(
+                          predefinedDishes.length,
+                          (index) => GestureDetector(
+                              onTap: () {
+                                ref.read(dietListProvider.notifier).addDish(
+                                    dietId: path.dietId!,
+                                    dayIndex: path.dayIndex!,
+                                    mealId: path.mealId!,
+                                    newDish: predefinedDishes[index]);
+                                Navigator.of(context).pop();
+                              },
+                              child: StyledHeadline(
+                                text: predefinedDishes[index].name,
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium,
+                              )))),
                 ),
-              )),
-        ],
-      )),
+              ],
+            ),
+          )),
       bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         destinations: [

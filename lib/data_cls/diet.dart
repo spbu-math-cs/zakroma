@@ -154,6 +154,7 @@ class DietList extends Notifier<List<Diet>> {
       required int dayIndex,
       required String mealId,
       required Dish newDish}) {
+    debugPrint('adding gish... state = ${state.toString()}');
     state = [
       for (final diet in state)
         if (diet.id == dietId)
@@ -176,6 +177,7 @@ class DietList extends Notifier<List<Diet>> {
         else
           diet,
     ];
+    debugPrint('DONE! state = ${state.toString()}');
   }
 
   void remove({required String id}) {

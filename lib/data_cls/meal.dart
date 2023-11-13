@@ -100,8 +100,9 @@ class Meal {
                               Expanded(
                                 child: LayoutBuilder(
                                     builder: (context, constraints) {
+                                      debugPrint(constraints.toString());
                                   return SizedBox.square(
-                                    dimension: constraints.maxHeight,
+                                    dimension: constraints.maxWidth,
                                     child: Material(
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(

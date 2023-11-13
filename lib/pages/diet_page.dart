@@ -27,7 +27,8 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final diet = ref
         .watch(dietListProvider)
         .getDietById(ref.read(pathProvider).dietId!)!;
@@ -43,160 +44,112 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
     // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
     return CustomScaffold(
+      title: diet.name,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Заголовок: название рациона
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: dPadding.horizontal),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => StyledHeadline(
-                        text: diet.name,
-                        textStyle:
-                            Theme.of(context).textTheme.displaySmall!.copyWith(
-                                  fontSize: 3 * constraints.maxHeight / 4,
-                                )),
-                  ),
-                ),
-              ),
-            ),
-            // Список дней недели в рационе
-            Expanded(
-                flex: 10,
-                child: Column(
-                  children: [
-                    // Выбранный день недели
-                    Expanded(
-                      flex: 13,
-                      child: PageView(
-                          onPageChanged: (index) => setState(() {
-                                selectedDay = index;
-                              }),
-                          controller: pageController,
-                          children: List.generate(
-                              Constants.weekDays.length,
-                              (dayIndex) => RRSurface(
-                                  padding: dPadding,
-                                  child: Column(
-                                    children: [
-                                      // День недели
-                                      Expanded(
-                                          child: Padding(
-                                            padding: dPadding +
-                                                EdgeInsets.only(
-                                                    left: dPadding.left),
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: StyledHeadline(
-                                                text: Constants.weekDays[dayIndex]
-                                                    .capitalize(),
-                                                textStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge,
-                                              ),
-                                            ),
-                                          )),
-                                      // Список приёмов пищи
-                                      Expanded(
-                                        flex: 9,
-                                        child: FlatList(
-                                            padding: dPadding.copyWith(top: 0),
-                                            children: List<Widget>.generate(
-                                                diet
-                                                    .getDay(dayIndex)
-                                                    .meals
-                                                    .length, (mealIndex) {
-                                              var expanded = mealModes[dayIndex]
-                                                      [diet
-                                                          .getDay(dayIndex)
-                                                          .meals[mealIndex]] ??
-                                                  false;
-                                              return Column(
-                                                children: [
-                                                  // Название приёма пищи
-                                                  GestureDetector(
-                                                    behavior:
-                                                        HitTestBehavior.opaque,
-                                                    onTap: () {
-                                                      ref
-                                                          .read(pathProvider
-                                                              .notifier)
-                                                          .update((state) =>
-                                                              state.copyWith(
-                                                                  dayIndex:
-                                                                      dayIndex,
-                                                                  mealId: diet
-                                                                      .getDay(
-                                                                          dayIndex)
-                                                                      .meals[
-                                                                          mealIndex]
-                                                                      .id));
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      MealPage(
-                                                                        initialEdit:
-                                                                            editMode,
-                                                                      )));
-                                                    },
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        StyledHeadline(
-                                                            text: diet
-                                                                .getDay(
-                                                                    dayIndex)
-                                                                .meals[
-                                                                    mealIndex]
-                                                                .name,
-                                                            textStyle: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineMedium),
-                                                        expanded
-                                                            ? const Icon(Icons
-                                                                .expand_more)
-                                                            : const Icon(Icons
-                                                                .chevron_right)
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  // Список блюд в данном приёме
-                                                  // TODO: решить проблему со списком в списке
-                                                  // Visibility(
-                                                  //     visible: true,
-                                                  //     child: diet
-                                                  //         .getDay(dayIndex)
-                                                  //         .meals[mealIndex]
-                                                  //         .getDishesList(
-                                                  //             context,
-                                                  //             constants,
-                                                  //             scrollable: false,
-                                                  //             padding:
-                                                  //                 EdgeInsets
-                                                  //                     .zero))
-                                                ],
-                                              );
-                                            })),
+            PageView(
+                onPageChanged: (index) => setState(() {
+                      selectedDay = index;
+                    }),
+                controller: pageController,
+                children: List.generate(
+                    Constants.weekDays.length,
+                    (dayIndex) => RRSurface(
+                            child: Stack(
+                          children: [
+                            // Список приёмов пищи
+                            FlatList(
+                                // constants.paddingUnit * 6 — это размер заголовка (см. фигму)
+                                padding:
+                                    EdgeInsets.all(constants.paddingUnit * 2).copyWith(top: constants.paddingUnit),
+                                separator: FlatListSeparator.rrBorder,
+                                sliverAppBar: SliverAppBar(
+                                  toolbarHeight: constants.paddingUnit * 6,
+                                  elevation: constants.dElevation,
+                                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                                  automaticallyImplyLeading: false,
+                                  pinned: true,
+                                  floating: true,
+                                  title: Padding(
+                                    padding: constants.dHeadingPadding,
+                                    child: StyledHeadline(
+                                      text: Constants.weekDays[dayIndex]
+                                          .capitalize(),
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge,
+                                    ),
+                                  ),
+                                ),
+                                children: List<Widget>.generate(
+                                    diet.getDay(dayIndex).meals.length,
+                                    (mealIndex) {
+                                  var expanded = mealModes[dayIndex][diet
+                                          .getDay(dayIndex)
+                                          .meals[mealIndex]] ??
+                                      false;
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      ref.read(pathProvider.notifier).update(
+                                          (state) => state.copyWith(
+                                              dayIndex: dayIndex,
+                                              mealId: diet
+                                                  .getDay(dayIndex)
+                                                  .meals[mealIndex]
+                                                  .id));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => MealPage(
+                                                    initialEdit: editMode,
+                                                  )));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                          constants.paddingUnit * 2),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          StyledHeadline(
+                                              text: diet
+                                                  .getDay(dayIndex)
+                                                  .meals[mealIndex]
+                                                  .name,
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium),
+                                          expanded
+                                              ? const Icon(Icons.expand_more)
+                                              : const Icon(Icons.chevron_right)
+                                        ],
                                       ),
-                                    ],
-                                  )))),
+                                    ),
+                                  );
+                                })),
+                          ],
+                        )))),
+            // Индикатор дней недели
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: constants.paddingUnit * 7,
+                child: Padding(
+                  padding: constants.dBlockPadding +
+                      EdgeInsets.fromLTRB(constants.paddingUnit * 6, 0,
+                          constants.paddingUnit * 6, constants.paddingUnit),
+                  child: Material(
+                    color: Theme.of(context).colorScheme.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(constants.dOuterRadius),
                     ),
-                    // Индикатор дней недели
-                    Expanded(
-                        child: Padding(
-                      padding: dPadding.copyWith(top: 0, bottom: 0) * 2 +
-                          EdgeInsets.only(bottom: dPadding.bottom),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: constants.paddingUnit),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: List<Widget>.generate(
                             Constants.weekDaysShort.length,
                             (index) => Expanded(
@@ -209,7 +162,8 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                   }),
                                   child: Center(
                                     child: Text(
-                                      Constants.weekDaysShort[index].capitalize(),
+                                      Constants.weekDaysShort[index]
+                                          .capitalize(),
                                       textAlign: TextAlign.center,
                                       style: Theme.of(context)
                                           .textTheme
@@ -227,9 +181,11 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                   ),
                                 ))),
                       ),
-                    ))
-                  ],
-                ))
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

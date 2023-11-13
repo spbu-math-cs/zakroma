@@ -9,7 +9,6 @@ import '../utility/animated_fab.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/navigation_bar.dart';
 import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
 
 class MealPage extends ConsumerStatefulWidget {
   final bool initialEdit;
@@ -33,40 +32,15 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
         .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
 
     return CustomScaffold(
+      title: meal.name,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Заголовок: название рациона
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.only(left: dPadding.horizontal),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => StyledHeadline(
-                        text: meal.name,
-                        textStyle:
-                            Theme.of(context).textTheme.displaySmall!.copyWith(
-                                  fontSize: 3 * constraints.maxHeight / 4,
-                                )),
-                  ),
-                ),
-              ),
-            ),
-            // Список блюд
-            Expanded(
-                flex: 10,
-                child: RRSurface(
-                    padding: dPadding.copyWith(bottom: dPadding.vertical),
-                    child: ref
-                        .read(dietListProvider)
-                        .getDietById(path.dietId!)!
-                        .getMealById(
-                            dayIndex: path.dayIndex!, mealId: path.mealId!)!
-                        .getDishesList(context, ref.read(constantsProvider(MediaQuery.of(context).size.width)), dishMiniatures: true)))
-          ],
-        ),
+        child: RRSurface(
+            child: ref
+                .read(dietListProvider)
+                .getDietById(path.dietId!)!
+                .getMealById(
+                    dayIndex: path.dayIndex!, mealId: path.mealId!)!
+                .getDishesList(context, ref.read(constantsProvider(MediaQuery.of(context).size.width)), dishMiniatures: true)),
       ),
       bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
