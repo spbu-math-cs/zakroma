@@ -35,9 +35,6 @@ class _CartPageState extends ConsumerState<CartPage> {
               ? false
               : true;
         }));
-    debugPrint('Закажи в лавке ${cart.keys.expand((element) => [
-          "${element.marketName} ${cart[element]}"
-        ]).join(', ')}.');
 
     return CustomScaffold(
       title: 'Корзина',
@@ -115,7 +112,7 @@ class _CartPageState extends ConsumerState<CartPage> {
               Navigator.of(context).pop();
             },
           ),
-          // TODO: заменить кнопку на что-то осмысленное
+          // TODO(func): заменить кнопку на что-то осмысленное
           CNavigationDestination(
             icon: Icons.edit_outlined,
             label: 'Редактировать',
@@ -125,7 +122,7 @@ class _CartPageState extends ConsumerState<CartPage> {
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {
-              // TODO: показывать всплывающее окошко со списком опций (см. черновики/figma)
+              // TODO(func): показывать всплывающее окошко со списком опций (см. черновики/figma)
             },
           ),
         ],

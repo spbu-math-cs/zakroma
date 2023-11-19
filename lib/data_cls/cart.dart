@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ingredient.dart';
 class CartNotifier extends Notifier<Map<Ingredient, int>> {
+  // TODO(server): подгрузить список продуктов в корзине
   @override
   Map<Ingredient, int> build() => {};
 
@@ -18,6 +19,7 @@ class CartNotifier extends Notifier<Map<Ingredient, int>> {
   }
 
   void remove(Ingredient ingredient) {
+    // TODO(func): добавить предупреждение как в decrement
     state = Map.fromEntries(state.entries);
     state.remove(ingredient);
   }
@@ -37,7 +39,6 @@ class CartNotifier extends Notifier<Map<Ingredient, int>> {
           }, child: const Text('Продолжить'))
         ],
       ));
-      // TODO: выдать предупреждение о том, что товар будет удалён из корзины
     } else {
       state = Map.fromEntries(state.entries);
       state[ingredient] = state[ingredient]! - 1;

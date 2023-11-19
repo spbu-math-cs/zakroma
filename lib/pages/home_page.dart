@@ -2,18 +2,17 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import '../data_cls/cart.dart';
-import '../data_cls/ingredient.dart';
-import '../utility/custom_scaffold.dart';
 import '../constants.dart';
+import '../data_cls/cart.dart';
 import '../data_cls/diet.dart';
+import '../data_cls/ingredient.dart';
 import '../data_cls/meal.dart';
+import '../utility/custom_scaffold.dart';
 import '../utility/get_current_date.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 import 'cart_page.dart';
-// TODO: получать todayMeals, статус количества продуктов и доставки из бэка
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -26,8 +25,7 @@ class HomePage extends ConsumerWidget {
     final currentDiet = ref.watch(dietListProvider).firstOrNull;
     final List<Meal>? todayMeals =
         currentDiet?.getDay(DateTime.now().weekday - 1).meals;
-    debugPrint('home, size = ${41 * constants.paddingUnit / 4}');
-    const double x = 15.2;
+    const double dottedRRButtonBorderDashSize = 15.2;
 
     return CustomScaffold(
       title: 'Закрома',
@@ -38,7 +36,9 @@ class HomePage extends ConsumerWidget {
               flex: 12,
               child: Padding(
                 padding: constants.dBlockPadding - constants.dCardPaddingHalf,
-                // TODO: добавить отображение реального списка людей и скролл
+                // TODO(server): подгрузить членов группы (id, иконка)
+                // TODO(func): реализовать клик по плюсу, члену группы
+                // TODO(tech): реализовать горизонтальную прокрутку членов группы
                 child: Row(
                   children: List<Widget>.generate(
                       groupMembersDisplayCount + 1, // +1 для плюса слева
@@ -60,14 +60,14 @@ class HomePage extends ConsumerWidget {
                                         color: Theme.of(context)
                                             .colorScheme
                                             .primaryContainer,
-                                        // TODO: починить костыль с dashPattern'ом
+                                        // TODO(fix): понять, как нормально рисовать пунктирную границу
                                         dashPattern: const [
-                                          x / 2,
-                                          x, x, x, x, // 12 часов
-                                          x, x, x, x, // 3 часа
-                                          x, x, x, x, // 6 часов
-                                          x, x, x,
-                                          x / 2,
+                                          dottedRRButtonBorderDashSize / 2, // 9 часов, верхняя половина
+                                          dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, // 12 часов
+                                          dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, // 3 часа
+                                          dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, // 6 часов
+                                          dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize, dottedRRButtonBorderDashSize,
+                                          dottedRRButtonBorderDashSize / 2, // 9 часов, нижняя половина
                                         ],
                                         padding: EdgeInsets.zero,
                                         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
@@ -101,20 +101,22 @@ class HomePage extends ConsumerWidget {
                 child: Row(
                   children: [
                     // Статус холодильника/доставки
-                    // TODO: сделать листание + индикаторы снизу
+                    // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                     Expanded(
+                        // TODO(server): подгрузить информацию по холодильнику (???)
+                        // TODO(server): подгрузить информацию по доставке (bool есть_активная_доставка, ???)
                         child: RRButton(
                             onTap: () {},
                             padding: EdgeInsets.zero,
                             childAlignment: Alignment.centerLeft,
-                            childPadding: EdgeInsets.only(left: constants.paddingUnit * 2),
+                            childPadding: EdgeInsets.only(
+                                left: constants.paddingUnit * 2),
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
                             child: StyledHeadline(
                                 text: 'Дома\nполно продуктов',
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge))),
+                                textStyle:
+                                    Theme.of(context).textTheme.titleLarge))),
                     // Корзина
                     Padding(
                       padding:
@@ -124,8 +126,9 @@ class HomePage extends ConsumerWidget {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
-                                // TODO: убрать, использовалось для демо
-                                _addIngredients(ref.read(cartProvider.notifier));
+                                // TODO(tape): убрать заполнение корзины
+                                _addIngredients(
+                                    ref.read(cartProvider.notifier));
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const CartPage()));
                               },
@@ -169,13 +172,13 @@ class HomePage extends ConsumerWidget {
                         }),
                       )),
                   // Перечисление приёмов пищи на сегодня
-                  // TODO: реализовать листание + индикаторы снизу
+                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                   Expanded(
                       flex: 14,
                       child: Padding(
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
-                        // TODO: заменить Row на PageView
+                        // TODO(refactor): вынести всю логику child'а
                         child: todayMeals == null || todayMeals.isEmpty
                             ? Center(
                                 child: TextButton.icon(
@@ -199,7 +202,6 @@ class HomePage extends ConsumerWidget {
                                         : const Text('Добавить приём')),
                               )
                             : Row(
-                                // TODO: заменить хардкод-приёмы на генератор приёмов
                                 children: List<Widget>.generate(
                                     todayMeals.length,
                                     (index) => Padding(
@@ -210,18 +212,23 @@ class HomePage extends ConsumerWidget {
                                                   12 * constants.paddingUnit,
                                               child: RRButton(
                                                   onTap: () {
-                                                    showSlidingBottomSheet(context,
+                                                    showSlidingBottomSheet(
+                                                        context,
                                                         builder: (context) {
-                                                          return createSlidingSheet(
-                                                            context,
-                                                            headingText:
-                                                            todayMeals[index].name,
-                                                            body: todayMeals[index]
-                                                                .getDishesList(context, constants,
-                                                                dishMiniatures: true),
-                                                            constants: constants,
-                                                          );
-                                                        });
+                                                      return createSlidingSheet(
+                                                        context,
+                                                        headingText:
+                                                            todayMeals[index]
+                                                                .name,
+                                                        body: todayMeals[index]
+                                                            .getDishesList(
+                                                                context,
+                                                                constants,
+                                                                dishMiniatures:
+                                                                    true),
+                                                        constants: constants,
+                                                      );
+                                                    });
                                                   },
                                                   borderRadius:
                                                       constants.dInnerRadius,
@@ -267,15 +274,15 @@ class HomePage extends ConsumerWidget {
                         }),
                       )),
                   // Перечисление рецептов
-                  // TODO: реализовать листание + индикаторы снизу
+                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                   Expanded(
                       flex: 18,
                       child: Padding(
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
-                        // TODO: заменить Row на PageView
                         child: Row(
-                          // TODO: заменить хардкод-приёмы на генератор приёмов
+                          // TODO(server): подгрузить рецепты (id, название, иконка)
+                          // TODO(tech): реализовать recipesProvider?
                           children: [
                             Expanded(
                                 child: RRButton(
@@ -414,7 +421,7 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  // TODO: убрать, использовалось для демо
+  // TODO(tape): убрать
   void _addIngredients(CartNotifier cart) {
     cart.add(const Ingredient(
         name: 'огурцы',

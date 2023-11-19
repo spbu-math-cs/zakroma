@@ -53,7 +53,7 @@ class Meal {
                       ref.read(dietListProvider.notifier).addMeal(
                           dietId: dietId,
                           dayIndex: dayIndex,
-                          // TODO: исправить id
+                          // TODO(server): подгрузить новый id
                           newMeal: Meal(
                               id: const Uuid().v4(),
                               name: text,

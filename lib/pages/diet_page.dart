@@ -29,19 +29,11 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
   Widget build(BuildContext context) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    // TODO(server): подгрузить информацию о рационе, вызвав соотв. метод dietListProvider'а
     final diet = ref
         .watch(dietListProvider)
         .getDietById(ref.read(pathProvider).dietId!)!;
-    // TODO(fix): лист не обновляется при добавлении приёма пищи в диету
-    var mealModes = List.generate(
-        diet.days.length,
-        (index) => Map.fromIterable(List<bool>.generate(
-            diet.getDay(index).meals.length, (mealIndex) => false)));
     final pageController = PageController(initialPage: selectedDay);
-    // ref.listen(dietListProvider, (previous, next) {
-    //   mealModes = [...mealModes, ];
-    // });
-    // [{приём_пищи: свёрнут/развёрнут (false/true), ...}, {...}, {...}, {...}, {...}, {...}, {...}]
 
     return CustomScaffold(
       title: diet.name,
@@ -85,10 +77,6 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                 children: List<Widget>.generate(
                                     diet.getDay(dayIndex).meals.length,
                                     (mealIndex) {
-                                  var expanded = mealModes[dayIndex][diet
-                                          .getDay(dayIndex)
-                                          .meals[mealIndex]] ??
-                                      false;
                                   return GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
@@ -121,9 +109,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                                               textStyle: Theme.of(context)
                                                   .textTheme
                                                   .headlineMedium),
-                                          expanded
-                                              ? const Icon(Icons.expand_more)
-                                              : const Icon(Icons.chevron_right)
+                                          const Icon(Icons.chevron_right)
                                         ],
                                       ),
                                     ),
@@ -210,7 +196,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {
-              // TODO: показывать всплывающее окошко со списком опций (см. черновики/figma)
+              // TODO(func): показывать всплывающее окошко со списком опций (см. черновики/figma)
             },
           ),
         ],

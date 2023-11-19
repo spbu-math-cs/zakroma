@@ -7,7 +7,7 @@ import '../utility/flat_list.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
-// TODO: загружать пользовательские данные (аватарку, имя, ...) и настройки откуда-то
+// TODO(design): переписать в новом дизайне
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -22,6 +22,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final categoryTextStyle = Theme.of(context).textTheme.headlineMedium;
+    // TODO(server): подгружать категории настроек
     final categoryList = [
       'Настройки питания',
       'Внешний вид',
@@ -41,6 +42,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             child: RRSurface(
               child: Column(
                 children: [
+                  // TODO(server): подгружать данные профиля (имя, аватарку, ...)
                   // Профиль пользователя
                   Expanded(
                       flex: 2,
@@ -134,7 +136,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () => {
-                                //TODO
+                                // TODO(func): переходить в категорию
                               },
                               child: StyledHeadline(
                                 text: categoryList[index],

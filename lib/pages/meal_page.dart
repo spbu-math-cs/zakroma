@@ -10,6 +10,8 @@ import '../utility/custom_scaffold.dart';
 import '../utility/navigation_bar.dart';
 import '../utility/rr_surface.dart';
 
+// TODO(design): переписать в новом дизайне
+
 class MealPage extends ConsumerStatefulWidget {
   final bool initialEdit;
 
@@ -63,7 +65,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
             icon: Icons.more_horiz,
             label: 'Опции',
             onTap: () {
-              // TODO: показывать всплывающее окошко со списком опций (см. черновики/figma)
+              // TODO(func): показывать всплывающее окошко со списком опций (см. черновики/figma)
             },
           ),
         ],

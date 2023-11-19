@@ -32,12 +32,17 @@ class Diet {
   Diet copyWith({String? id, String? name, List<DietDay>? days}) =>
       Diet(id: id ?? this.id, name: name ?? this.name, days: days ?? this.days);
 
+  // TODO(server): подгрузить информацию о приёме пищи (название, список блюд)
+  // - Блюдо из списка: id, название, иконка, количество порций
   Meal? getMealById({required int dayIndex, required String mealId}) =>
       getDay(dayIndex)
           .meals
           .where((element) => element.id == mealId)
           .firstOrNull;
 
+  // TODO(server): подгрузить информацию о блюде (рецепт, список тегов, список ингредиентов)
+  // - Тег из списка: название, ???
+  // - Ингредиент из списка: название, ???
   Dish? getDishById(
           {required int dayIndex,
           required String mealId,
@@ -65,7 +70,7 @@ class Diet {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) {
-                      // TODO: получить с сервера новый id
+                      // TODO(server): подгрузить новый id
                       final newDietId = const Uuid().v4();
                       ref
                           .read(dietListProvider.notifier)
@@ -90,8 +95,10 @@ extension DietGetter on List<Diet> {
   }
 }
 
+// TODO(tech): реализовать метод, подгружающий информацию о рационе (список diet_day)
+// - День из списка: порядковый номер (0-6), список приёмов пищи (id, название, **первые 3 блюда** из списка блюд)
+// TODO(idea): можно ли подгружать информацию прямо в getDietById?
 class DietList extends Notifier<List<Diet>> {
-  // TODO: получать список всех диет с сервера
   @override
   List<Diet> build() => collectDiets();
 
@@ -187,304 +194,7 @@ class DietList extends Notifier<List<Diet>> {
 
 final dietListProvider = NotifierProvider<DietList, List<Diet>>(DietList.new);
 
-// TODO: переписать функцию так, чтобы она отправляла запрос на сервер и получала данные оттуда
+// TODO(server): подгрузить список всех рационов (id, название, bool является_текущим)
 List<Diet> collectDiets() {
-  // final dishes = [
-  //   Dish(
-  //       name: 'Омлет с овощами',
-  //       recipe: [
-  //         'Взбейте яйца',
-  //         'Нарежьте овощи, обжарьте их в сковороде',
-  //         'Добавьте яйца и готовьте до затвердения'
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Яйца', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(
-  //             Ingredient(name: 'Помидоры', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Перец', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Лук', unit: IngredientUnit.grams), 20),
-  //       ])),
-  //   Dish(
-  //       name: 'Фруктовый салат с орехами',
-  //       recipe: [
-  //         'Нарежьте фрукты и орехи',
-  //         'Смешайте их в салате',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Апельсины', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(Ingredient(name: 'Бананы', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(
-  //             Ingredient(name: 'Грецкие орехи', unit: IngredientUnit.grams),
-  //             30),
-  //       ])),
-  //   Dish(
-  //       name: 'Лосось с картофельным пюре и шпинатом',
-  //       recipe: [
-  //         'Запеките лосось с лимонным соком',
-  //         'Подавайте с картофельным пюре и обжаренным шпинатом',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Филе лосося', unit: IngredientUnit.grams), 150),
-  //         MapEntry(
-  //             Ingredient(name: 'Картофельное пюре', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(Ingredient(name: 'Шпинат', unit: IngredientUnit.grams), 50),
-  //         MapEntry(
-  //             Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
-  //       ])),
-  //   Dish(
-  //       name: 'Цезарь с курицей',
-  //       recipe: [
-  //         'Обжарьте куриную грудку, нарежьте ее',
-  //         'Смешайте с салатом, гренками, сыром и соусом',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(
-  //             Ingredient(name: 'Салат Романо', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Гренки', unit: IngredientUnit.grams), 40),
-  //         MapEntry(
-  //             Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-  //         MapEntry(
-  //             Ingredient(name: 'Соус Цезарь', unit: IngredientUnit.grams), 30),
-  //       ])),
-  //   Dish(
-  //       name: 'Курица с киноа и зеленью',
-  //       recipe: [
-  //         'Обжарьте курицу',
-  //         'Приготовьте киноа',
-  //         'Cмешайте с петрушкой и лимонным соком'
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(Ingredient(name: 'Киноа', unit: IngredientUnit.grams), 100),
-  //         MapEntry(
-  //             Ingredient(name: 'Петрушка', unit: IngredientUnit.grams), 30),
-  //         MapEntry(
-  //             Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
-  //       ])),
-  //   Dish(
-  //       name: 'Паста с томатным соусом и брокколи',
-  //       recipe: [
-  //         'Варите спагетти',
-  //         'Приготовьте томатный соус с брокколи и смешайте с пастой',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Спагетти', unit: IngredientUnit.grams), 100),
-  //         MapEntry(
-  //             Ingredient(name: 'Томатный соус', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(
-  //             Ingredient(name: 'Брокколи', unit: IngredientUnit.grams), 50),
-  //         MapEntry(
-  //             Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-  //         MapEntry(Ingredient(name: 'Оливковое', unit: IngredientUnit.mils), 5),
-  //       ])),
-  // ];
   return [];
-  // return [
-  //   Diet(id: '0', name: 'Текущий рацион или как я рад жить', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[0],
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[4],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[4],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //   ]),
-  //   Diet(id: '1', name: 'Котлетки с пюрешкой', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //   ]),
-  //   Diet(id: '2', name: 'База кормит', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //   ]),
-  //   // Diet(id: '3', name: 'Алёша Попович рекомендует', days: [
-  //   //   DietDay(index: 5, meals: [
-  //   //     Meal(name: 'Завтрак', dishes: []),
-  //   //     Meal(name: 'Обед', dishes: []),
-  //   //     Meal(name: 'Ужин', dishes: []),
-  //   //   ]),
-  //   //   DietDay(index: 6, meals: [
-  //   //     Meal(name: 'Завтрак', dishes: []),
-  //   //     Meal(name: 'Обед', dishes: []),
-  //   //     Meal(name: 'Ужин', dishes: []),
-  //   //   ]),
-  //   // ]),
-  // ];
 }
