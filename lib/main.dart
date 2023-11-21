@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
 import 'pages/diets_page.dart';
 import 'pages/home_page.dart';
 import 'pages/settings_page.dart';
@@ -8,23 +10,20 @@ import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart';
 
-// TODO: корзина (список продуктов для покупки)
-// TODO: копирование списка продуктов в буфер обмена (https://stackoverflow.com/questions/55885433/flutter-dart-how-to-add-copy-to-clipboard-on-tap-to-a-app)
-// TODO: переход в приложение Алисы (https://pub.dev/packages/external_app_launcher/score)
-// TODO: окно входа
-// TODO: холодильник
+// TODO(func): регистрация
+// TODO(func): окно входа
+// TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
-  runApp(const ProviderScope(child: MainPage()));
+
+  runApp(const ProviderScope(
+      child: MainPage()));
 }
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
-
-  static const serverIP = '';
-  static const serverPort = '';
 
   @override
   Widget build(BuildContext context, ref) {
@@ -66,8 +65,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
-        // TODO: закомментированный вариант не затемняется на андроиде при затемнении всего экрана (slidingSheet, prompt'ы с текстом)
-        // statusBarColor: Theme.of(context).colorScheme.primary));
         statusBarColor: Colors.transparent));
 
     final pageController = PageController();
@@ -99,22 +96,16 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return PageView(
-              controller: pageController,
-              onPageChanged: (index) => setState(() {
-                currentPageIndex = index;
-              }),
-              children: const [
-                HomePage(),
-                DietListPage(),
-                SettingsPage(),
-              ],
-            );
-          }
-        ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) => setState(() {
+          currentPageIndex = index;
+        }),
+        children: const [
+          HomePage(),
+          DietListPage(),
+          SettingsPage(),
+        ],
       ),
     );
   }

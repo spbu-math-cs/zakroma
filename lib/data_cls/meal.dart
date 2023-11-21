@@ -32,7 +32,7 @@ class Meal {
     String dietId,
     int dayIndex, {
     bool editMode = false,
-  }) =>
+  }) async =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -49,8 +49,8 @@ class Meal {
                   (
                     buttonText: 'Продолжить',
                     needsValidation: true,
-                    onTap: (text) {
-                      ref.read(dietListProvider.notifier).addMeal(
+                    onTap: (text) async {
+                      ref.read(dietsProvider.notifier).addMeal(
                           dietId: dietId,
                           dayIndex: dayIndex,
                           // TODO(server): подгрузить новый id
@@ -59,15 +59,16 @@ class Meal {
                               name: text,
                               dishes: const []));
                       Navigator.of(context).pop();
-                      final mealId = ref
-                          .read(dietListProvider.notifier)
-                          .getDietById(dietId: dietId)!
+                      final mealId = (await ref
+                          .read(dietsProvider.notifier)
+                          .getDietById(dietId: dietId))!
                           .days[dayIndex]
                           .meals
                           .last
                           .id;
                       ref.read(pathProvider.notifier).update((state) =>
                           state.copyWith(dayIndex: dayIndex, mealId: mealId));
+                      if (!context.mounted) return;
                       Navigator.push(
                           context,
                           MaterialPageRoute(

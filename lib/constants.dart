@@ -54,6 +54,9 @@ class Constants {
     'воскресенье',
   ];
 
+  /// IP-адрес сервера (включает в себя порт).
+  static const serverAddress = '';
+
   const Constants({required this.paddingUnit});
 
   /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).

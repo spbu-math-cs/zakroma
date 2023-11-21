@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/utility/async_builder.dart';
+
 import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
@@ -28,61 +30,73 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     final path = ref.watch(pathProvider);
-    final meal = ref
-        .watch(dietListProvider)
-        .getDietById(path.dietId!)!
-        .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
+    final asyncDiets = ref.watch(dietsProvider);
 
-    return CustomScaffold(
-      title: meal.name,
-      body: SafeArea(
-        child: RRSurface(
-            child: ref
-                .read(dietListProvider)
-                .getDietById(path.dietId!)!
-                .getMealById(
-                    dayIndex: path.dayIndex!, mealId: path.mealId!)!
-                .getDishesList(context, ref.read(constantsProvider(MediaQuery.of(context).size.width)), dishMiniatures: true)),
-      ),
-      bottomNavigationBar: FunctionalBottomBar(
-        selectedIndex: -1, // никогда не хотим выделять никакую кнопку
-        destinations: [
-          CNavigationDestination(
-            icon: Icons.arrow_back,
-            label: 'Назад',
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          CNavigationDestination(
-            icon: Icons.edit_outlined,
-            label: 'Редактировать',
-            onTap: () => setState(() {
-              editMode = !editMode;
-            }),
-          ),
-          CNavigationDestination(
-            icon: Icons.more_horiz,
-            label: 'Опции',
-            onTap: () {
-              // TODO(func): показывать всплывающее окошко со списком опций (см. черновики/figma)
-            },
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: AnimatedFAB(
-          text: 'Добавить блюдо',
-          icon: Icons.add,
-          animate: animateFAB,
-          visible: editMode,
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const DishSearchPage()));
-          }),
-    );
+    return AsyncBuilder(
+        asyncValue: asyncDiets,
+        builder: (diets) => FutureBuilder(
+              future: diets.getDietById(path.dietId!),
+              builder: (BuildContext context, AsyncSnapshot<Diet?> snapshot) {
+                if (snapshot.hasData) {
+                  final meal = snapshot.data!.getMealById(
+                      dayIndex: path.dayIndex!, mealId: path.mealId!)!;
+                  return CustomScaffold(
+                    title: meal.name,
+                    body: SafeArea(
+                      child: RRSurface(
+                          child: meal.getDishesList(
+                              context,
+                              ref.read(constantsProvider(
+                                  MediaQuery.of(context).size.width)),
+                              dishMiniatures: true)),
+                    ),
+                    bottomNavigationBar: FunctionalBottomBar(
+                      selectedIndex: -1,
+                      // никогда не хотим выделять никакую кнопку
+                      destinations: [
+                        CNavigationDestination(
+                          icon: Icons.arrow_back,
+                          label: 'Назад',
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        CNavigationDestination(
+                          icon: Icons.edit_outlined,
+                          label: 'Редактировать',
+                          onTap: () => setState(() {
+                            editMode = !editMode;
+                          }),
+                        ),
+                        CNavigationDestination(
+                          icon: Icons.more_horiz,
+                          label: 'Опции',
+                          onTap: () {
+                            // TODO(func): показывать всплывающее окошко со списком опций (см. черновики/figma)
+                          },
+                        ),
+                      ],
+                    ),
+                    floatingActionButtonLocation:
+                        FloatingActionButtonLocation.centerFloat,
+                    floatingActionButton: AnimatedFAB(
+                        text: 'Добавить блюдо',
+                        icon: Icons.add,
+                        animate: animateFAB,
+                        visible: editMode,
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DishSearchPage()));
+                        }),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            ));
   }
 
   @override

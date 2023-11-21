@@ -6,6 +6,7 @@ import 'styled_headline.dart';
 
 class CustomScaffold extends ConsumerWidget {
   final String? title;
+  final Widget? header;
   final Widget body;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
@@ -15,10 +16,11 @@ class CustomScaffold extends ConsumerWidget {
     super.key,
     required this.body,
     this.title,
+    this.header,
     this.bottomNavigationBar,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
-  });
+  }) : assert(title == null || header == null);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,33 +30,36 @@ class CustomScaffold extends ConsumerWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
-          debugPrint('maxHeight = ${constraints.maxHeight}');
           final topPadding = constraints.maxHeight -
               Constants.screenHeight * constants.paddingUnit;
-          debugPrint('topPadding = ${topPadding.toString()}');
           return Padding(
             padding: EdgeInsets.only(top: topPadding > 0 ? topPadding : 0),
-            child: title == null
-                ? body
-                : Column(
-                    children: [
-                      Expanded(
-                        flex: 9,
-                        child: Padding(
-                          padding: constants.dAppHeadlinePadding,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: StyledHeadline(
-                              text: title!,
-                              textStyle:
-                                  Theme.of(context).textTheme.displayLarge,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(flex: Constants.screenHeight - 9, child: body)
-                    ],
-                  ),
+            child: Column(
+              children: [
+                Visibility(
+                  visible: header != null || title != null,
+                  child: Expanded(
+                      flex: 9,
+                      child: header == null
+                          ? title == null
+                              ? const SizedBox.shrink()
+                              : Padding(
+                                  padding: constants.dAppHeadlinePadding,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: StyledHeadline(
+                                      text: title!,
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .displayLarge,
+                                    ),
+                                  ),
+                                )
+                          : header!),
+                ),
+                Expanded(flex: Constants.screenHeight - 9, child: body)
+              ],
+            ),
           );
         }),
       ),
