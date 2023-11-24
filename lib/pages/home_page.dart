@@ -130,7 +130,7 @@ class HomePage extends ConsumerWidget {
                       // TODO(server): подгрузить информацию по доставке (bool есть_активная_доставка, ???)
                         child: RRButton(
                             onTap: () {},
-                            padding: EdgeInsets.zero,
+                            borderRadius: constants.dOuterRadius,
                             childAlignment: Alignment.centerLeft,
                             childPadding: EdgeInsets.only(
                                 left: constants.paddingUnit * 2),
@@ -159,7 +159,7 @@ class HomePage extends ConsumerWidget {
                                         builder: (context) =>
                                         const CartPage()));
                               },
-                              padding: EdgeInsets.zero,
+                              borderRadius: constants.dOuterRadius,
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .primaryContainer,
@@ -579,7 +579,7 @@ SlidingSheetDialog createSlidingSheet(context,
   return SlidingSheetDialog(
     headerBuilder: (context, sheetState) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: dPadding.top),
+        padding: EdgeInsets.symmetric(vertical: constants.paddingUnit),
         child: GestureDetector(
           onDoubleTap: () {
             headlineOnDoubleTap(context);
@@ -614,7 +614,7 @@ SlidingSheetDialog createSlidingSheet(context,
       return SizedBox(
         height: screenHeight,
         child: Padding(
-          padding: dPadding.copyWith(top: 0),
+          padding: constants.dBlockPadding,
           child: body,
         ),
       );

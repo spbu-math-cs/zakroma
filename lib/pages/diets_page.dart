@@ -16,7 +16,7 @@ class DietListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final asyncDiets = ref.watch(dietsProvider);
 
     return AsyncBuilder(
@@ -25,7 +25,7 @@ class DietListPage extends ConsumerWidget {
               title: 'Питание',
               body: RRSurface(
                 child: Padding(
-                  padding: EdgeInsets.only(top: dPadding.top),
+                  padding: EdgeInsets.all(constants.paddingUnit * 2),
                   child: LayoutBuilder(builder: (context, constraints) {
                     return ListView.builder(
                         itemCount: diets.length + 1,
@@ -41,11 +41,10 @@ class DietListPage extends ConsumerWidget {
 }
 
 Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
-  final asyncDiets = ref.watch(dietsProvider);
-
   return AsyncBuilder(
-      asyncValue: asyncDiets,
+      asyncValue: ref.watch(dietsProvider),
       builder: (diets) {
+        final constants = ref.watch(constantsProvider(MediaQuery.of(context).size.width));
         if (diets.isEmpty || index == 1) {
           return DottedRRButton(
               onTap: () => Diet.showAddDietDialog(context, ref),
@@ -65,7 +64,7 @@ Widget getDietDisplay(BuildContext context, WidgetRef ref, int index) {
                   MaterialPageRoute(builder: (context) => const DietPage()));
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: dPadding.top),
+              padding: EdgeInsets.all(constants.paddingUnit * 2),
               child: StyledHeadline(
                 text: diets[index].name,
                 textStyle: Theme.of(context).textTheme.headlineMedium,

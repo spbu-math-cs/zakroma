@@ -34,119 +34,87 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     return CustomScaffold(
       title: 'Настройки',
-      body: Column(
-        children: [
-          // Профиль пользователя и его группы
-          Expanded(
-            flex: 4,
-            child: RRSurface(
-              child: Column(
-                children: [
-                  // TODO(server): подгружать данные профиля (имя, аватарку, ...)
-                  // Профиль пользователя
-                  Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: EdgeInsets.all(dPadding.top),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: LayoutBuilder(
-                                    builder: (context, constraints) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        right: constraints.maxWidth -
-                                            constraints.maxHeight),
-                                    child: Center(
-                                      // padding: EdgeInsets.all(defaultPadding.left) + EdgeInsets.only(right: constraints.maxWidth - constraints.maxHeight),
-                                      child: Material(
-                                        borderRadius:
-                                            BorderRadius.circular(constants.dOuterRadius),
-                                        clipBehavior: Clip.antiAlias,
-                                        elevation: constants.dElevation,
-                                        child: SizedBox.square(
-                                          dimension:
-                                              3 * constraints.maxHeight / 4,
-                                          child: Image.asset(
-                                            'assets/images/ryan_gosling.jpeg',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                })),
-                            Expanded(
-                                flex: 1,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      StyledHeadline(
-                                        text: 'Райан Г.',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall,
-                                      ),
-                                      StyledHeadline(
-                                          text: '185 см',
-                                          textStyle: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall),
-                                      StyledHeadline(
-                                        text: '80 кг',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall,
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                          ],
-                        ),
-                      )),
-                  // Группа пользователя
-                  Expanded(
-                      flex: 1,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: StyledHeadline(
-                            text: 'Настройки группы',
-                            textStyle: categoryTextStyle),
-                      ))
-                ],
-              ),
-            ),
-          ),
-          // Список настроек
-          Expanded(
-              flex: 6,
-              child: RRSurface(
-                  padding: dPadding.copyWith(bottom: dPadding.vertical),
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return FlatList(
-                        scrollPhysics: const ClampingScrollPhysics(),
-                        dividerColor: Theme.of(context).colorScheme.surface,
-                        children: List.generate(
-                          categoryList.length,
-                          (index) => Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () => {
-                                // TODO(func): переходить в категорию
-                              },
-                              child: StyledHeadline(
-                                text: categoryList[index],
-                                textStyle: categoryTextStyle,
+      body: RRSurface(
+        child: Column(
+          children: [
+            // TODO(server): подгружать данные профиля (имя, аватарку, ...)
+            // Профиль пользователя
+            Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: EdgeInsets.all(constants.paddingUnit),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: LayoutBuilder(builder: (context, constraints) {
+                        return Padding(
+                          padding: EdgeInsets.zero,
+                          child: Center(
+                            child: Material(
+                              borderRadius:
+                                  BorderRadius.circular(constants.dInnerRadius),
+                              clipBehavior: Clip.antiAlias,
+                              elevation: constants.dElevation,
+                              child: SizedBox.square(
+                                dimension: constants.paddingUnit * 12,
+                                child: Image.asset(
+                                  'assets/images/ryan_gosling.jpeg',
+                                ),
                               ),
                             ),
                           ),
-                        ));
-                  }))),
-        ],
+                        );
+                      })),
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StyledHeadline(
+                              text: 'Райан Г.',
+                              textStyle:
+                                  Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            StyledHeadline(
+                                text: '185 см',
+                                textStyle:
+                                    Theme.of(context).textTheme.headlineSmall),
+                            StyledHeadline(
+                              text: '80 кг',
+                              textStyle:
+                                  Theme.of(context).textTheme.headlineSmall,
+                            ),
+                          ],
+                        ),
+                      ))
+                    ],
+                  ),
+                )),
+            // Список настроек
+            Expanded(
+                flex: 10,
+                child: FlatList(
+                    scrollPhysics: const ClampingScrollPhysics(),
+                    dividerColor: Theme.of(context).colorScheme.surface,
+                    children: List.generate(
+                      categoryList.length,
+                      (index) => Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => {
+                            // TODO(func): переходить в категорию
+                          },
+                          child: StyledHeadline(
+                            text: categoryList[index],
+                            textStyle: categoryTextStyle,
+                          ),
+                        ),
+                      ),
+                    ))),
+          ],
+        ),
       ),
     );
   }

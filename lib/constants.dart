@@ -118,7 +118,3 @@ class ConstantsNotifier extends FamilyNotifier<Constants, double> {
 }
 
 final constantsProvider = NotifierProvider.family<ConstantsNotifier, Constants, double>(() => ConstantsNotifier());
-
-@Deprecated(
-    'Каждый класс элементов теперь имеет индивидуальные отступы: см. `constants.dart`.')
-const dPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 8);

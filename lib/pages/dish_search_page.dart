@@ -26,11 +26,8 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
   @override
   Widget build(BuildContext context) {
     final path = ref.read(pathProvider);
-    // final meal = ref
-    //     .read(dietsProvider)
-    //     .getDietById(path.dietId!)!
-    //     .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
-    final asyncDiets = ref.watch(dietsProvider);
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final searchResults = getSearchResults();
 
     // TODO(tech+func): реализовать поиск
@@ -40,7 +37,7 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
     // клик по блюду: добавляем блюдо в приём
     // TODO(func): реализовать множественный выбор блюд
     return AsyncBuilder(
-        asyncValue: asyncDiets,
+        asyncValue: ref.watch(dietsProvider),
         builder: (diets) {
           final diet = diets.getDietById(path.dietId!);
           // final meal = diets
@@ -50,62 +47,72 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
             future: diet,
             builder: (BuildContext context, AsyncSnapshot<Diet?> snapshot) {
               if (snapshot.hasData) {
-                final meal = snapshot.data!.getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;
+                final meal = snapshot.data!.getMealById(
+                    dayIndex: path.dayIndex!, mealId: path.mealId!)!;
                 return CustomScaffold(
                   title: meal.name,
                   body: SafeArea(
                       child: RRSurface(
-                        child: Column(
-                          children: [
-                            // Строка поиска
-                            Expanded(
-                                child: Padding(
-                                  padding: (dPadding * 2).copyWith(bottom: 0),
-                                  child: Center(
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(top: dPadding.top),
-                                        border: const OutlineInputBorder(),
-                                        prefixIcon: const Icon(Icons.search),
-                                        prefixIconColor:
-                                        Theme.of(context).colorScheme.secondary,
-                                        hintText: 'поиск',
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                            // Результаты поиска
-                            Expanded(
-                              flex: 8,
-                              child: FlatList(
-                                  children: List<Widget>.generate(
-                                      searchResults.length,
-                                          (index) => GestureDetector(
-                                          onTap: () {
-                                            if (searchResults[index].dish != null) {
-                                              ref.read(dietsProvider.notifier).addDish(
-                                                  dietId: path.dietId!,
-                                                  dayIndex: path.dayIndex!,
-                                                  mealId: path.mealId!,
-                                                  newDish: searchResults[index].dish!);
-                                              Navigator.of(context).pop();
-                                            } else {
-                                              // TODO(func): перейти по выбранному тэгу
-                                            }
-                                          },
-                                          child: StyledHeadline(
-                                            text: (searchResults[index].dish?.name ??
-                                                searchResults[index].tag?.name)!,
-                                            textStyle: Theme.of(context)
-                                                .textTheme
-                                                .headlineMedium,
-                                          )))),
+                    child: Padding(
+                      padding: EdgeInsets.all(constants.paddingUnit * 2),
+                      child: Column(
+                        children: [
+                          // Строка поиска
+                          Expanded(
+                              child: Center(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.only(top: constants.paddingUnit),
+                                border: const OutlineInputBorder(),
+                                prefixIcon: const Icon(Icons.search),
+                                prefixIconColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                hintText: 'поиск',
+                              ),
                             ),
-                          ],
-                        ),
-                      )),
+                          )),
+                          // Результаты поиска
+                          Expanded(
+                            flex: 8,
+                            child: FlatList(
+                                children: List<Widget>.generate(
+                                    searchResults.length,
+                                    (index) => GestureDetector(
+                                        onTap: () {
+                                          if (searchResults[index].dish !=
+                                              null) {
+                                            ref
+                                                .read(dietsProvider.notifier)
+                                                .addDish(
+                                                    dietId: path.dietId!,
+                                                    dayIndex: path.dayIndex!,
+                                                    mealId: path.mealId!,
+                                                    newDish:
+                                                        searchResults[index]
+                                                            .dish!);
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            // TODO(func): перейти по выбранному тэгу
+                                          }
+                                        },
+                                        child: StyledHeadline(
+                                          text: (searchResults[index]
+                                                  .dish
+                                                  ?.name ??
+                                              searchResults[index].tag?.name)!,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium,
+                                        )))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
                   bottomNavigationBar: FunctionalBottomBar(
-                    selectedIndex: -1, // никогда не хотим выделять никакую кнопку
+                    selectedIndex: -1,
+                    // никогда не хотим выделять никакую кнопку
                     destinations: [
                       CNavigationDestination(
                         icon: Icons.arrow_back,
