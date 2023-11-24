@@ -26,7 +26,7 @@ class RRButton extends ConsumerWidget {
     this.borderRadius,
     this.decoration,
     this.foregroundDecoration,
-    this.padding = dPadding,
+    this.padding = EdgeInsets.zero,
     this.elevation,
     required this.onTap,
     this.onDoubleTap,
@@ -46,7 +46,7 @@ class RRButton extends ConsumerWidget {
                 color: backgroundColor ?? Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                      borderRadius ?? constants.dOuterRadius),
+                      borderRadius ?? constants.dInnerRadius),
                 ),
                 clipBehavior: Clip.antiAlias,
                 elevation: elevation ?? constants.dElevation,
@@ -75,7 +75,7 @@ class DottedRRButton extends RRButton {
       this.borderColor,
       super.borderRadius,
       super.decoration,
-      super.padding = dPadding,
+      super.padding,
       super.onTap,
       super.onDoubleTap,
       super.onLongPress});
@@ -88,12 +88,13 @@ class DottedRRButton extends RRButton {
       padding: padding,
       child: DottedBorder(
         color: borderColor ?? Theme.of(context).colorScheme.surface,
-        dashPattern: const [12, 14],
+        // 1.84 и 2 подобраны на глаз на Zenfone 9
+        dashPattern: [constants.paddingUnit * 1.84, constants.paddingUnit * 2],
         padding: EdgeInsets.zero,
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
         strokeWidth: 4,
-        radius: Radius.circular(borderRadius ?? constants.dOuterRadius),
+        radius: Radius.circular(borderRadius ?? constants.dInnerRadius),
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(

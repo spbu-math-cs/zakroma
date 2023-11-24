@@ -8,16 +8,16 @@ import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart';
 
-// TODO: корзина (список продуктов для покупки)
-// TODO: копирование списка продуктов в буфер обмена (https://stackoverflow.com/questions/55885433/flutter-dart-how-to-add-copy-to-clipboard-on-tap-to-a-app)
-// TODO: переход в приложение Алисы (https://pub.dev/packages/external_app_launcher/score)
-// TODO: окно входа
-// TODO: холодильник
+// TODO(tech): переписать все страницы с использованием новых констант
+// TODO(func): регистрация
+// TODO(func): окно входа
+// TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
-  runApp(const ProviderScope(child: MainPage()));
+  runApp(const ProviderScope(
+      child: MainPage()));
 }
 
 class MainPage extends ConsumerWidget {
