@@ -16,7 +16,7 @@ class StyledHeadline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var redTextEndIndex = 1;
-    while (text.length < redTextEndIndex &&
+    while (redTextEndIndex < text.length &&
         int.tryParse(text[redTextEndIndex]) != null) {
       redTextEndIndex++;
     }
@@ -27,13 +27,21 @@ class StyledHeadline extends StatelessWidget {
           text: text.substring(0, redTextEndIndex),
           style: textStyle?.copyWith(
             color: Theme.of(context).colorScheme.secondary,
+            height: 1
           ),
           children: [
             TextSpan(
               text: text.substring(redTextEndIndex),
-              style: textStyle,
+              style: textStyle?.copyWith(
+                height: 1
+              ),
             )
           ]),
     );
   }
+}
+
+extension Capitalizer on String {
+  String capitalize() =>
+      isEmpty ? this : substring(0, 1).toUpperCase() + substring(1);
 }

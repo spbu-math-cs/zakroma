@@ -1,11 +1,12 @@
-//TODO: написать нормальный класс, который будет помогать в поиске
+// TODO(tech): написать класс для поиска блюд по тегам/категориям
 
 import 'package:flutter/cupertino.dart';
 
 @immutable
 class Tag {
+  final String name;
   final Tag parent;
   final List<Tag> children;
 
-  const Tag({required this.parent, required this.children});
+  const Tag({required this.name, required this.parent, required this.children});
 }

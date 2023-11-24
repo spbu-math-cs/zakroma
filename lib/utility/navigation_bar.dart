@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FunctionalBottomBar extends StatelessWidget {
-  final List<NavigationDestination> navigationBarIcons;
-  final double height;
+import '../constants.dart';
+
+class FunctionalBottomBar extends ConsumerWidget {
+  final List<CNavigationDestination> destinations;
   final int selectedIndex;
   final Color? backgroundColor;
   final Color? buttonColor;
@@ -13,8 +14,7 @@ class FunctionalBottomBar extends StatelessWidget {
 
   const FunctionalBottomBar(
       {super.key,
-      required this.height,
-      required this.navigationBarIcons,
+      required this.destinations,
       required this.selectedIndex,
       this.backgroundColor,
       this.buttonColor,
@@ -23,48 +23,53 @@ class FunctionalBottomBar extends StatelessWidget {
       this.onDestinationSelected});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final height = MediaQuery.of(context).size.height / 17;
+
     return Container(
       decoration: BoxDecoration(
-          color: backgroundColor ??
-              Theme.of(context).colorScheme.secondaryContainer,
+          color:
+              backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
           boxShadow: [
             BoxShadow(
                 color: Theme.of(context).colorScheme.shadow,
-                blurRadius: dElevation,
+                blurRadius: constants.dElevation,
                 offset: const Offset(0, -1))
           ]),
       height: height + MediaQuery.of(context).padding.bottom / 1.13,
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom / 1.13),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom / 1.13),
         child: Row(
           children: List<Widget>.generate(
-              navigationBarIcons.length,
+              destinations.length,
               (index) => Expanded(
                       child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     // сначала пытаемся вызвать onTap самой иконки, потом onDestinationSelected,
                     // а если и то, и другое == null, то просто ничего не делаем
-                    onTap: () => navigationBarIcons[index].onTap != null
-                        ? navigationBarIcons[index].onTap!()
+                    onTap: () => destinations[index].onTap != null
+                        ? destinations[index].onTap!()
                         : onDestinationSelected != null
                             ? onDestinationSelected!(index)
                             : {},
-                    child: NavigationDestination(
-                      icon: navigationBarIcons[index].icon,
-                      label: navigationBarIcons[index].label,
-                      color: navigationBarIcons[index].color ??
+                    child: CNavigationDestination(
+                      icon: destinations[index].icon,
+                      label: destinations[index].label,
+                      color: destinations[index].color ??
                           buttonColor ??
-                          Theme.of(context).colorScheme.onSecondaryContainer,
-                      selectedIcon: navigationBarIcons[index].selectedIcon,
-                      selectedColor: navigationBarIcons[index].selectedColor ??
+                          Theme.of(context).colorScheme.onPrimaryContainer,
+                      selectedIcon: destinations[index].selectedIcon,
+                      selectedColor: destinations[index].selectedColor ??
                           selectedButtonColor ??
                           Theme.of(context).colorScheme.primary,
-                      onTap: navigationBarIcons[index].onTap,
-                      labelStyle: navigationBarIcons[index].labelStyle ??
+                      onTap: destinations[index].onTap,
+                      labelStyle: destinations[index].labelStyle ??
                           labelStyle ??
                           Theme.of(context).textTheme.labelSmall,
-                      isSelected: navigationBarIcons[index].isSelected ??
+                      isSelected: destinations[index].isSelected ??
                           selectedIndex == index,
                     ),
                   ))),
@@ -74,7 +79,7 @@ class FunctionalBottomBar extends StatelessWidget {
   }
 }
 
-class NavigationDestination extends StatelessWidget {
+class CNavigationDestination extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color? color;
@@ -84,7 +89,7 @@ class NavigationDestination extends StatelessWidget {
   final TextStyle? labelStyle;
   final bool? isSelected;
 
-  const NavigationDestination({
+  const CNavigationDestination({
     super.key,
     required this.icon,
     required this.label,
@@ -119,7 +124,7 @@ class NavigationDestination extends StatelessWidget {
                 textAlign: TextAlign.end,
                 style: labelStyle?.copyWith(
                   fontSize: 2 * constraints.maxHeight / 8,
-                  color: (isSelected ?? false) ? selectedColor : color,
+                  color: color,
                 ),
               ),
             ),

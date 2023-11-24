@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/data_cls/dish.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/pages/meal_display.dart';
-import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
-import 'package:zakroma_frontend/utility/flat_list.dart';
 
+import '../constants.dart';
+import '../data_cls/dish.dart';
+import '../data_cls/path.dart';
+import '../pages/meal_page.dart';
+import '../utility/alert_text_prompt.dart';
+import '../utility/flat_list.dart';
 import 'diet.dart';
 
 @immutable
@@ -32,7 +32,7 @@ class Meal {
     String dietId,
     int dayIndex, {
     bool editMode = false,
-  }) =>
+  }) async =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -49,25 +49,26 @@ class Meal {
                   (
                     buttonText: 'Продолжить',
                     needsValidation: true,
-                    onTap: (text) {
-                      ref.read(dietListProvider.notifier).addMeal(
+                    onTap: (text) async {
+                      ref.read(dietsProvider.notifier).addMeal(
                           dietId: dietId,
                           dayIndex: dayIndex,
-                          // TODO: исправить id
+                          // TODO(server): подгрузить новый id
                           newMeal: Meal(
                               id: const Uuid().v4(),
                               name: text,
                               dishes: const []));
                       Navigator.of(context).pop();
-                      final mealId = ref
-                          .read(dietListProvider.notifier)
-                          .getDietById(dietId: dietId)!
+                      final mealId = (await ref
+                          .read(dietsProvider.notifier)
+                          .getDietById(dietId: dietId))!
                           .days[dayIndex]
                           .meals
                           .last
                           .id;
                       ref.read(pathProvider.notifier).update((state) =>
                           state.copyWith(dayIndex: dayIndex, mealId: mealId));
+                      if (!context.mounted) return;
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -79,31 +80,35 @@ class Meal {
                 ],
               ));
 
-  FlatList getDishesList(BuildContext context,
-          {bool dishMiniatures = false,
-          bool scrollable = true,
-          EdgeInsets? padding}) =>
+  FlatList getDishesList(
+    BuildContext context,
+    Constants constants, {
+    bool dishMiniatures = false,
+    bool scrollable = true,
+    EdgeInsets? padding,
+  }) =>
       FlatList(
         scrollPhysics: scrollable
             ? const ClampingScrollPhysics()
             : const NeverScrollableScrollPhysics(),
-        addDivider: dishMiniatures,
-        padding: padding ?? dPadding.copyWith(left: 0, right: 0),
-        childPadding: dPadding.copyWith(left: 0),
+        separator: FlatListSeparator.rrBorder,
         children: List.generate(
             dishesCount,
             (dishIndex) => Row(
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisSize: MainAxisSize.min,
                   children: (dishMiniatures
                           ? <Widget>[
                               Expanded(
                                 child: LayoutBuilder(
                                     builder: (context, constraints) {
+                                      debugPrint(constraints.toString());
                                   return SizedBox.square(
                                     dimension: constraints.maxWidth,
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(dBorderRadius),
+                                    child: Material(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            constants.dInnerRadius),
+                                      ),
                                       child: Image.asset(
                                         'assets/images/${getDish(dishIndex).name}.jpg',
                                         fit: BoxFit.fitHeight,
@@ -116,9 +121,9 @@ class Meal {
                           : <Widget>[]) +
                       <Widget>[
                         Expanded(
-                          flex: 4,
+                          flex: 3,
                           child: Padding(
-                            padding: EdgeInsets.only(left: dPadding.left),
+                            padding: EdgeInsets.all(constants.paddingUnit * 2),
                             child: Text(
                                 '${dishMiniatures ? '' : '- '}${getDish(dishIndex).name}',
                                 overflow: TextOverflow.ellipsis,

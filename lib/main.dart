@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/pages/diet_list.dart';
-import 'package:zakroma_frontend/pages/home.dart';
-import 'package:zakroma_frontend/pages/settings.dart';
-import 'package:zakroma_frontend/themes.dart' as themes;
-import 'package:zakroma_frontend/utility/navigation_bar.dart' as nav_bar;
+import 'pages/diets_page.dart';
+import 'pages/home_page.dart';
+import 'pages/settings_page.dart';
+import 'themes.dart' as themes;
+import 'utility/custom_scaffold.dart';
+import 'utility/navigation_bar.dart';
 
-
-// TODO: доделать главный экран
-// TODO: продукт свёрнутый (миниатюра, которая нужна в списке продуктов)
-// TODO: продукт развёрнутый (раскрывается при нажатии? нужен где??)
-// TODO: страница составления рациона (список блюд)
-// TODO: корзина (список продуктов для покупки)
-// TODO: окно входа
-// TODO: холодильник
+// TODO(tech): переписать все страницы с использованием новых констант
+// TODO(func): регистрация
+// TODO(func): окно входа
+// TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
-  runApp(const ProviderScope(child: MainPage()));
+  runApp(const ProviderScope(
+      child: MainPage()));
 }
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
-
-  static const serverIP = '';
-  static const serverPort = '';
 
   @override
   Widget build(BuildContext context, ref) {
@@ -41,21 +35,26 @@ class MainPage extends ConsumerWidget {
   }
 }
 
-class Zakroma extends StatefulWidget {
+class Zakroma extends ConsumerStatefulWidget {
   const Zakroma({super.key});
 
   @override
-  State<Zakroma> createState() => _ZakromaState();
+  ConsumerState<Zakroma> createState() => _ZakromaState();
 }
 
-class _ZakromaState extends State<Zakroma> {
+class _ZakromaState extends ConsumerState<Zakroma> {
   int currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    // считаем константы для текущего устройства
+    // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('WidgetsBinding');
+    });
   }
 
   @override
@@ -64,36 +63,31 @@ class _ZakromaState extends State<Zakroma> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Theme.of(context).colorScheme.background));
+        statusBarColor: Colors.transparent));
 
     final pageController = PageController();
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      resizeToAvoidBottomInset: false,
-      bottomNavigationBar: nav_bar.FunctionalBottomBar(
-        height: MediaQuery.of(context).size.height / 17,
+    return CustomScaffold(
+      bottomNavigationBar: FunctionalBottomBar(
         onDestinationSelected: (index) {
           setState(() {
             currentPageIndex = index;
           });
-          pageController.animateToPage(index,
-              duration: fabAnimationDuration,
-              curve: Curves.ease);
+          pageController.jumpToPage(index);
         },
         selectedIndex: currentPageIndex,
-        navigationBarIcons: const [
-          nav_bar.NavigationDestination(
+        destinations: const [
+          CNavigationDestination(
             icon: Icons.home_outlined,
             label: 'Главная',
             selectedIcon: Icons.home,
           ),
-          nav_bar.NavigationDestination(
+          CNavigationDestination(
             icon: Icons.restaurant_menu,
-            label: 'Рационы',
+            label: 'Питание',
             selectedIcon: Icons.restaurant_menu,
           ),
-          nav_bar.NavigationDestination(
+          CNavigationDestination(
             icon: Icons.settings_outlined,
             label: 'Настройки',
             selectedIcon: Icons.settings,

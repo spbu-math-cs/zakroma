@@ -1,57 +1,67 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:zakroma_frontend/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RRButton extends StatelessWidget {
+import '../constants.dart';
+
+class RRButton extends ConsumerWidget {
   final Color? backgroundColor;
-  final double borderRadius;
+  final double? borderRadius;
   final Widget child;
   final Alignment childAlignment;
+  final EdgeInsets childPadding;
   final Decoration? decoration;
   final Decoration? foregroundDecoration;
   final EdgeInsets padding;
-  final double elevation;
+  final double? elevation;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
   final void Function()? onLongPress;
 
-  const RRButton(
-      {super.key,
-      required this.child,
-      this.childAlignment = Alignment.center,
-      this.backgroundColor,
-      this.borderRadius = dBorderRadius,
-      this.decoration,
-      this.foregroundDecoration,
-      this.padding = dPadding,
-      this.elevation = dElevation,
-      this.onTap,
-      this.onDoubleTap,
-      this.onLongPress});
+  const RRButton({
+    super.key,
+    this.childAlignment = Alignment.center,
+    this.childPadding = EdgeInsets.zero,
+    this.backgroundColor,
+    this.borderRadius,
+    this.decoration,
+    this.foregroundDecoration,
+    this.padding = EdgeInsets.zero,
+    this.elevation,
+    required this.onTap,
+    this.onDoubleTap,
+    this.onLongPress,
+    required this.child,
+  });
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: padding,
-      child: Container(
-          foregroundDecoration: foregroundDecoration,
-          child: Material(
-              color: backgroundColor ?? Theme.of(context).colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              clipBehavior: Clip.antiAlias,
-              elevation: elevation,
-              child: InkWell(
-                onTap: onTap,
-                onDoubleTap: onDoubleTap,
-                onLongPress: onLongPress,
-                child: Align(
-                    alignment: childAlignment,
-                    child: Padding(
-                      padding: dPadding,
-                      child: child,
-                    )),
-              ))));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    return Padding(
+        padding: padding,
+        child: Container(
+            foregroundDecoration: foregroundDecoration,
+            child: Material(
+                color: backgroundColor ?? Theme.of(context).colorScheme.surface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      borderRadius ?? constants.dInnerRadius),
+                ),
+                clipBehavior: Clip.antiAlias,
+                elevation: elevation ?? constants.dElevation,
+                child: InkWell(
+                  onTap: onTap,
+                  onDoubleTap: onDoubleTap,
+                  onLongPress: onLongPress,
+                  child: Align(
+                      alignment: childAlignment,
+                      child: Padding(
+                        padding: childPadding,
+                        child: child,
+                      )),
+                ))));
+  }
 }
 
 class DottedRRButton extends RRButton {
@@ -60,34 +70,37 @@ class DottedRRButton extends RRButton {
   const DottedRRButton(
       {super.key,
       required super.child,
-      super.childAlignment = Alignment.center,
+      super.childAlignment,
       super.backgroundColor,
       this.borderColor,
-      super.borderRadius = dBorderRadius,
+      super.borderRadius,
       super.decoration,
-      super.padding = dPadding,
+      super.padding,
       super.onTap,
       super.onDoubleTap,
       super.onLongPress});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     return Padding(
       padding: padding,
       child: DottedBorder(
         color: borderColor ?? Theme.of(context).colorScheme.surface,
-        dashPattern: const [8, 8],
+        // 1.84 и 2 подобраны на глаз на Zenfone 9
+        dashPattern: [constants.paddingUnit * 1.84, constants.paddingUnit * 2],
         padding: EdgeInsets.zero,
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
         strokeWidth: 4,
-        radius: const Radius.circular(dBorderRadius),
+        radius: Radius.circular(borderRadius ?? constants.dInnerRadius),
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(
             backgroundColor: Colors.transparent,
             childAlignment: childAlignment,
-            borderRadius: dBorderRadius,
+            borderRadius: borderRadius,
             decoration: const BoxDecoration(),
             padding: EdgeInsets.zero,
             elevation: 0,

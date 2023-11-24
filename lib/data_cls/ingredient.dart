@@ -1,5 +1,5 @@
 // Вообще, по хорошему, надо и штуки, и миллилитры тоже в граммы переводить
-// TODO: добавить ещё всякие столовые и чайные ложки
+// TODO(tech): добавить ещё всякие столовые и чайные ложки
 enum IngredientUnit {
   grams,
   mils,
@@ -9,6 +9,11 @@ enum IngredientUnit {
 class Ingredient {
   /// Название продукта.
   final String name;
+
+  /// Название продукта на торговой площадке.
+  ///
+  /// Используется при заказе доставки данного продукта.
+  final String marketName;
 
   /// Единица измерения продукта: граммы, миллилитры или штуки.
   final IngredientUnit unit;
@@ -27,8 +32,9 @@ class Ingredient {
 
   const Ingredient(
       {required this.name,
+        required this.marketName,
       required this.unit,
-      // TODO: убрать нули и вернуть required
+      // TODO(tech): убрать нули и вернуть required
       this.kcal = 0,
       this.carbs = 0,
       this.proteins = 0,

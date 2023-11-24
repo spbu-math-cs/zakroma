@@ -1,12 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:zakroma_frontend/data_cls/diet_day.dart';
-import 'package:zakroma_frontend/data_cls/dish.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
-import 'package:zakroma_frontend/data_cls/path.dart';
-import 'package:zakroma_frontend/pages/diet_display.dart';
-import 'package:zakroma_frontend/utility/alert_text_prompt.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
+import '../network.dart';
+import '../data_cls/diet_day.dart';
+import '../data_cls/dish.dart';
+import '../data_cls/meal.dart';
+import '../data_cls/path.dart';
+import '../pages/diet_page.dart';
+import '../utility/alert_text_prompt.dart';
 
 @immutable
 class Diet {
@@ -21,6 +25,15 @@ class Diet {
   const Diet({required this.id, required this.name, required this.days})
       : assert(days.length == 7);
 
+  factory Diet.fromJson(Map<String, dynamic> map) {
+    return Diet(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      days: map['days'].toString().split(';') as List<DietDay>,
+      // TODO(tech): добавить каждому элементу .split'а каст к DietDay
+    );
+  }
+
   int get length => days.length;
 
   bool get isEmpty => days.isEmpty;
@@ -32,12 +45,17 @@ class Diet {
   Diet copyWith({String? id, String? name, List<DietDay>? days}) =>
       Diet(id: id ?? this.id, name: name ?? this.name, days: days ?? this.days);
 
+  // TODO(server): подгрузить информацию о приёме пищи (название, список блюд)
+  // - Блюдо из списка: id, название, иконка, количество порций
   Meal? getMealById({required int dayIndex, required String mealId}) =>
       getDay(dayIndex)
           .meals
           .where((element) => element.id == mealId)
           .firstOrNull;
 
+  // TODO(server): подгрузить информацию о блюде (рецепт, список тегов, список ингредиентов)
+  // - Тег из списка: название, ???
+  // - Ингредиент из списка: название, ???
   Dish? getDishById(
           {required int dayIndex,
           required String mealId,
@@ -65,10 +83,10 @@ class Diet {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) {
-                      // TODO: получить с сервера новый id
+                      // TODO(server): подгрузить новый id
                       final newDietId = const Uuid().v4();
                       ref
-                          .read(dietListProvider.notifier)
+                          .read(dietsProvider.notifier)
                           .add(dietId: newDietId, name: text);
                       ref
                           .read(pathProvider.notifier)
@@ -85,404 +103,116 @@ class Diet {
 }
 
 extension DietGetter on List<Diet> {
-  Diet? getDietById(String dietId) {
+  Future<Diet?> getDietById(String dietId) async {
     return where((element) => element.id == dietId).first;
   }
 }
 
-class DietList extends Notifier<List<Diet>> {
-  // TODO: получать список всех диет с сервера
+// TODO(tech): реализовать метод, подгружающий информацию о рационе (список diet_day)
+// - День из списка: порядковый номер (0-6), список приёмов пищи (id, название, **первые 3 блюда** из списка блюд)
+// TODO(idea): можно ли подгружать информацию прямо в getDietById?
+class Diets extends AsyncNotifier<List<Diet>> {
+  String token = '';
+  // TODO(server): протестировать
+  Future<List<Diet>> _fetchDiets() async {
+    final json = await get(token, 'request'); // TODO(server): взять request из апи
+    final diets = jsonDecode(json.body) as List<Map<String, dynamic>>;
+    return diets.map(Diet.fromJson).toList();
+  }
+
   @override
-  List<Diet> build() => collectDiets();
+  FutureOr<List<Diet>> build() async {
+    final user = switch (ref.watch(userProvider)) {
+      AsyncData(:final value) => value,
+      AsyncError(error:_, stackTrace:_) => null,
+      _ => null,
+    };
+    if (user != null && user.sync) {
+      // TODO(tech): понять, является ли костылём решение с ref и прямым обращением к userProvider.value
+      token = ref.read(userProvider).value!.token;
+      return _fetchDiets();
+    }
+    // Работаем оффлайн
+    return [];
+  }
 
   void add(
-      {required String dietId, required String name, List<DietDay>? days}) {
-    state = state.isEmpty
-        ? [
-            Diet(
-                id: dietId,
-                name: name,
-                days: days ??
-                    List<DietDay>.generate(
-                        7, (index) => DietDay(index: index, meals: const []))),
-          ]
-        : [
-            // добавляем на второе место: первое занимает текущий рацион
-            state.first,
-            Diet(
-                id: dietId,
-                name: name,
-                days: days ??
-                    List<DietDay>.generate(
-                        7, (index) => DietDay(index: index, meals: const []))),
-            ...state.sublist(1),
-          ];
+      {required String dietId,
+      required String name,
+      List<DietDay>? days}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await post(
+          token,
+          'request',  // TODO(server): взять request из апи
+          <String, dynamic>{
+            'id': dietId,
+            'name': name,
+            'days': days ??
+                List<DietDay>.generate(
+                    7, (index) => DietDay(index: index, meals: const []))
+          });
+      return _fetchDiets();
+    });
   }
 
-  void setName({required String dietId, required String newName}) {
-    state = [
-      for (final diet in state)
-        if (diet.id == dietId)
-          Diet(id: diet.id, name: newName, days: diet.days)
-        else
-          diet,
-    ];
+  void setName({required String dietId, required String newName}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await patch(
+          token,
+          'request/$dietId',  // TODO(server): взять request из апи
+          <String, String>{'newName': newName});
+      return _fetchDiets();
+    });
   }
 
-  Diet? getDietById({required String dietId}) =>
-      state.where((element) => element.id == dietId).firstOrNull;
+  Future<Diet?> getDietById({required String dietId}) async {
+    state = const AsyncValue.loading();
+    final json = await get(token, 'request/$dietId');
+    state = await AsyncValue.guard(() async {
+      return _fetchDiets();
+    });
+    return Diet.fromJson(jsonDecode(json.body) as Map<String, dynamic>);
+  }
 
   void addMeal(
-      {required String dietId, required int dayIndex, required Meal newMeal}) {
-    state = [
-      for (final diet in state)
-        if (diet.id == dietId)
-          diet.copyWith(days: [
-            for (final day in diet.days)
-              if (day.index == dayIndex)
-                DietDay(index: dayIndex, meals: [...day.meals, newMeal])
-              else
-                day
-          ])
-        else
-          diet,
-    ];
+      {required String dietId, required int dayIndex, required Meal newMeal}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await post(
+          token,
+          'request/$dietId/$dayIndex',  // TODO(server): взять request из апи
+          newMeal);
+      return _fetchDiets();
+    });
   }
 
   void addDish(
       {required String dietId,
       required int dayIndex,
       required String mealId,
-      required Dish newDish}) {
-    state = [
-      for (final diet in state)
-        if (diet.id == dietId)
-          diet.copyWith(days: [
-            for (final day in diet.days)
-              if (day.index == dayIndex)
-                DietDay(index: dayIndex, meals: [
-                  for (final meal in day.meals)
-                    if (meal.id == mealId)
-                      Meal(
-                          id: meal.id,
-                          name: meal.name,
-                          dishes: [...meal.dishes, newDish])
-                    else
-                      meal
-                ])
-              else
-                day
-          ])
-        else
-          diet,
-    ];
+      required Dish newDish}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await post(
+          token,
+          'request/$dietId/$dayIndex/$mealId',  // TODO(server): взять request из апи
+          newDish);
+      return _fetchDiets();
+    });
   }
 
-  void remove({required String id}) {
-    state = state.where((diet) => diet.id != id).toList();
+  void remove({required String dietId}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await delete(
+          token,
+          'request/$dietId');  // TODO(server): взять request из апи
+      return _fetchDiets();
+    });
   }
 }
 
-final dietListProvider = NotifierProvider<DietList, List<Diet>>(DietList.new);
+final dietsProvider = AsyncNotifierProvider<Diets, List<Diet>>(Diets.new);
 
-// TODO: переписать функцию так, чтобы она отправляла запрос на сервер и получала данные оттуда
-List<Diet> collectDiets() {
-  // final dishes = [
-  //   Dish(
-  //       name: 'Омлет с овощами',
-  //       recipe: [
-  //         'Взбейте яйца',
-  //         'Нарежьте овощи, обжарьте их в сковороде',
-  //         'Добавьте яйца и готовьте до затвердения'
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Яйца', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(
-  //             Ingredient(name: 'Помидоры', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Перец', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Лук', unit: IngredientUnit.grams), 20),
-  //       ])),
-  //   Dish(
-  //       name: 'Фруктовый салат с орехами',
-  //       recipe: [
-  //         'Нарежьте фрукты и орехи',
-  //         'Смешайте их в салате',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Апельсины', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(Ingredient(name: 'Бананы', unit: IngredientUnit.pieces), 2),
-  //         MapEntry(
-  //             Ingredient(name: 'Грецкие орехи', unit: IngredientUnit.grams),
-  //             30),
-  //       ])),
-  //   Dish(
-  //       name: 'Лосось с картофельным пюре и шпинатом',
-  //       recipe: [
-  //         'Запеките лосось с лимонным соком',
-  //         'Подавайте с картофельным пюре и обжаренным шпинатом',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Филе лосося', unit: IngredientUnit.grams), 150),
-  //         MapEntry(
-  //             Ingredient(name: 'Картофельное пюре', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(Ingredient(name: 'Шпинат', unit: IngredientUnit.grams), 50),
-  //         MapEntry(
-  //             Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
-  //       ])),
-  //   Dish(
-  //       name: 'Цезарь с курицей',
-  //       recipe: [
-  //         'Обжарьте куриную грудку, нарежьте ее',
-  //         'Смешайте с салатом, гренками, сыром и соусом',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(
-  //             Ingredient(name: 'Салат Романо', unit: IngredientUnit.grams), 50),
-  //         MapEntry(Ingredient(name: 'Гренки', unit: IngredientUnit.grams), 40),
-  //         MapEntry(
-  //             Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-  //         MapEntry(
-  //             Ingredient(name: 'Соус Цезарь', unit: IngredientUnit.grams), 30),
-  //       ])),
-  //   Dish(
-  //       name: 'Курица с киноа и зеленью',
-  //       recipe: [
-  //         'Обжарьте курицу',
-  //         'Приготовьте киноа',
-  //         'Cмешайте с петрушкой и лимонным соком'
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(Ingredient(name: 'Куриное филе', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(Ingredient(name: 'Киноа', unit: IngredientUnit.grams), 100),
-  //         MapEntry(
-  //             Ingredient(name: 'Петрушка', unit: IngredientUnit.grams), 30),
-  //         MapEntry(
-  //             Ingredient(name: 'Лимонный сок', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Масло', unit: IngredientUnit.mils), 2),
-  //         MapEntry(Ingredient(name: 'Соль', unit: IngredientUnit.grams), 3),
-  //       ])),
-  //   Dish(
-  //       name: 'Паста с томатным соусом и брокколи',
-  //       recipe: [
-  //         'Варите спагетти',
-  //         'Приготовьте томатный соус с брокколи и смешайте с пастой',
-  //       ],
-  //       tags: [],
-  //       ingredients: Map.fromEntries([
-  //         MapEntry(
-  //             Ingredient(name: 'Спагетти', unit: IngredientUnit.grams), 100),
-  //         MapEntry(
-  //             Ingredient(name: 'Томатный соус', unit: IngredientUnit.grams),
-  //             150),
-  //         MapEntry(
-  //             Ingredient(name: 'Брокколи', unit: IngredientUnit.grams), 50),
-  //         MapEntry(
-  //             Ingredient(name: 'Пармезан', unit: IngredientUnit.grams), 30),
-  //         MapEntry(Ingredient(name: 'Оливковое', unit: IngredientUnit.mils), 5),
-  //       ])),
-  // ];
-  return [];
-  // return [
-  //   Diet(id: '0', name: 'Текущий рацион или как я рад жить', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[0],
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[4],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Перекус', dishes: [
-  //         dishes[4],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: [dishes[0]]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[2],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[4],
-  //       ]),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: [
-  //         dishes[1],
-  //       ]),
-  //       Meal(name: 'Обед', dishes: [
-  //         dishes[3],
-  //       ]),
-  //       Meal(name: 'Ужин', dishes: [
-  //         dishes[5],
-  //       ]),
-  //     ]),
-  //   ]),
-  //   Diet(id: '1', name: 'Котлетки с пюрешкой', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //   ]),
-  //   Diet(id: '2', name: 'База кормит', days: [
-  //     DietDay(index: 0, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 1, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 2, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 3, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 4, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 5, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //     DietDay(index: 6, meals: [
-  //       Meal(name: 'Завтрак', dishes: []),
-  //       Meal(name: 'Обед', dishes: []),
-  //       Meal(name: 'Ужин', dishes: []),
-  //     ]),
-  //   ]),
-  //   // Diet(id: '3', name: 'Алёша Попович рекомендует', days: [
-  //   //   DietDay(index: 5, meals: [
-  //   //     Meal(name: 'Завтрак', dishes: []),
-  //   //     Meal(name: 'Обед', dishes: []),
-  //   //     Meal(name: 'Ужин', dishes: []),
-  //   //   ]),
-  //   //   DietDay(index: 6, meals: [
-  //   //     Meal(name: 'Завтрак', dishes: []),
-  //   //     Meal(name: 'Обед', dishes: []),
-  //   //     Meal(name: 'Ужин', dishes: []),
-  //   //   ]),
-  //   // ]),
-  // ];
-}

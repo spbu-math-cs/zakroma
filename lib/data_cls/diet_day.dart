@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
+import '../data_cls/meal.dart';
 
 @immutable
 class DietDay {
