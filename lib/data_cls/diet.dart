@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
-import '../network.dart';
+
 import '../data_cls/diet_day.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/meal.dart';
 import '../data_cls/path.dart';
+import '../network.dart';
 import '../pages/diet_page.dart';
 import '../utility/alert_text_prompt.dart';
 
@@ -26,12 +29,25 @@ class Diet {
       : assert(days.length == 7);
 
   factory Diet.fromJson(Map<String, dynamic> map) {
-    return Diet(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      days: map['days'].toString().split(';') as List<DietDay>,
-      // TODO(tech): добавить каждому элементу .split'а каст к DietDay
-    );
+    debugPrint('Diet.fromJson(${map.toString()})');
+    switch (map) {
+      case {
+          'id': String id,
+          'name': String name,
+          'days': List<dynamic> days,
+        }:
+        return Diet(
+            id: id,
+            name: name,
+            days: List<DietDay>.from(
+                days.map((e) => DietDay.fromJson(e as Map<String, dynamic>))));
+      case {
+          'id': String id,
+          'name': String name,
+        }:
+        return Diet(id: id, name: name, days: const []);
+      case _: throw FormatException('Failed to parse Diet from $map');
+    }
   }
 
   int get length => days.length;
@@ -113,27 +129,48 @@ extension DietGetter on List<Diet> {
 // TODO(idea): можно ли подгружать информацию прямо в getDietById?
 class Diets extends AsyncNotifier<List<Diet>> {
   String token = '';
+
   // TODO(server): протестировать
   Future<List<Diet>> _fetchDiets() async {
-    final json = await get(token, 'request'); // TODO(server): взять request из апи
-    final diets = jsonDecode(json.body) as List<Map<String, dynamic>>;
-    return diets.map(Diet.fromJson).toList();
+    debugPrint('  _fetchDiets()');
+    final json =
+        await get('api/diets/1', token); // TODO(server): взять request из апи
+    if (json.statusCode == 200) {
+      final diets = jsonDecode(json.body) as List<dynamic>;
+      return List<Diet>.from(
+          diets.map((e) => Diet.fromJson(e as Map<String, dynamic>)));
+    } else {
+      throw HttpException(
+          'Diets._fetchDiets() ended with exception: ${json.body}');
+    }
   }
 
   @override
   FutureOr<List<Diet>> build() async {
+    List<Diet> result = [];
+    debugPrint('  Diets.build()');
     final user = switch (ref.watch(userProvider)) {
       AsyncData(:final value) => value,
-      AsyncError(error:_, stackTrace:_) => null,
+      AsyncError(:final error, stackTrace: _) =>
+        User(firstName: error.toString()),
       _ => null,
     };
-    if (user != null && user.sync) {
-      // TODO(tech): понять, является ли костылём решение с ref и прямым обращением к userProvider.value
-      token = ref.read(userProvider).value!.token;
-      return _fetchDiets();
+    if (user == null) {
+      state = const AsyncLoading();
+    } else if (user.sync && user.token != null) {
+      debugPrint('user = ${user.toString()}');
+      // Работаем онлайн
+      token = user.token!;
+      try {
+        result = await _fetchDiets();
+      } on HttpException catch (e) {
+        debugPrint(e.message);
+      }
+    } else {
+      // Работаем оффлайн?
+      // throw UnimplementedError();
     }
-    // Работаем оффлайн
-    return [];
+    return result;
   }
 
   void add(
@@ -143,15 +180,16 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await post(
-          token,
-          'request',  // TODO(server): взять request из апи
-          <String, dynamic>{
-            'id': dietId,
-            'name': name,
-            'days': days ??
-                List<DietDay>.generate(
-                    7, (index) => DietDay(index: index, meals: const []))
-          });
+        'addDiet', // TODO(server): взять request из апи
+        <String, dynamic>{
+          'id': dietId,
+          'name': name,
+          'days': days ??
+              List<DietDay>.generate(
+                  7, (index) => DietDay(index: index, meals: const []))
+        },
+        token,
+      );
       return _fetchDiets();
     });
   }
@@ -160,16 +198,17 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await patch(
-          token,
-          'request/$dietId',  // TODO(server): взять request из апи
-          <String, String>{'newName': newName});
+        'api/diet/setName/$dietId', // TODO(server): взять request из апи
+        <String, String>{'newName': newName},
+        token,
+      );
       return _fetchDiets();
     });
   }
 
   Future<Diet?> getDietById({required String dietId}) async {
     state = const AsyncValue.loading();
-    final json = await get(token, 'request/$dietId');
+    final json = await get('api/diets/$dietId', token);
     state = await AsyncValue.guard(() async {
       return _fetchDiets();
     });
@@ -177,13 +216,16 @@ class Diets extends AsyncNotifier<List<Diet>> {
   }
 
   void addMeal(
-      {required String dietId, required int dayIndex, required Meal newMeal}) async {
+      {required String dietId,
+      required int dayIndex,
+      required Meal newMeal}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await post(
-          token,
-          'request/$dietId/$dayIndex',  // TODO(server): взять request из апи
-          newMeal);
+        'api/meal/add/$dietId/$dayIndex', // TODO(server): взять request из апи
+        newMeal,
+        token,
+      );
       return _fetchDiets();
     });
   }
@@ -196,9 +238,10 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await post(
-          token,
-          'request/$dietId/$dayIndex/$mealId',  // TODO(server): взять request из апи
-          newDish);
+        'api/meal/add/$dietId/$dayIndex/$mealId', // TODO(server): взять request из апи
+        newDish,
+        token,
+      );
       return _fetchDiets();
     });
   }
@@ -206,13 +249,10 @@ class Diets extends AsyncNotifier<List<Diet>> {
   void remove({required String dietId}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await delete(
-          token,
-          'request/$dietId');  // TODO(server): взять request из апи
+      await delete('api/diet/remove/$dietId', token); // TODO(server): взять request из апи
       return _fetchDiets();
     });
   }
 }
 
 final dietsProvider = AsyncNotifierProvider<Diets, List<Diet>>(Diets.new);
-
