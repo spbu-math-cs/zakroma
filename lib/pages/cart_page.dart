@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/data_cls/cart.dart';
-import 'package:zakroma_frontend/utility/styled_headline.dart';
+
 import '../constants.dart';
+import '../data_cls/cart.dart';
 import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';
+import '../utility/styled_headline.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart';
 import '../utility/rr_buttons.dart';
@@ -145,23 +146,27 @@ class IngredientTile extends ConsumerWidget {
     return Center(
       child: Row(
         children: [
+          // Миниатюра продукта
           Expanded(
               child: Image.asset(
             'assets/images/${ingredient.name}.jpeg',
             fit: BoxFit.fill,
           )),
+          // Информация о продукте и кнопки для изменения
           Expanded(
               flex: 3,
               child: Padding(
                 padding: EdgeInsets.all(constants.paddingUnit * 2),
                 child: Stack(
                   children: [
+                    // Название блюда
                     Align(
                       alignment: Alignment.topLeft,
                       child: StyledHeadline(
                           text: ingredient.name.capitalize(),
                           textStyle: Theme.of(context).textTheme.titleLarge),
                     ),
+                    // Кнопки для изменения количества
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: SizedBox(
@@ -169,6 +174,7 @@ class IngredientTile extends ConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // Кнопка «увеличить количество» (aka плюс)
                             RRButton(
                                 onTap: () => ref
                                     .read(cartProvider.notifier)
@@ -182,11 +188,13 @@ class IngredientTile extends ConsumerWidget {
                                     size: constants.paddingUnit * 2,
                                   ),
                                 )),
+                            // Счётчик, показывающий текущее количество
                             SizedBox(
                                 width: 3 * constants.paddingUnit,
                                 child: Center(
                                   child: Text(cart[ingredient].toString()),
                                 )),
+                            // Кнопка «уменьшить количество» (aka минус)
                             RRButton(
                                 onTap: () => ref
                                     .read(cartProvider.notifier)
@@ -206,6 +214,7 @@ class IngredientTile extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    // Кнопка «удалить»
                     Align(
                       alignment: Alignment.bottomRight,
                       child: SizedBox.square(
