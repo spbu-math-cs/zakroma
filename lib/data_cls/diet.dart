@@ -133,8 +133,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
   // TODO(server): протестировать
   Future<List<Diet>> _fetchDiets() async {
     debugPrint('  _fetchDiets()');
-    final json =
-        await get('api/diets/1', token); // TODO(server): взять request из апи
+    final json = await get('api/diets/1', token); // TODO(server): взять request из апи
     if (json.statusCode == 200) {
       final diets = jsonDecode(json.body) as List<dynamic>;
       return List<Diet>.from(
