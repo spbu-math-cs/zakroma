@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ class User {
   final String? email;
   final String? password;
   final String? token;
+  final String? idCookie;
   final bool sync;
 
   const User(
@@ -21,6 +23,7 @@ class User {
       this.email,
       this.password,
       this.token,
+      this.idCookie,
       this.sync = true})
       : assert(!sync || (sync && token != ''));
 
@@ -33,6 +36,7 @@ class User {
         'email: $email,\n'
         'password: $password,\n'
         'token: $token,\n'
+        'idCookie: $idCookie,\n'
         'sync: $sync}';
   }
 }
@@ -48,14 +52,13 @@ class UserNotifier extends AsyncNotifier<User> {
     prefs.setString('password', 'milka');
     prefs.setBool('sync', true);
     prefs.remove('token');
+    prefs.remove('idCookie');
 
     final tokenValid = await _isTokenValid(
         prefs.getString('email')!, prefs.getString('token'));
     if (prefs.getString('email') != null && !tokenValid) {
       // пользователь зарегистрирован, но не имеет действующего токена
-      final token = await _getToken(
-          prefs.getString('email')!, prefs.getString('password')!);
-      prefs.setString('token', token);
+      await _authorize(prefs.getString('email')!, prefs.getString('password')!);
     }
 
     debugPrint('  UserNotifier.build() finished');
@@ -66,6 +69,7 @@ class UserNotifier extends AsyncNotifier<User> {
       email: prefs.getString('email'),
       password: prefs.getString('password'),
       token: prefs.getString('token'),
+      idCookie: prefs.getString('idCookie'),
       sync: prefs.getBool('sync') ?? true,
     );
   }
@@ -83,10 +87,20 @@ class UserNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<String> _getToken(String email, String password) async {
+  Future<void> _authorize(String email, String password) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final response =
         await post('auth/login', {'username': email, 'password': password});
-    return response.body;
+    final cookies = response.headers['set-cookie']!
+        .split(';')
+        .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    prefs.setString('token', body['token']);
+    prefs.setString(
+        'idCookie',
+        cookies
+            .firstWhere((element) => element.key == 'zakroma_session')
+            .value);
   }
 }
 
