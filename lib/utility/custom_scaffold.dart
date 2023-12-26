@@ -8,6 +8,7 @@ class CustomScaffold extends ConsumerWidget {
   final String? title;
   final Widget? header;
   final Widget body;
+  final Widget? topNavigationBar;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
@@ -17,6 +18,7 @@ class CustomScaffold extends ConsumerWidget {
     required this.body,
     this.title,
     this.header,
+    this.topNavigationBar,
     this.bottomNavigationBar,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
@@ -34,7 +36,10 @@ class CustomScaffold extends ConsumerWidget {
           final topPadding = constraints.maxHeight -
               Constants.screenHeight * constants.paddingUnit -
               (bottomNavigationBar == null
-                  ? Constants.navigationBarHeight * constants.paddingUnit
+                  ? Constants.bottomNavigationBarHeight * constants.paddingUnit
+                  : 0) -
+              (topNavigationBar == null
+                  ? Constants.topNavigationBarHeight * constants.paddingUnit
                   : 0);
 
           return Padding(
@@ -42,9 +47,17 @@ class CustomScaffold extends ConsumerWidget {
             child: Column(
               children: [
                 Visibility(
+                  visible: topNavigationBar != null,
+                  child: Expanded(
+                      flex: Constants.topNavigationBarHeight,
+                      child: topNavigationBar == null
+                          ? const SizedBox.shrink()
+                          : topNavigationBar!),
+                ),
+                Visibility(
                   visible: header != null || title != null,
                   child: Expanded(
-                      flex: 9,
+                      flex: 9, // стандартная высота заголовка
                       child: header == null
                           ? title == null
                               ? const SizedBox.shrink()
@@ -62,7 +75,13 @@ class CustomScaffold extends ConsumerWidget {
                                 )
                           : header!),
                 ),
-                Expanded(flex: Constants.screenHeight - 9, child: body)
+                Expanded(
+                    flex: Constants.screenHeight -
+                        9 -
+                        (topNavigationBar == null
+                            ? 0
+                            : Constants.topNavigationBarHeight),
+                    child: body)
               ],
             ),
           );

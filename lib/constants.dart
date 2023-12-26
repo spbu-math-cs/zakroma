@@ -14,8 +14,11 @@ class Constants {
   /// Не учитывает высоту панели навигации приложения!
   static const screenHeight = 85;
 
-  /// Высота панели навигации приложения (в единицах paddingUnit).
-  static const navigationBarHeight = 7;
+  /// Высота нижней панели навигации приложения (в единицах paddingUnit).
+  static const bottomNavigationBarHeight = 7;
+
+  /// Высота верхней панели навигации приложения (в единицах paddingUnit).
+  static const topNavigationBarHeight = 3;
 
   /// Продолжительность анимаций (миллисекунды).
   static const dAnimationDuration = Duration(milliseconds: 250);
