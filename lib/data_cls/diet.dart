@@ -165,11 +165,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
     debugPrint('user = ${user.toString()}');
     if (user == null) {
       state = const AsyncLoading();
-    } else if (user.sync && user.token != null) {
+    } else if (user.isAuthorized && user.token != null) {
       // debugPrint('user = ${user.toString()}');
       // Работаем онлайн
       token = user.token!;
-      idCookie = user.idCookie!;
+      idCookie = user.cookie!;
       try {
         result = await _fetchDiets();
       } on HttpException catch (e) {

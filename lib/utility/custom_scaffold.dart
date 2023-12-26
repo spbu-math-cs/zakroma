@@ -32,6 +32,8 @@ class CustomScaffold extends ConsumerWidget {
         child: LayoutBuilder(builder: (context, constraints) {
           final topPadding = constraints.maxHeight -
               Constants.screenHeight * constants.paddingUnit;
+          debugPrint('topPadding: ${topPadding.toString()}');
+
           return Padding(
             padding: EdgeInsets.only(top: topPadding > 0 ? topPadding : 0),
             child: Column(

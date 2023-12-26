@@ -27,6 +27,7 @@ class FunctionalBottomBar extends ConsumerWidget {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final height = MediaQuery.of(context).size.height / 17;
+    debugPrint('navbar height: $height');
 
     return Container(
       decoration: BoxDecoration(

@@ -9,35 +9,32 @@ import 'package:zakroma_frontend/network.dart';
 class User {
   final String? firstName;
   final String? secondName;
-  final String? thirdName;
   final String? email;
   final String? password;
   final String? token;
-  final String? idCookie;
-  final bool sync;
+  final String? cookie;
+  final bool isAuthorized;
 
   const User(
       {this.firstName,
       this.secondName,
-      this.thirdName,
       this.email,
       this.password,
       this.token,
-      this.idCookie,
-      this.sync = true})
-      : assert(!sync || (sync && token != ''));
+      this.cookie,
+      this.isAuthorized = false})
+      : assert(!isAuthorized || (isAuthorized && (token ?? '') != '' && (cookie ?? '') != ''));
 
   @override
   String toString() {
     return 'User{\n'
         'firstName: $firstName,\n'
         'secondName: $secondName,\n'
-        'thirdName: $thirdName,\n'
         'email: $email,\n'
         'password: $password,\n'
         'token: $token,\n'
-        'idCookie: $idCookie,\n'
-        'sync: $sync}';
+        'cookie: $cookie,\n'
+        'isAuthorized: $isAuthorized}';
   }
 }
 
@@ -47,16 +44,9 @@ class UserNotifier extends AsyncNotifier<User> {
     debugPrint('  UserNotifier.build()');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // TODO(tape): убрать по готовности регистрации
-    prefs.setString('email', 'admin');
-    prefs.setString('password', 'milka');
-    prefs.setBool('sync', true);
-    prefs.remove('token');
-    prefs.remove('idCookie');
-
     final tokenValid = await _isTokenValid(
         prefs.getString('email')!, prefs.getString('token'));
-    if (prefs.getString('email') != null && !tokenValid) {
+    if (!(prefs.getBool('isAuthorized') ?? false) && !tokenValid) {
       // пользователь зарегистрирован, но не имеет действующего токена
       await _authorize(prefs.getString('email')!, prefs.getString('password')!);
     }
@@ -65,12 +55,11 @@ class UserNotifier extends AsyncNotifier<User> {
     return User(
       firstName: prefs.getString('firstName'),
       secondName: prefs.getString('secondName'),
-      thirdName: prefs.getString('thirdName'),
       email: prefs.getString('email'),
       password: prefs.getString('password'),
       token: prefs.getString('token'),
-      idCookie: prefs.getString('idCookie'),
-      sync: prefs.getBool('sync') ?? true,
+      cookie: prefs.getString('cookie'),
+      isAuthorized: prefs.getBool('isAuthorized') ?? true,
     );
   }
 
@@ -97,7 +86,7 @@ class UserNotifier extends AsyncNotifier<User> {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
     prefs.setString('token', body['token']);
     prefs.setString(
-        'idCookie',
+        'cookie',
         cookies
             .firstWhere((element) => element.key == 'zakroma_session')
             .value);
