@@ -28,7 +28,10 @@ class DietListPage extends ConsumerWidget {
                 itemCount: diets.length + 1,
                 itemBuilder: (context, index) => SizedBox(
                       height: constraints.maxHeight / 5,
-                      child: getDietDisplay(context, ref, index),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: getDietDisplay(context, ref, index),
+                      ),
                     ));
           }),
         ),
