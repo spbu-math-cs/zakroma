@@ -39,8 +39,8 @@ class CustomScaffold extends ConsumerWidget {
                   ? Constants.bottomNavigationBarHeight * constants.paddingUnit
                   : 0) -
               (topNavigationBar == null
-                  ? Constants.topNavigationBarHeight * constants.paddingUnit
-                  : 0);
+                  ? 0
+                  : Constants.topNavigationBarHeight * constants.paddingUnit);
 
           return Padding(
             padding: EdgeInsets.only(top: topPadding > 0 ? topPadding : 0),
