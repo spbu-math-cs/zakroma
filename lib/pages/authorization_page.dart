@@ -178,6 +178,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             debugPrint(e.toString());
                           }
                           if (!context.mounted) return;
+                          FocusManager.instance.primaryFocus
+                              ?.unfocus(); // убираем клавиатуру
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const Zakroma()));
                         }
