@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +35,44 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
           currentPageIndex = index;
         }),
         children: const [LoginPage()],
+      ),
+    );
+  }
+}
+
+class CustomTextFormField extends ConsumerWidget {
+  final TextEditingController textEditingController;
+  final String? Function(String?)? validator;
+  final String hintText;
+
+  const CustomTextFormField(
+      {super.key,
+      required this.textEditingController,
+      required this.validator,
+      required this.hintText});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants =
+        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.primaryContainer,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(constants.dInnerRadius),
+          ),
+          hintText: hintText,
+          contentPadding: constants.dBlockPadding,
+        ),
+        controller: textEditingController,
+        validator: validator,
       ),
     );
   }
@@ -83,6 +122,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   child: CustomTextFormField(
                       textEditingController: emailController,
                       validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Введите электронную почту';
+                        } else if (!EmailValidator.validate(value)) {
+                          return null; // TODO(release): включить перед релизом
+                          return 'Введите корректный адрес электронной почты';
+                        }
                         return null;
                       },
                       hintText: 'Электронная почта'),
@@ -179,40 +224,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 }
 
-class CustomTextFormField extends ConsumerWidget {
-  final TextEditingController textEditingController;
-  final String? Function(String?)? validator;
-  final String hintText;
-
-  const CustomTextFormField(
-      {super.key,
-      required this.textEditingController,
-      required this.validator,
-      required this.hintText});
+class RegistrationGetNamePage extends ConsumerStatefulWidget {
+  const RegistrationGetNamePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+  ConsumerState createState() => _RegistrationGetNamePageState();
+}
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),
-      child: TextFormField(
-        textAlignVertical: TextAlignVertical.center,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.primaryContainer,
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(constants.dInnerRadius),
-          ),
-          hintText: hintText,
-          contentPadding: constants.dBlockPadding,
-        ),
-        controller: textEditingController,
-        validator: validator,
-      ),
-    );
+class _RegistrationGetNamePageState
+    extends ConsumerState<RegistrationGetNamePage> {
+  final firstNameController = TextEditingController();
+  final secondNameController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
