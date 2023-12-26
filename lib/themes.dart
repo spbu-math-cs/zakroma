@@ -50,7 +50,7 @@ enum AppTheme {
         background: Colors.white,
         surface: lighten(orangeBackground, 64),
         onSurface: Colors.black,
-        onSurfaceVariant: lighten(orangeBackground, 15),
+        onSurfaceVariant: Colors.black45,
         surfaceTint: Colors.white,
         outline: lighten(orangeBackground, 64),  // FFE6CA
         shadow: Colors.black26,

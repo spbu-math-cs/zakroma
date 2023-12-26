@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 
 import '../constants.dart';
+import '../main.dart';
 import '../utility/flat_list.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
@@ -46,25 +48,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   child: Row(
                     children: [
                       Expanded(
-                          child: LayoutBuilder(builder: (context, constraints) {
-                        return Padding(
-                          padding: EdgeInsets.zero,
-                          child: Center(
-                            child: Material(
-                              borderRadius:
-                                  BorderRadius.circular(constants.dInnerRadius),
-                              clipBehavior: Clip.antiAlias,
-                              elevation: constants.dElevation,
-                              child: SizedBox.square(
-                                dimension: constants.paddingUnit * 12,
-                                child: Image.asset(
-                                  'assets/images/ryan_gosling.jpeg',
-                                ),
+                          child: Padding(
+                        padding: EdgeInsets.zero,
+                        child: Center(
+                          child: Material(
+                            borderRadius:
+                                BorderRadius.circular(constants.dInnerRadius),
+                            clipBehavior: Clip.antiAlias,
+                            elevation: constants.dElevation,
+                            child: SizedBox.square(
+                              dimension: constants.paddingUnit * 12,
+                              child: Image.asset(
+                                'assets/images/ryan_gosling.jpeg',
                               ),
                             ),
                           ),
-                        );
-                      })),
+                        ),
+                      )),
                       Expanded(
                           child: Align(
                         alignment: Alignment.centerLeft,
@@ -88,7 +88,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             ),
                           ],
                         ),
-                      ))
+                      )),
+                      Expanded(
+                          child: IconButton(
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setBool('isAuthorized', false);
+                                if (!context.mounted) return;
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => const Zakroma()));
+                              },
+                              icon: Icon(
+                                Icons.logout,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ))),
                     ],
                   ),
                 )),

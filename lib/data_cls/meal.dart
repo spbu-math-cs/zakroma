@@ -22,6 +22,24 @@ class Meal {
 
   const Meal({required this.id, required this.name, required this.dishes});
 
+  factory Meal.fromJson(Map<String, dynamic> map) {
+    // debugPrint('Meal.fromJson(${map.toString()})');
+    switch (map) {
+      case {
+          'id': String id,
+          'name': String name,
+          'dishes': List<dynamic> dishes,
+        }:
+        return Meal(
+            id: id,
+            name: name,
+            dishes: List<Dish>.from(
+                dishes.map((e) => Dish.fromJson(e as Map<String, dynamic>))));
+      case _:
+        throw UnimplementedError();
+    }
+  }
+
   int get dishesCount => dishes.length;
 
   Dish getDish(int index) => dishes[index];
@@ -60,8 +78,8 @@ class Meal {
                               dishes: const []));
                       Navigator.of(context).pop();
                       final mealId = (await ref
-                          .read(dietsProvider.notifier)
-                          .getDietById(dietId: dietId))!
+                              .read(dietsProvider.notifier)
+                              .getDietById(dietId: dietId))!
                           .days[dayIndex]
                           .meals
                           .last
@@ -101,7 +119,6 @@ class Meal {
                               Expanded(
                                 child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      debugPrint(constraints.toString());
                                   return SizedBox.square(
                                     dimension: constraints.maxWidth,
                                     child: Material(

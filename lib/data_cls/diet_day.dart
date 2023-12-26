@@ -11,4 +11,17 @@ class DietDay {
 
   const DietDay({required this.index, required this.meals})
       : assert(index >= 0 && index <= 6);
+
+  factory DietDay.fromJson(Map<String, dynamic> map) {
+    debugPrint('DietDay.fromJson(${map.toString()})');
+    switch (map) {
+      case {
+        'index': int index,
+        'meals': List<dynamic> meals,
+      }:
+        return DietDay(index: index, meals: List<Meal>.from(meals.map((e) => Meal.fromJson(e as Map<String, dynamic>))));
+      case _:
+        throw UnimplementedError();
+    }
+  }
 }

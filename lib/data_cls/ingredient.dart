@@ -32,7 +32,7 @@ class Ingredient {
 
   const Ingredient(
       {required this.name,
-        required this.marketName,
+      required this.marketName,
       required this.unit,
       // TODO(tech): убрать нули и вернуть required
       this.kcal = 0,
@@ -43,4 +43,29 @@ class Ingredient {
         assert(carbs >= 0 && carbs <= 100),
         assert(proteins >= 0 && proteins <= 100),
         assert(fats >= 0 && fats <= 100);
+
+  factory Ingredient.fromJson(Map<String, dynamic> map) {
+    // debugPrint('Ingredient.fromJson(${map.toString()})');
+    switch (map) {
+      case {
+          'name': String name,
+          'marketName': String marketName,
+          'unit': IngredientUnit unit,
+          'kcal': double kcal,
+          'carbs': double carbs,
+          'proteins': double proteins,
+          'fats': double fats,
+        }:
+        return Ingredient(
+            name: name,
+            marketName: marketName,
+            unit: unit,
+            kcal: kcal,
+            carbs: carbs,
+            proteins: proteins,
+            fats: fats);
+      case _:
+        throw UnimplementedError();
+    }
+  }
 }

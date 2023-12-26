@@ -36,12 +36,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dotted_border: ^2.1.0
-  wtf_sliding_sheet: ^1.1.2
+  wtf_sliding_sheet: ^1.1.3
   flutter_riverpod: ^2.4.4
   uuid: ^4.0.0
   external_app_launcher: ^3.1.0
   http: ^1.1.0
   shared_preferences: ^2.2.2
+  email_validator: ^2.1.17
 
 dev_dependencies:
   flutter_test:
