@@ -5,6 +5,8 @@ import 'package:zakroma_frontend/constants.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 
+import '../data_cls/user.dart';
+import '../main.dart';
 import '../utility/styled_headline.dart';
 
 class AuthorizationPage extends ConsumerStatefulWidget {
@@ -53,14 +55,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext text) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
-    debugPrint('paddingUnit: ${constants.paddingUnit}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
         padding: constants.dBlockPadding
             .copyWith(top: constants.paddingUnit * 16, bottom: 0),
-        // .copyWith(top: constants.paddingUnit * 28, bottom: 0),
         child: Form(
           key: formKey,
           child: Column(
@@ -121,42 +121,55 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 flex: 37,
                 child: Padding(
                   padding: EdgeInsets.only(bottom: constants.paddingUnit * 32),
-                  child: RRButton(onTap: () {}, child: const Text('Войти')),
+                  child: RRButton(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          debugPrint('email: ${emailController.text}');
+                          debugPrint('password: ${passwordController.text}');
+                          try {
+                            await ref.read(userProvider.notifier).authorize(
+                                emailController.text, passwordController.text);
+                          } catch (e) {
+                            debugPrint(e.toString());
+                          }
+                          if (!context.mounted) return;
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Zakroma()));
+                        }
+                      },
+                      child: const Text('Войти')),
                 ),
               ),
               // Кнопка регистрации
               Expanded(
                 flex: 7,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  debugPrint('flexUnit: ${constraints.maxHeight / 7}');
-                  return Padding(
-                    padding: EdgeInsets.only(top: constants.paddingUnit * 2),
-                    child: RRButton(
-                      onTap: () {},
-                      child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: 'Нет аккаунта? ',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(height: 1),
-                              children: [
-                                TextSpan(
-                                  text: 'Зарегистрируйтесь!',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          height: 1),
-                                )
-                              ])),
-                    ),
-                  );
-                }),
+                child: Padding(
+                  padding: EdgeInsets.only(top: constants.paddingUnit * 2),
+                  child: RRButton(
+                    onTap: () {},
+                    child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                            text: 'Нет аккаунта? ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(height: 1),
+                            children: [
+                              TextSpan(
+                                text: 'Зарегистрируйтесь!',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        height: 1),
+                              )
+                            ])),
+                  ),
+                ),
               )
             ],
           ),
@@ -170,6 +183,7 @@ class CustomTextFormField extends ConsumerWidget {
   final TextEditingController textEditingController;
   final String? Function(String?)? validator;
   final String hintText;
+
   const CustomTextFormField(
       {super.key,
       required this.textEditingController,
@@ -194,9 +208,6 @@ class CustomTextFormField extends ConsumerWidget {
             borderRadius: BorderRadius.circular(constants.dInnerRadius),
           ),
           hintText: hintText,
-          // hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-          //   height: 1
-          // ),
           contentPadding: constants.dBlockPadding,
         ),
         controller: textEditingController,

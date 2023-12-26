@@ -23,7 +23,8 @@ class User {
       this.token,
       this.cookie,
       this.isAuthorized = false})
-      : assert(!isAuthorized || (isAuthorized && (token ?? '') != '' && (cookie ?? '') != ''));
+      : assert(!isAuthorized ||
+            (isAuthorized && (token ?? '') != '' && (cookie ?? '') != ''));
 
   @override
   String toString() {
@@ -48,7 +49,7 @@ class UserNotifier extends AsyncNotifier<User> {
         prefs.getString('email')!, prefs.getString('token'));
     if (!(prefs.getBool('isAuthorized') ?? false) && !tokenValid) {
       // пользователь зарегистрирован, но не имеет действующего токена
-      await _authorize(prefs.getString('email')!, prefs.getString('password')!);
+      await authorize(prefs.getString('email')!, prefs.getString('password')!);
     }
 
     debugPrint('  UserNotifier.build() finished');
@@ -76,20 +77,36 @@ class UserNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<void> _authorize(String email, String password) async {
+  Future<void> authorize(String email, String password) async {
+    debugPrint('  UserNotifier.authorize()');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final response =
         await post('auth/login', {'username': email, 'password': password});
+    debugPrint('response.statusCode: ${response.statusCode}');
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 401:
+        throw Exception('Неверный логин или пароль');
+      case 400:
+        throw Exception('Внутренняя ошибка сервера');
+      default:
+        throw Exception('Неизвестная ошибка');
+    }
     final cookies = response.headers['set-cookie']!
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
+    debugPrint('response.body: ${body.toString()}');
+    // prefs.setString('email', email);
+    // prefs.setString('password', password);
     prefs.setString('token', body['token']);
     prefs.setString(
         'cookie',
         cookies
             .firstWhere((element) => element.key == 'zakroma_session')
             .value);
+    prefs.setBool('isAuthorized', true);
   }
 }
 

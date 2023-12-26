@@ -26,13 +26,16 @@ class CustomScaffold extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
           final topPadding = constraints.maxHeight -
-              Constants.screenHeight * constants.paddingUnit;
-          debugPrint('topPadding: ${topPadding.toString()}');
+              Constants.screenHeight * constants.paddingUnit -
+              (bottomNavigationBar == null
+                  ? Constants.navigationBarHeight * constants.paddingUnit
+                  : 0);
 
           return Padding(
             padding: EdgeInsets.only(top: topPadding > 0 ? topPadding : 0),
