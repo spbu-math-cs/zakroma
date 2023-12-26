@@ -1,12 +1,13 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
 import '../constants.dart';
 import '../data_cls/cart.dart';
 import '../data_cls/diet.dart';
+import '../data_cls/group.dart';
 import '../data_cls/ingredient.dart';
 import '../data_cls/meal.dart';
 import '../utility/custom_scaffold.dart';
@@ -21,9 +22,10 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    const groupMembersDisplayCount = 3;
+    const dietsDisplayCount = 3;
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final user = ref.watch(userProvider);
 
     return CustomScaffold(
       title: 'Закрома',
@@ -37,7 +39,29 @@ class HomePage extends ConsumerWidget {
                 // TODO(server): подгрузить членов группы (id, иконка)
                 // TODO(func): реализовать клик по плюсу, члену группы
                 // TODO(tech): реализовать горизонтальную прокрутку членов группы
-                child: const Placeholder(),
+                child: FutureBuilder(
+                  future: ref.watch(userProvider.notifier).groups,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final groups = snapshot.data as List<Group>;
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                          children: List<Text>.generate(
+                        groups.length,
+                        (index) => Text(
+                          groups[index].name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(height: 1),
+                        ),
+                      )),
+                    );
+                  },
+                ),
               )),
           // Статус холодильника/доставки + корзина
           Expanded(
@@ -125,6 +149,8 @@ class HomePage extends ConsumerWidget {
                           asyncValue: ref.watch(dietsProvider),
                           builder: (diets) {
                             final currentDiet = diets.firstOrNull;
+                            debugPrint(
+                                'asyncbuilder speaking, currentDiet: $currentDiet');
                             final List<Meal>? todayMeals = currentDiet
                                 ?.getDay(DateTime.now().weekday - 1)
                                 .meals;

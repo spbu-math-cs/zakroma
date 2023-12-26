@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/network.dart';
 
+import 'group.dart';
+
 class User {
   final String? firstName;
   final String? secondName;
@@ -176,7 +178,7 @@ class UserNotifier extends AsyncNotifier<User> {
     }
   }
 
-  Future<void> changeGroup(String groupHash) async {
+  Future<void> switchCurrentGroup(String groupHash) async {
     final response = await patch(
       'api/groups/change',
       {
@@ -197,6 +199,28 @@ class UserNotifier extends AsyncNotifier<User> {
       default:
         throw Exception('Неизвестная ошибка');
     }
+  }
+
+  Future<List<Group>> get groups async {
+    final response = await get(
+      'api/groups/list',
+      state.value!.token!,
+      state.value!.cookie!,
+    );
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 401:
+        throw Exception('Неавторизованный запрос');
+      case 400:
+        throw Exception('Неверный запрос');
+      case 500:
+        throw Exception('Внутренняя ошибка');
+      default:
+        throw Exception('Неизвестная ошибка');
+    }
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    return List<Group>.from(body['groups'].map((e) => Group.fromJson(e)));
   }
 }
 

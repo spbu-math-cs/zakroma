@@ -27,7 +27,11 @@ class Diet {
   /// Длиной рациона считается количество дней в нём.
   final List<DietDay> days;
 
-  const Diet({required this.id, required this.name, this.isActive = false, required this.days})
+  const Diet(
+      {required this.id,
+      required this.name,
+      this.isActive = false,
+      required this.days})
       : assert(days.length == 7);
 
   factory Diet.fromJson(Map<String, dynamic> map) {
@@ -136,19 +140,23 @@ class Diets extends AsyncNotifier<List<Diet>> {
 
   // TODO(server): протестировать
   Future<List<Diet>> _fetchDiets() async {
-    debugPrint('  _fetchDiets()');
-    final json =
-        await get('api/diets/0', token, idCookie); // TODO(server): взять request из апи
+    final json = await get('api/diets/list', token,
+        idCookie); // TODO(server): взять request из апи
     debugPrint('json = ${json.statusCode}, ${json.body}');
-    if (json.statusCode == 200) {
-      final diets = jsonDecode(json.body) as List<dynamic>;
-      debugPrint(diets.toString());
-      return List<Diet>.from(
-          diets.map((e) => Diet.fromJson(e as Map<String, dynamic>)));
-    } else {
-      return collectDiets();
-      throw HttpException(
-          'Diets._fetchDiets() ended with exception: ${json.body}');
+    switch (json.statusCode) {
+      case 200:
+        final diets = jsonDecode(json.body) as List<dynamic>;
+        debugPrint(diets.toString());
+        return List<Diet>.from(
+            diets.map((e) => Diet.fromJson(e as Map<String, dynamic>)));
+      case 401:
+        throw const HttpException('Unauthorized');
+      case 400:
+        throw const HttpException('Bad request');
+      case 404:
+        throw const HttpException('Not found');
+      default:
+        throw HttpException('Unexpected status code: ${json.statusCode}');
     }
   }
 
@@ -219,7 +227,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
 
   Future<Diet?> getDietById({required String dietId}) async {
     state = const AsyncValue.loading();
-    final json = await get('api/diets/$dietId', token, idCookie,);
+    final json = await get(
+      'api/diets/$dietId',
+      token,
+      idCookie,
+    );
     state = await AsyncValue.guard(() async {
       return _fetchDiets();
     });
@@ -262,8 +274,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
   void remove({required String dietId}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await delete('api/diet/remove/$dietId',
-          token, idCookie,); // TODO(server): взять request из апи
+      await delete(
+        'api/diet/remove/$dietId',
+        token,
+        idCookie,
+      ); // TODO(server): взять request из апи
       return _fetchDiets();
     });
   }
@@ -505,8 +520,7 @@ List<Diet> collectDiets() {
         ])),
   ];
   return [
-    Diet(id: '0', name: 'Текущий рацион', isActive: true,
-        days: [
+    Diet(id: '0', name: 'Текущий рацион', isActive: true, days: [
       DietDay(index: 0, meals: [
         Meal(id: '1', name: 'Завтрак', dishes: [dishes[0]]),
         Meal(id: '2', name: 'Обед', dishes: [
