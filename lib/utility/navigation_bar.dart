@@ -26,7 +26,7 @@ class FunctionalBottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
-    final height = constants.paddingUnit * Constants.navigationBarHeight +
+    final height = constants.paddingUnit * Constants.bottomNavigationBarHeight +
         MediaQuery.of(context).padding.bottom / 1.13;
 
     return Container(
@@ -39,7 +39,7 @@ class FunctionalBottomBar extends ConsumerWidget {
                 blurRadius: constants.dElevation,
                 offset: const Offset(0, -1))
           ]),
-      height: constants.paddingUnit * Constants.navigationBarHeight +
+      height: constants.paddingUnit * Constants.bottomNavigationBarHeight +
           MediaQuery.of(context).padding.bottom / 1.13, // фикс для iOS
       child: Padding(
         padding: EdgeInsets.only(
