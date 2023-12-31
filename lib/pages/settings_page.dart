@@ -96,8 +96,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                     await SharedPreferences.getInstance();
                                 prefs.setBool('isAuthorized', false);
                                 if (!context.mounted) return;
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const Zakroma()));
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => const Zakroma()));
                               },
                               icon: Icon(
                                 Icons.logout,

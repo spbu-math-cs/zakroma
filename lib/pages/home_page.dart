@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
@@ -22,10 +23,16 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    // делаем системную панель навигации «прозрачной»
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+        systemNavigationBarColor:
+            Theme.of(context).colorScheme.primaryContainer,
+        statusBarColor: Colors.transparent));
+
     const dietsDisplayCount = 3;
     final constants =
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
-    final user = ref.watch(userProvider);
+    final diets = ref.watch(dietsProvider);
 
     return CustomScaffold(
       title: 'Закрома',
@@ -39,29 +46,30 @@ class HomePage extends ConsumerWidget {
                 // TODO(server): подгрузить членов группы (id, иконка)
                 // TODO(func): реализовать клик по плюсу, члену группы
                 // TODO(tech): реализовать горизонтальную прокрутку членов группы
-                child: FutureBuilder(
-                  future: ref.watch(userProvider.notifier).groups,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final groups = snapshot.data as List<Group>;
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                          children: List<Text>.generate(
-                        groups.length,
-                        (index) => Text(
-                          groups[index].name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(height: 1),
-                        ),
-                      )),
-                    );
-                  },
-                ),
+                child: const Placeholder(),
+                // child: FutureBuilder(
+                //   future: ref.watch(userProvider.notifier).groups,
+                //   builder: (context, snapshot) {
+                //     if (snapshot.connectionState != ConnectionState.done) {
+                //       return const Center(child: CircularProgressIndicator());
+                //     }
+                //     final groups = snapshot.data as List<Group>;
+                //     return SingleChildScrollView(
+                //       scrollDirection: Axis.horizontal,
+                //       child: Row(
+                //           children: List<Text>.generate(
+                //         groups.length,
+                //         (index) => Text(
+                //           groups[index].name,
+                //           style: Theme.of(context)
+                //               .textTheme
+                //               .headlineSmall!
+                //               .copyWith(height: 1),
+                //         ),
+                //       )),
+                //     );
+                //   },
+                // ),
               )),
           // Статус холодильника/доставки + корзина
           Expanded(

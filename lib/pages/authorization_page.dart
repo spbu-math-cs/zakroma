@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/constants.dart';
+import 'package:zakroma_frontend/utility/async_builder.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 import 'package:zakroma_frontend/utility/rr_buttons.dart';
 
@@ -11,11 +12,12 @@ import '../main.dart';
 import '../utility/pair.dart';
 import '../utility/styled_headline.dart';
 
-const fieldExtension =
-    3; // вертикальное расширение поля ввода при некорректном вводе
+// Величина вертикального расширения поля ввода при некорректном вводе (в paddingUnit)
+const fieldExtension = 3;
 
 class AuthorizationPage extends ConsumerStatefulWidget {
-  const AuthorizationPage({super.key});
+  final String? loginErrorMessage;
+  const AuthorizationPage({super.key, this.loginErrorMessage});
 
   @override
   ConsumerState createState() => _AuthorizationPageState();
@@ -27,6 +29,7 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
   final formKey = GlobalKey<FormState>();
   final extendFields = Pair(false, false);
   final interactedWithFields = Pair(false, false);
+  AsyncValue<bool> isAuthorized = const AsyncData(false);
 
   @override
   Widget build(BuildContext text) {
@@ -56,124 +59,170 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                       textStyle: Theme.of(context).textTheme.displayLarge,
                     ),
                   )),
-              // Поле ввода почты
               Expanded(
-                flex: 10 + (extendFields.first ? fieldExtension : 0),
-                child: Padding(
-                  padding: EdgeInsets.only(top: constants.paddingUnit * 3),
-                  child: CustomTextFormField(
-                      textEditingController: emailController,
-                      validator: (value) {
-                        interactedWithFields.first = true;
-                        return _validateEmail(value);
-                      },
-                      hintText: 'Электронная почта'),
-                ),
-              ),
-              // Поле ввода пароля
-              Expanded(
-                  flex: 7 + (extendFields.second ? fieldExtension : 0),
-                  child: CustomTextFormField(
-                      textEditingController: passwordController,
-                      validator: (value) {
-                        interactedWithFields.second = true;
-                        return _validatePassword(value);
-                      },
-                      hintText: 'Пароль')),
-              // Кнопка «Забыли пароль?»
-              // TODO(func): реализовать нажатие на кнопку
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: constants.paddingUnit * 4),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Забыли пароль?',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            height: 1,
-                          ),
-                    ),
-                  ),
-                ),
-              ),
-              // Кнопка «Войти»
-              Expanded(
-                flex: 37 -
-                    (extendFields.first ? fieldExtension : 0) -
-                    (extendFields.second ? fieldExtension : 0),
-                child: RRButton(
-                    padding: EdgeInsets.only(
-                        bottom: constants.paddingUnit *
-                            (32 -
-                                (extendFields.first ? fieldExtension : 0) -
-                                (extendFields.second ? fieldExtension : 0))),
-                    onTap: () async {
-                      setState(() {
-                        interactedWithFields.first =
-                            interactedWithFields.second = true;
-                        // хз, почему notifyListeners помечен как visibleForTesting
-                        emailController.notifyListeners();
-                        passwordController.notifyListeners();
-                      });
-                      if (formKey.currentState!.validate()) {
-                        try {
-                          await ref.read(userProvider.notifier).authorize(
-                              emailController.text, passwordController.text);
-                        } catch (e) {
-                          debugPrint(e.toString());
-                        }
-                        if (!context.mounted) return;
-                        FocusManager.instance.primaryFocus
-                            ?.unfocus(); // убираем клавиатуру
-                        // делаем системную панель навигации «прозрачной» — почему-то она не меняет цвет при переходе на главную
-                        SystemChrome.setSystemUIOverlayStyle(
-                            SystemUiOverlayStyle.light.copyWith(
-                                systemNavigationBarColor: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                                statusBarColor: Colors.transparent));
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const Zakroma()));
-                      }
-                    },
-                    child: const Text('Войти')),
-              ),
-              // Кнопка регистрации
-              Expanded(
-                flex: 7,
-                child: RRButton(
-                  padding: EdgeInsets.only(top: constants.paddingUnit * 2),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const RegistrationPage()));
-                  },
-                  child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          text: 'Нет аккаунта? ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(height: 1),
-                          children: [
-                            TextSpan(
-                              text: 'Зарегистрируйтесь!',
+                flex: 67,
+                child: AsyncBuilder(
+                  asyncValue: isAuthorized,
+                  builder: (user) => Column(
+                    children: [
+                      Expanded(
+                        flex: 10 + (extendFields.first ? fieldExtension : 0),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.only(top: constants.paddingUnit * 3),
+                          child: CustomTextFormField(
+                              textEditingController: emailController,
+                              validator: (value) {
+                                interactedWithFields.first = true;
+                                return _validateEmail(value);
+                              },
+                              hintText: 'Электронная почта'),
+                        ),
+                      ),
+                      // Поле ввода пароля
+                      Expanded(
+                          flex: 7 + (extendFields.second ? fieldExtension : 0),
+                          child: CustomTextFormField(
+                              textEditingController: passwordController,
+                              obscureText: true,
+                              validator: (value) {
+                                interactedWithFields.second = true;
+                                return _validatePassword(value);
+                              },
+                              hintText: 'Пароль')),
+                      // Кнопка «Забыли пароль?»
+                      // TODO(func): реализовать нажатие на кнопку
+                      Expanded(
+                        flex: 6,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              bottom: constants.paddingUnit * 4),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              'Забыли пароль?',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
                                   .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      height: 1),
-                            )
-                          ])),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
+                                    height: 1,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Кнопка «Войти»
+                      Expanded(
+                        flex: 37 -
+                            (extendFields.first ? fieldExtension : 0) -
+                            (extendFields.second ? fieldExtension : 0),
+                        child: RRButton(
+                            padding: EdgeInsets.only(
+                                bottom: constants.paddingUnit *
+                                    (32 -
+                                        (extendFields.first
+                                            ? fieldExtension
+                                            : 0) -
+                                        (extendFields.second
+                                            ? fieldExtension
+                                            : 0))),
+                            onTap: () async {
+                              setState(() {
+                                interactedWithFields.first =
+                                    interactedWithFields.second = true;
+                                // хз, почему notifyListeners помечен как visibleForTesting
+                                emailController.notifyListeners();
+                                passwordController.notifyListeners();
+                              });
+                              if (formKey.currentState!.validate()) {
+                                setState(() {
+                                  isAuthorized = const AsyncLoading();
+                                });
+                                try {
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .authorize(emailController.text,
+                                          passwordController.text);
+                                  if (!context.mounted) return;
+                                  FocusManager.instance.primaryFocus
+                                      ?.unfocus(); // убираем клавиатуру
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Zakroma()));
+                                } catch (e) {
+                                  debugPrint(e.toString());
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: const Text('Ошибка!'),
+                                            content: Text(
+                                                e.toString().split(': ').last),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Ок'))
+                                            ],
+                                          ));
+                                }
+                                setState(() {
+                                  isAuthorized = ref
+                                      .watch(userProvider)
+                                      .maybeWhen(
+                                          data: (user) =>
+                                              AsyncData(user.isAuthorized),
+                                          orElse: () => const AsyncData(false));
+                                });
+                              }
+                            },
+                            child: const Text('Войти')),
+                      ),
+                      // Кнопка регистрации
+                      Expanded(
+                        flex: 7,
+                        child: RRButton(
+                          padding:
+                              EdgeInsets.only(top: constants.paddingUnit * 2),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const RegistrationPage()));
+                          },
+                          child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                  text: 'Нет аккаунта? ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(height: 1),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Зарегистрируйтесь!',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              height: 1),
+                                    )
+                                  ])),
+                        ),
+                      ),
+                    ],
+                  ),
+                  circularProgressIndicatorColor:
+                      Theme.of(context).colorScheme.primaryContainer,
                 ),
-              )
+              ),
+              // Поле ввода почты
             ],
           ),
         ),
@@ -493,6 +542,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                       8, // константа 8 подобрана на глаз
               child: CustomTextFormField(
                   textEditingController: passwordController,
+                  obscureText: true,
                   validator: (value) {
                     interactedWithFields[3] = true;
                     return _validatePassword(value);
@@ -508,6 +558,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   padding: EdgeInsets.only(bottom: constants.paddingUnit),
                   child: CustomTextFormField(
                       textEditingController: passwordRepeatController,
+                      obscureText: true,
                       validator: (value) {
                         interactedWithFields[4] = true;
                         if (value != passwordController.text) {
@@ -558,7 +609,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           secondNameController.value.text,
                           emailController.value.text,
                           passwordController.value.text);
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const Zakroma()));
                     }
                   },
@@ -585,12 +636,14 @@ class CustomTextFormField extends ConsumerWidget {
   final TextEditingController textEditingController;
   final String? Function(String?)? validator;
   final String hintText;
+  final bool obscureText;
 
   const CustomTextFormField(
       {super.key,
       required this.textEditingController,
       required this.validator,
-      required this.hintText});
+      required this.hintText,
+      this.obscureText = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -602,6 +655,7 @@ class CustomTextFormField extends ConsumerWidget {
       child: TextFormField(
         textAlignVertical: TextAlignVertical.center,
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        obscureText: obscureText,
         decoration: InputDecoration(
           filled: true,
           fillColor: Theme.of(context).colorScheme.primaryContainer,

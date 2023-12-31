@@ -6,31 +6,35 @@ import 'package:http/http.dart' as http;
 const serverAddress =
     'http://10.0.2.2:8080'; // TODO(server): по готовности сервера заменить на адрес сервера
 
-Future<http.Response> get(String request, String token, String idCookie) async {
-  debugPrint('get($request, $token)');
+Future<http.Response> get(String request, String token, String cookie) async {
+  // debugPrint('---GET---\n($request, $token, $cookie)');
   return http.get(Uri.parse('$serverAddress/$request'),
-      headers: _createHeader(token, idCookie));
+      headers: _createHeader(token, cookie));
 }
 
 Future<http.Response> post<T>(String request, T body,
-    [String? token, String? idCookie]) async {
+    [String? token, String? cookie]) async {
+  // debugPrint(
+  //     '---POST---\n(request = $request, body = $body, token = $token, cookie = $cookie])');
   return http.post(Uri.parse('$serverAddress/$request'),
-      headers: _createHeader(token, idCookie), body: json.encode(body));
+      headers: _createHeader(token, cookie), body: json.encode(body));
 }
 
 Future<http.Response> patch<T>(
-    String request, T body, String token, String idCookie) async {
+    String request, T body, String token, String cookie) async {
+  // debugPrint(
+  //     '---PATCH---\n(request = $request, body = $body, token = $token, cookie = $cookie])');
   return http.patch(Uri.parse('$serverAddress/$request'),
-      headers: _createHeader(token, idCookie), body: body);
+      headers: _createHeader(token, cookie), body: json.encode(body));
 }
 
 Future<http.Response> delete(
-    String request, String token, String idCookie) async {
+    String request, String token, String cookie) async {
   return http.delete(Uri.parse('$serverAddress/$request'),
-      headers: _createHeader(token, idCookie));
+      headers: _createHeader(token, cookie));
 }
 
-Map<String, String> _createHeader(String? token, String? idCookie) {
+Map<String, String> _createHeader(String? token, String? cookie) {
   Map<String, String> result = {
     'content-type': 'application/json',
     'accept': 'application/json',
@@ -38,8 +42,8 @@ Map<String, String> _createHeader(String? token, String? idCookie) {
   if (token != null) {
     result['Authorization'] = 'Bearer $token';
   }
-  if (idCookie != null) {
-    result['Cookie'] = 'zakroma_session=$idCookie';
+  if (cookie != null) {
+    result['Cookie'] = 'zakroma_session=$cookie';
   }
   return result;
 }
