@@ -177,7 +177,7 @@ class HomePage extends ConsumerWidget {
                                               Meal.showAddMealDialog(
                                                   context,
                                                   ref,
-                                                  currentDiet.id,
+                                                  currentDiet.dietHash,
                                                   DateTime.now().weekday - 1);
                                             }
                                           },
@@ -189,51 +189,60 @@ class HomePage extends ConsumerWidget {
                                               ? const Text('Добавить рацион')
                                               : const Text('Добавить приём')),
                                     )
-                                  : Row(
-                                      children: List<Widget>.generate(
-                                          todayMeals.length,
-                                          (index) => Padding(
-                                                padding: constants.dCardPadding,
-                                                child: SizedBox.square(
-                                                    // 12 — константа, взятая, опять же, из фигмы
-                                                    dimension: 12 *
-                                                        constants.paddingUnit,
-                                                    child: RRButton(
-                                                        onTap: () {
-                                                          showSlidingBottomSheet(
-                                                              context, builder:
-                                                                  (context) {
-                                                            return createSlidingSheet(
-                                                              context,
-                                                              headingText:
-                                                                  todayMeals[
+                                  : SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                          children: List<Widget>.generate(
+                                              todayMeals.length,
+                                              (index) => Padding(
+                                                    padding:
+                                                        constants.dCardPadding,
+                                                    child: SizedBox.square(
+                                                        // 12 — константа, взятая, опять же, из фигмы
+                                                        dimension: 12 *
+                                                            constants
+                                                                .paddingUnit,
+                                                        child: RRButton(
+                                                            onTap: () {
+                                                              showSlidingBottomSheet(
+                                                                  context,
+                                                                  builder:
+                                                                      (context) {
+                                                                return createSlidingSheet(
+                                                                  context,
+                                                                  headingText:
+                                                                      todayMeals[
+                                                                              index]
+                                                                          .name,
+                                                                  body: todayMeals[
                                                                           index]
-                                                                      .name,
-                                                              body: todayMeals[
-                                                                      index]
-                                                                  .getDishesList(
-                                                                      context,
+                                                                      .getDishesList(
+                                                                          context,
+                                                                          constants,
+                                                                          dishMiniatures:
+                                                                              true),
+                                                                  constants:
                                                                       constants,
-                                                                      dishMiniatures:
-                                                                          true),
-                                                              constants:
-                                                                  constants,
-                                                            );
-                                                          });
-                                                        },
-                                                        borderRadius: constants
-                                                            .dInnerRadius,
-                                                        padding:
-                                                            EdgeInsets.zero,
-                                                        child: StyledHeadline(
-                                                            text: todayMeals[
-                                                                    index]
-                                                                .name,
-                                                            textStyle: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineSmall))),
-                                              ))),
+                                                                );
+                                                              });
+                                                            },
+                                                            borderRadius:
+                                                                constants
+                                                                    .dInnerRadius,
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            child:
+                                                                StyledHeadline(
+                                                                    // overflow: TextOverflow.clip,
+                                                                    text: todayMeals[
+                                                                            index]
+                                                                        .name,
+                                                                    textStyle: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .headlineSmall))),
+                                                  ))),
+                                    ),
                             );
                           })),
                 ],

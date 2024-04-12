@@ -49,7 +49,7 @@ class DietTile extends ConsumerWidget {
     return RRButton(
       onTap: () {
         ref.read(pathProvider.notifier).update((state) => state.copyWith(
-              dietId: diet.id,
+              dietId: diet.dietHash,
             ));
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const DietPage()));
@@ -76,13 +76,14 @@ class DietTile extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      0, 0, constants.paddingUnit * 2, constants.paddingUnit * 3),
+                  padding: EdgeInsets.fromLTRB(0, 0, constants.paddingUnit * 2,
+                      constants.paddingUnit * 3),
                   child: StyledHeadline(
                     text: diet.name,
-                    textStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      fontWeight: FontWeight.bold
-                    ),
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .headlineMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -128,7 +129,7 @@ Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
         return RRButton(
             onTap: () {
               ref.read(pathProvider.notifier).update((state) => state.copyWith(
-                    dietId: diets[index].id,
+                    dietId: diets[index].dietHash,
                   ));
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const DietPage()));

@@ -17,6 +17,7 @@ const fieldExtension = 3;
 
 class AuthorizationPage extends ConsumerStatefulWidget {
   final String? loginErrorMessage;
+
   const AuthorizationPage({super.key, this.loginErrorMessage});
 
   @override
@@ -578,39 +579,31 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                       passwordController.notifyListeners();
                       passwordRepeatController.notifyListeners();
                     });
+                    if (!context.mounted) return;
                     if (passwordFormKey.currentState!.validate()) {
-                      try {
-                        // TODO(func): отправить запрос на регистрацию
-                        await ref.read(userProvider.notifier).authorize(
-                            firstNameController.text,
-                            secondNameController.text);
-                      } catch (e) {
-                        if (!context.mounted) return;
-                        showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                                  title: const Text('Произошла ошибка :('),
-                                  content: Text(e.toString()),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Ок'))
-                                  ],
-                                ));
-                        debugPrint(e.toString());
-                      }
-                      if (!context.mounted) return;
                       FocusManager.instance.primaryFocus
                           ?.unfocus(); // убираем клавиатуру
-                      ref.watch(userProvider.notifier).register(
+                      final result = ref.watch(userProvider.notifier).register(
                           firstNameController.value.text,
                           secondNameController.value.text,
                           emailController.value.text,
                           passwordController.value.text);
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const Zakroma()));
+                      result.onError((Exception e, stackTrace) => showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: const Text('Произошла ошибка :('),
+                                content: Text(e.toString()),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Ок'))
+                                ],
+                              )));
+                      result.then((value) => Navigator.of(context)
+                          .pushReplacement(MaterialPageRoute(
+                              builder: (context) => const Zakroma())));
                     }
                   },
                   child: const Text('Далее')),
@@ -674,6 +667,7 @@ class CustomTextFormField extends ConsumerWidget {
 }
 
 String? _validateEmail(String? value) {
+  // TODO(server): по-хорошему здесь ещё нужен запрос к серверу, проверяющий, что у нас нет пользователя с таким же email
   if (value == null || value.isEmpty) {
     return 'Введите адрес электронной почты';
   } else if (!EmailValidator.validate(value)) {

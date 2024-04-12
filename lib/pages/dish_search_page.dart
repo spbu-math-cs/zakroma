@@ -39,7 +39,7 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
     return AsyncBuilder(
         asyncValue: ref.watch(dietsProvider),
         builder: (diets) {
-          final diet = diets.getDietById(path.dietId!);
+          final diet = diets.getDietByHash(path.dietId!);
           // final meal = diets
           //     .getDietById(path.dietId!)!
           //     .getMealById(dayIndex: path.dayIndex!, mealId: path.mealId!)!;

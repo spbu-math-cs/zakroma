@@ -18,7 +18,7 @@ import 'ingredient.dart';
 
 @immutable
 class Diet {
-  final String id;
+  final String dietHash;
   final String name;
   final bool isActive;
 
@@ -28,30 +28,32 @@ class Diet {
   final List<DietDay> days;
 
   const Diet(
-      {required this.id,
+      {required this.dietHash,
       required this.name,
       this.isActive = false,
       required this.days})
       : assert(days.length == 7);
 
   factory Diet.fromJson(Map<String, dynamic> map) {
-    debugPrint('Diet.fromJson(${map.toString()})');
+    // debugPrint('Diet.fromJson(${map.toString()})');
     switch (map) {
       case {
-          'id': String id,
+          'id': int _,
+          'hash': String hash,
           'name': String name,
-          'days': List<dynamic> days,
+          'day-diets': List<dynamic> days,
         }:
         return Diet(
-            id: id,
+            dietHash: hash,
             name: name,
             days: List<DietDay>.from(
                 days.map((e) => DietDay.fromJson(e as Map<String, dynamic>))));
       case {
-          'id': String id,
+          'id': int _,
+          'hash': String hash,
           'name': String name,
         }:
-        return Diet(id: id, name: name, days: const []);
+        return Diet(dietHash: hash, name: name, days: const []);
       case _:
         throw FormatException('Failed to parse Diet from $map');
     }
@@ -61,19 +63,23 @@ class Diet {
 
   bool get isEmpty => days.isEmpty;
 
+  String get hash => dietHash;
+
   DietDay getDay(int index) => days[index];
 
   void addDay(DietDay day) => days.add(day);
 
-  Diet copyWith({String? id, String? name, List<DietDay>? days}) =>
-      Diet(id: id ?? this.id, name: name ?? this.name, days: days ?? this.days);
+  Diet copyWith({String? hash, String? name, List<DietDay>? days}) => Diet(
+      dietHash: hash ?? this.hash,
+      name: name ?? this.name,
+      days: days ?? this.days);
 
   // TODO(server): подгрузить информацию о приёме пищи (название, список блюд)
   // - Блюдо из списка: id, название, иконка, количество порций
   Meal? getMealById({required int dayIndex, required String mealId}) =>
       getDay(dayIndex)
           .meals
-          .where((element) => element.id == mealId)
+          .where((element) => element.mealHash == mealId)
           .firstOrNull;
 
   // TODO(server): подгрузить информацию о блюде (рецепт, список тегов, список ингредиентов)
@@ -126,8 +132,8 @@ class Diet {
 }
 
 extension DietGetter on List<Diet> {
-  Future<Diet?> getDietById(String dietId) async {
-    return where((element) => element.id == dietId).first;
+  Future<Diet?> getDietByHash(String dietHash) async {
+    return where((element) => element.dietHash == dietHash).first;
   }
 }
 
@@ -166,9 +172,17 @@ class Diets extends AsyncNotifier<List<Diet>> {
     switch (json.statusCode) {
       case 200:
         final diets = jsonDecode(json.body) as List<dynamic>;
+        final List<Diet> result = [];
         debugPrint('diets = ${diets.toString()}');
-        return List<Diet>.from(
-            diets.map((e) => Diet.fromJson(e as Map<String, dynamic>)));
+        for (final dietHash in diets) {
+          final diet = await getDietByHash(dietHash: dietHash as String);
+          if (diet == null) {
+            debugPrint('diet == null');
+            continue;
+          }
+          result.add(diet);
+        }
+        return result;
       case 401:
         throw const HttpException('Unauthorized');
       case 400:
@@ -244,17 +258,19 @@ class Diets extends AsyncNotifier<List<Diet>> {
     });
   }
 
-  Future<Diet?> getDietById({required String dietId}) async {
+  Future<Diet?> getDietByHash({required String dietHash}) async {
     state = const AsyncValue.loading();
-    final json = await get(
-      'api/diets/$dietId',
+    final response = await get(
+      'api/diets/$dietHash',
       token,
       cookie,
     );
-    state = await AsyncValue.guard(() async {
-      return _fetchDietsOLD();
-    });
-    return Diet.fromJson(jsonDecode(json.body) as Map<String, dynamic>);
+    debugPrint('getDietByHash(),\tresponse.body = ${response.body}');
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    for (final day in json['day-diets']) {
+      debugPrint('day = ${day.toString()}');
+    }
+    return Diet.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   void addMeal(
@@ -539,26 +555,26 @@ List<Diet> collectDiets() {
         ])),
   ];
   return [
-    Diet(id: '0', name: 'Текущий рацион', isActive: true, days: [
+    Diet(dietHash: '0', name: 'Текущий рацион', isActive: true, days: [
       DietDay(index: 0, meals: [
-        Meal(id: '1', name: 'Завтрак', dishes: [dishes[0]]),
-        Meal(id: '2', name: 'Обед', dishes: [
+        Meal(mealHash: '1', index: 1, name: 'Завтрак', dishes: [dishes[0]]),
+        Meal(mealHash: '2', index: 2, name: 'Обед', dishes: [
           dishes[2],
         ]),
-        Meal(id: '3', name: 'Ужин', dishes: [
+        Meal(mealHash: '3', index: 3, name: 'Ужин', dishes: [
           dishes[4],
         ]),
       ]),
       DietDay(index: 1, meals: [
-        Meal(id: '4', name: 'Завтрак', dishes: [
+        Meal(mealHash: '4', index: 4, name: 'Завтрак', dishes: [
           dishes[0],
           dishes[1],
         ]),
-        Meal(id: '5', name: 'Обед', dishes: [
+        Meal(mealHash: '5', index: 5, name: 'Обед', dishes: [
           dishes[2],
           dishes[3],
         ]),
-        Meal(id: '6', name: 'Перекус', dishes: [
+        Meal(mealHash: '6', index: 6, name: 'Перекус', dishes: [
           dishes[3],
           dishes[3],
           dishes[3],
@@ -575,161 +591,161 @@ List<Diet> collectDiets() {
           dishes[3],
           dishes[3],
         ]),
-        Meal(id: '7', name: 'Перекус', dishes: [
+        Meal(mealHash: '7', index: 7, name: 'Перекус', dishes: [
           dishes[4],
         ]),
-        Meal(id: '8', name: 'Перекус', dishes: [
+        Meal(mealHash: '8', index: 8, name: 'Перекус', dishes: [
           dishes[3],
         ]),
-        Meal(id: '9', name: 'Перекус', dishes: [
+        Meal(mealHash: '9', index: 9, name: 'Перекус', dishes: [
           dishes[4],
         ]),
-        Meal(id: '10', name: 'Ужин', dishes: [
+        Meal(mealHash: '10', index: 10, name: 'Ужин', dishes: [
           dishes[4],
           dishes[5],
         ]),
       ]),
       DietDay(index: 2, meals: [
-        Meal(id: '11', name: 'Завтрак', dishes: [
+        Meal(mealHash: '11', index: 11, name: 'Завтрак', dishes: [
           dishes[1],
         ]),
-        Meal(id: '12', name: 'Обед', dishes: [
+        Meal(mealHash: '12', index: 12, name: 'Обед', dishes: [
           dishes[3],
         ]),
-        Meal(id: '13', name: 'Ужин', dishes: [
+        Meal(mealHash: '13', index: 13, name: 'Ужин', dishes: [
           dishes[5],
         ]),
       ]),
       DietDay(index: 3, meals: [
-        Meal(id: '14', name: 'Завтрак', dishes: [dishes[0]]),
-        Meal(id: '15', name: 'Обед', dishes: [
+        Meal(mealHash: '14', index: 14, name: 'Завтрак', dishes: [dishes[0]]),
+        Meal(mealHash: '15', index: 15, name: 'Обед', dishes: [
           dishes[2],
         ]),
-        Meal(id: '16', name: 'Ужин', dishes: [
+        Meal(mealHash: '16', index: 16, name: 'Ужин', dishes: [
           dishes[4],
         ]),
       ]),
       DietDay(index: 4, meals: [
-        Meal(id: '17', name: 'Завтрак', dishes: [
+        Meal(mealHash: '17', index: 17, name: 'Завтрак', dishes: [
           dishes[1],
         ]),
-        Meal(id: '18', name: 'Обед', dishes: [
+        Meal(mealHash: '18', index: 18, name: 'Обед', dishes: [
           dishes[3],
         ]),
-        Meal(id: '19', name: 'Ужин', dishes: [
+        Meal(mealHash: '19', index: 19, name: 'Ужин', dishes: [
           dishes[5],
         ]),
       ]),
       DietDay(index: 5, meals: [
-        Meal(id: '20', name: 'Завтрак', dishes: [dishes[0]]),
-        Meal(id: '21', name: 'Обед', dishes: [
+        Meal(mealHash: '20', index: 20, name: 'Завтрак', dishes: [dishes[0]]),
+        Meal(mealHash: '21', index: 21, name: 'Обед', dishes: [
           dishes[2],
         ]),
-        Meal(id: '22', name: 'Ужин', dishes: [
+        Meal(mealHash: '22', index: 22, name: 'Ужин', dishes: [
           dishes[4],
         ]),
       ]),
       DietDay(index: 6, meals: [
-        Meal(id: '23', name: 'Завтрак', dishes: [
+        Meal(mealHash: '23', index: 23, name: 'Завтрак', dishes: [
           dishes[1],
         ]),
-        Meal(id: '24', name: 'Обед', dishes: [
+        Meal(mealHash: '24', index: 24, name: 'Обед', dishes: [
           dishes[3],
         ]),
-        Meal(id: '25', name: 'Ужин', dishes: [
+        Meal(mealHash: '25', index: 25, name: 'Ужин', dishes: [
           dishes[5],
         ]),
       ]),
     ]),
-    Diet(id: '1', name: 'Котлетки с пюрешкой', days: const [
+    Diet(dietHash: '1', name: 'Котлетки с пюрешкой', days: const [
       DietDay(index: 0, meals: [
-        Meal(id: '26', name: 'Завтрак', dishes: []),
-        Meal(id: '27', name: 'Обед', dishes: []),
-        Meal(id: '28', name: 'Ужин', dishes: []),
+        Meal(mealHash: '26', index: 26, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '27', index: 27, name: 'Обед', dishes: []),
+        Meal(mealHash: '28', index: 28, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 1, meals: [
-        Meal(id: '29', name: 'Завтрак', dishes: []),
-        Meal(id: '30', name: 'Обед', dishes: []),
-        Meal(id: '31', name: 'Ужин', dishes: []),
+        Meal(mealHash: '29', index: 29, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '30', index: 30, name: 'Обед', dishes: []),
+        Meal(mealHash: '31', index: 31, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 2, meals: [
-        Meal(id: '32', name: 'Завтрак', dishes: []),
-        Meal(id: '33', name: 'Обед', dishes: []),
-        Meal(id: '34', name: 'Ужин', dishes: []),
+        Meal(mealHash: '32', index: 32, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '33', index: 33, name: 'Обед', dishes: []),
+        Meal(mealHash: '34', index: 34, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 3, meals: [
-        Meal(id: '35', name: 'Завтрак', dishes: []),
-        Meal(id: '36', name: 'Обед', dishes: []),
-        Meal(id: '37', name: 'Ужин', dishes: []),
+        Meal(mealHash: '35', index: 35, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '36', index: 36, name: 'Обед', dishes: []),
+        Meal(mealHash: '37', index: 37, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 4, meals: [
-        Meal(id: '38', name: 'Завтрак', dishes: []),
-        Meal(id: '39', name: 'Обед', dishes: []),
-        Meal(id: '40', name: 'Ужин', dishes: []),
+        Meal(mealHash: '38', index: 38, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '39', index: 39, name: 'Обед', dishes: []),
+        Meal(mealHash: '40', index: 40, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 5, meals: [
-        Meal(id: '41', name: 'Завтрак', dishes: []),
-        Meal(id: '42', name: 'Обед', dishes: []),
-        Meal(id: '43', name: 'Ужин', dishes: []),
+        Meal(mealHash: '41', index: 41, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '42', index: 42, name: 'Обед', dishes: []),
+        Meal(mealHash: '43', index: 43, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 6, meals: [
-        Meal(id: '44', name: 'Завтрак', dishes: []),
-        Meal(id: '45', name: 'Обед', dishes: []),
-        Meal(id: '46', name: 'Ужин', dishes: []),
+        Meal(mealHash: '44', index: 44, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '45', index: 45, name: 'Обед', dishes: []),
+        Meal(mealHash: '46', index: 46, name: 'Ужин', dishes: []),
       ]),
     ]),
-    Diet(id: '2', name: 'База кормит', days: const [
+    Diet(dietHash: '2', name: 'База кормит', days: const [
       DietDay(index: 0, meals: [
-        Meal(id: '47', name: 'Завтрак', dishes: []),
-        Meal(id: '48', name: 'Обед', dishes: []),
-        Meal(id: '49', name: 'Ужин', dishes: []),
+        Meal(mealHash: '47', index: 47, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '48', index: 48, name: 'Обед', dishes: []),
+        Meal(mealHash: '49', index: 49, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 1, meals: [
-        Meal(id: '50', name: 'Завтрак', dishes: []),
-        Meal(id: '51', name: 'Обед', dishes: []),
-        Meal(id: '52', name: 'Ужин', dishes: []),
+        Meal(mealHash: '50', index: 50, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '51', index: 51, name: 'Обед', dishes: []),
+        Meal(mealHash: '52', index: 52, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 2, meals: [
-        Meal(id: '53', name: 'Завтрак', dishes: []),
-        Meal(id: '54', name: 'Обед', dishes: []),
-        Meal(id: '55', name: 'Ужин', dishes: []),
+        Meal(mealHash: '53', index: 53, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '54', index: 54, name: 'Обед', dishes: []),
+        Meal(mealHash: '55', index: 55, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 3, meals: [
-        Meal(id: '56', name: 'Завтрак', dishes: []),
-        Meal(id: '57', name: 'Обед', dishes: []),
-        Meal(id: '58', name: 'Ужин', dishes: []),
+        Meal(mealHash: '56', index: 56, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '57', index: 57, name: 'Обед', dishes: []),
+        Meal(mealHash: '58', index: 58, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 4, meals: [
-        Meal(id: '59', name: 'Завтрак', dishes: []),
-        Meal(id: '60', name: 'Обед', dishes: []),
-        Meal(id: '61', name: 'Ужин', dishes: []),
+        Meal(mealHash: '59', index: 59, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '60', index: 60, name: 'Обед', dishes: []),
+        Meal(mealHash: '61', index: 61, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 5, meals: [
-        Meal(id: '62', name: 'Завтрак', dishes: []),
-        Meal(id: '63', name: 'Обед', dishes: []),
-        Meal(id: '64', name: 'Ужин', dishes: []),
+        Meal(mealHash: '62', index: 62, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '63', index: 63, name: 'Обед', dishes: []),
+        Meal(mealHash: '64', index: 64, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 6, meals: [
-        Meal(id: '65', name: 'Завтрак', dishes: []),
-        Meal(id: '66', name: 'Обед', dishes: []),
-        Meal(id: '67', name: 'Ужин', dishes: []),
+        Meal(mealHash: '65', index: 65, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '66', index: 66, name: 'Обед', dishes: []),
+        Meal(mealHash: '67', index: 67, name: 'Ужин', dishes: []),
       ]),
     ]),
-    Diet(id: '3', name: 'Алёша Попович рекомендует', days: const [
+    Diet(dietHash: '3', name: 'Алёша Попович рекомендует', days: const [
       DietDay(index: 0, meals: []),
       DietDay(index: 1, meals: []),
       DietDay(index: 2, meals: []),
       DietDay(index: 3, meals: []),
       DietDay(index: 4, meals: []),
       DietDay(index: 5, meals: [
-        Meal(id: '0', name: 'Завтрак', dishes: []),
-        Meal(id: '0', name: 'Обед', dishes: []),
-        Meal(id: '0', name: 'Ужин', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Обед', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Ужин', dishes: []),
       ]),
       DietDay(index: 6, meals: [
-        Meal(id: '0', name: 'Завтрак', dishes: []),
-        Meal(id: '0', name: 'Обед', dishes: []),
-        Meal(id: '0', name: 'Ужин', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Завтрак', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Обед', dishes: []),
+        Meal(mealHash: '0', index: 0, name: 'Ужин', dishes: []),
       ]),
     ]),
   ];

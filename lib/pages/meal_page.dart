@@ -35,7 +35,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
     return AsyncBuilder(
         asyncValue: asyncDiets,
         builder: (diets) => FutureBuilder(
-              future: diets.getDietById(path.dietId!),
+              future: diets.getDietByHash(path.dietId!),
               builder: (BuildContext context, AsyncSnapshot<Diet?> snapshot) {
                 if (snapshot.hasData) {
                   final meal = snapshot.data!.getMealById(

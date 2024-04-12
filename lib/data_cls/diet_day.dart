@@ -16,10 +16,16 @@ class DietDay {
     debugPrint('DietDay.fromJson(${map.toString()})');
     switch (map) {
       case {
-        'index': int index,
-        'meals': List<dynamic> meals,
-      }:
-        return DietDay(index: index, meals: List<Meal>.from(meals.map((e) => Meal.fromJson(e as Map<String, dynamic>))));
+          'id': int _,
+          'index': int index,
+          'name': String _,
+          'meals-amount': int _,
+          'meals': List<dynamic> meals,
+        }:
+        return DietDay(
+            index: index,
+            meals: List<Meal>.from(
+                meals.map((e) => Meal.fromJson(e as Map<String, dynamic>))));
       case _:
         throw UnimplementedError();
     }

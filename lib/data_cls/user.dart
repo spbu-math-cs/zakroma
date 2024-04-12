@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show Response;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -146,7 +147,7 @@ class UserNotifier extends AsyncNotifier<User> {
 
   Future<void> register(String firstName, String secondName, String email,
       String password) async {
-    // debugPrint('register()');
+    debugPrint('register()');
     // final SharedPreferences prefs = await SharedPreferences.getInstance();
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
     final response = await post('auth/register', {
@@ -157,7 +158,7 @@ class UserNotifier extends AsyncNotifier<User> {
       'birth-date':
           '2023-12-12', // TODO(func): при регистрации спрашивать дату рождения
     });
-    // debugPrint('register\nresponse.statusCode: ${response.statusCode}');
+    debugPrint('register\tresponse.statusCode: ${response.statusCode}');
     switch (response.statusCode) {
       case 200:
         break;
@@ -172,7 +173,7 @@ class UserNotifier extends AsyncNotifier<User> {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
-    // debugPrint('register\tresponse.body: ${body.toString()}');
+    debugPrint('register\tresponse.body: ${body.toString()}');
     prefs.setString('firstName', firstName);
     prefs.setString('secondName', secondName);
     prefs.setString('email', email);
