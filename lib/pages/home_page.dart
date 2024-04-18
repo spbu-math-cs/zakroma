@@ -44,7 +44,7 @@ class HomePage extends ConsumerWidget {
               child: Padding(
                 padding: constants.dBlockPadding - constants.dCardPaddingHalf,
                 // TODO(server): подгрузить членов группы (id, иконка)
-                // TODO(func): реализовать клик по плюсу, члену группы
+                // TODO(func): реализовать клик по члену группы, по кнопке плюс
                 // TODO(tech): реализовать горизонтальную прокрутку членов группы
                 child: const Placeholder(),
                 // child: FutureBuilder(
@@ -150,7 +150,6 @@ class HomePage extends ConsumerWidget {
                         }),
                       )),
                   // Перечисление приёмов пищи на сегодня
-                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                   Expanded(
                       flex: 14,
                       child: AsyncBuilder(

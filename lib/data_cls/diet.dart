@@ -144,29 +144,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
   String token = '';
   String cookie = '';
 
-  // TODO(server): тут получаем не полную инфу про диету, а только её хэш и название
-  // TODO(server): сказать бэку, что надо добавить в ответ название диеты
-  Future<List<Diet>> _fetchDietsOLD() async {
-    debugPrint('_fetchDietsOLD()');
-    final json = await get('api/diets/list', token, cookie);
-    debugPrint('_fetchDiets\tjson = ${json.statusCode}, ${json.body}');
-    switch (json.statusCode) {
-      case 200:
-        final diets = jsonDecode(json.body) as List<dynamic>;
-        debugPrint(diets.toString());
-        return List<Diet>.from(
-            diets.map((e) => Diet.fromJson(e as Map<String, dynamic>)));
-      case 401:
-        throw const HttpException('Unauthorized');
-      case 400:
-        throw const HttpException('Bad request');
-      case 404:
-        throw const HttpException('Not found');
-      default:
-        throw HttpException('Unexpected status code: ${json.statusCode}');
-    }
-  }
-
+  // TODO(server): тут хотим получить не полную инфу про диету, а только хэш и название
   Future<List<Diet>> _fetchDietsShort() async {
     final json = await get('api/diets/list', token, cookie);
     switch (json.statusCode) {
@@ -197,17 +175,13 @@ class Diets extends AsyncNotifier<List<Diet>> {
   @override
   FutureOr<List<Diet>> build() async {
     List<Diet> result = [];
-    debugPrint('  Diets.build()');
     final user = switch (ref.watch(userProvider)) {
       AsyncData(:final value) => value,
       _ => null,
     };
     if (user == null) {
-      debugPrint('  Diets.build()\tuser == null');
       return [];
-      state = const AsyncLoading();
     } else if (user.isAuthorized && user.token != null) {
-      debugPrint('user = ${user.toString()}');
       // Работаем онлайн
       token = user.token!;
       cookie = user.cookie!;
@@ -217,7 +191,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
         debugPrint(e.message);
       }
     } else {
-      // Работаем оффлайн?
+      // Работаем оффлайн???
       throw UnimplementedError();
     }
     return result;
@@ -230,18 +204,12 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await post(
-        'addDiet', // TODO(server): взять request из апи
-        <String, dynamic>{
-          'id': dietId,
-          'name': name,
-          'days': days ??
-              List<DietDay>.generate(
-                  7, (index) => DietDay(index: index, meals: const []))
-        },
+        'api/diets/create',
+        <String, dynamic>{'name': name},
         token,
         cookie,
       );
-      return _fetchDietsOLD();
+      return _fetchDietsShort();
     });
   }
 
@@ -249,12 +217,12 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await patch(
-        'api/diet/setName/$dietId', // TODO(server): взять request из апи
+        'api/diet/setName/$dietId',
         <String, String>{'newName': newName},
         token,
         cookie,
       );
-      return _fetchDietsOLD();
+      return _fetchDietsShort();
     });
   }
 
@@ -280,11 +248,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await post(
-        'api/meal/add/$dietId/$dayIndex', // TODO(server): взять request из апи
+        'api/meal/add/$dietId/$dayIndex',
         newMeal,
         token,
       );
-      return _fetchDietsOLD();
+      return _fetchDietsShort();
     });
   }
 
@@ -297,12 +265,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
     state = await AsyncValue.guard(() async {
       await post(
         'api/meal/add/$dietId/$dayIndex/$mealId',
-        // TODO(server): взять request из апи
         newDish,
         token,
         cookie,
       );
-      return _fetchDietsOLD();
+      return _fetchDietsShort();
     });
   }
 
@@ -313,14 +280,15 @@ class Diets extends AsyncNotifier<List<Diet>> {
         'api/diet/remove/$dietId',
         token,
         cookie,
-      ); // TODO(server): взять request из апи
-      return _fetchDietsOLD();
+      );
+      return _fetchDietsShort();
     });
   }
 }
 
 final dietsProvider = AsyncNotifierProvider<Diets, List<Diet>>(Diets.new);
 
+// TODO(tape): убрать
 List<Diet> collectDiets() {
   final dishes = [
     Dish(
