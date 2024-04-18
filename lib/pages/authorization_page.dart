@@ -135,8 +135,8 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                                 interactedWithFields.first =
                                     interactedWithFields.second = true;
                                 // хз, почему notifyListeners помечен как visibleForTesting
-                                emailController.notifyListeners();
-                                passwordController.notifyListeners();
+                                // emailController.notifyListeners();
+                                // passwordController.notifyListeners();
                               });
                               if (formKey.currentState!.validate()) {
                                 setState(() {
@@ -422,8 +422,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onTap: () async {
                     setState(() {
                       interactedWithFields[0] = interactedWithFields[1] = true;
-                      firstNameController.notifyListeners();
-                      secondNameController.notifyListeners();
+                      // firstNameController.notifyListeners();
+                      // secondNameController.notifyListeners();
                     });
                     if (nameFormKey.currentState!.validate()) {
                       FocusManager.instance.primaryFocus
@@ -488,7 +488,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 onTap: () async {
                   setState(() {
                     interactedWithFields[2] = true;
-                    emailController.notifyListeners();
+                    // emailController.notifyListeners();
                   });
                   if (emailFormKey.currentState!.validate()) {
                     FocusManager.instance.primaryFocus
@@ -576,34 +576,41 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onTap: () async {
                     setState(() {
                       interactedWithFields[3] = interactedWithFields[4] = true;
-                      passwordController.notifyListeners();
-                      passwordRepeatController.notifyListeners();
+                      // passwordController.notifyListeners();
+                      // passwordRepeatController.notifyListeners();
                     });
-                    if (!context.mounted) return;
+
                     if (passwordFormKey.currentState!.validate()) {
-                      FocusManager.instance.primaryFocus
-                          ?.unfocus(); // убираем клавиатуру
-                      final result = ref.watch(userProvider.notifier).register(
-                          firstNameController.value.text,
-                          secondNameController.value.text,
-                          emailController.value.text,
-                          passwordController.value.text);
-                      result.onError((Exception e, stackTrace) => showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                title: const Text('Произошла ошибка :('),
-                                content: Text(e.toString()),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Ок'))
-                                ],
-                              )));
-                      result.then((value) => Navigator.of(context)
-                          .pushReplacement(MaterialPageRoute(
-                              builder: (context) => const Zakroma())));
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      // убираем клавиатуру
+                      try {
+                        await ref.watch(userProvider.notifier).register(
+                            firstNameController.value.text,
+                            secondNameController.value.text,
+                            emailController.value.text,
+                            passwordController.value.text);
+                        if (!context.mounted) {
+                          debugPrint('context unmounted');
+                          return;
+                        }
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const Zakroma()));
+                      } catch (e) {
+                        debugPrint(e.toString());
+                        showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: const Text('Ошибка!'),
+                                  content: Text(e.toString().split(': ').last),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Ок'))
+                                  ],
+                                ));
+                      }
                     }
                   },
                   child: const Text('Далее')),
@@ -617,8 +624,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     if (value == null || value.isEmpty) {
       return 'Введите имя';
     } else if (!alpha.hasMatch(value)) {
-      // TODO(think): Длинный вариант не влезает в одну строчку
-      // return '${surname ? 'Фамилия' : 'Имя'} может содержать только буквы русского алфавита';
       return 'Только буквы русского алфавита';
     }
     return null;

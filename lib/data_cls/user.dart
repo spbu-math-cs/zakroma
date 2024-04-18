@@ -114,7 +114,7 @@ class UserNotifier extends AsyncNotifier<User> {
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
     // debugPrint('authorize\tresponse.body = ${body.toString()}\n\n');
-    // TODO(think): надо ли хранить email и password локально?
+    // TODO(idea): надо ли хранить email и password локально?
     prefs.setString('email', email);
     prefs.setString('password', password);
     prefs.setString('token', body['token']);

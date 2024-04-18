@@ -19,12 +19,12 @@ class AlertTextPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textController = TextEditingController();
-    // TODO: выполнить textController.dispose() перед тем, как переходить на следующий экран
+    // TODO(tech): выполнить textController.dispose() перед тем, как переходить на следующий экран
     final formKey = GlobalKey<FormState>();
     return Form(
       key: formKey,
       child: AlertDialog(
-        title: Text(title), // TODO: добавить стиль
+        title: Text(title), // TODO(design): добавить стиль
         content: TextFormField(
           autofocus: true,
           autovalidateMode: AutovalidateMode.onUserInteraction,

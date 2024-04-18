@@ -145,7 +145,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
   String cookie = '';
 
   // TODO(server): тут получаем не полную инфу про диету, а только её хэш и название
-  // TODO(hr): написать Ване, чтобы добавил в ответ название диеты
+  // TODO(server): сказать бэку, что надо добавить в ответ название диеты
   Future<List<Diet>> _fetchDietsOLD() async {
     debugPrint('_fetchDietsOLD()');
     final json = await get('api/diets/list', token, cookie);

@@ -56,7 +56,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   void initState() {
     super.initState();
     // считаем константы для текущего устройства
-    // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
+    // TODO(idea): сохранить константы в local preferences, чтобы не пересчитывать каждый раз?
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     // TODO(tech): делаем что-то после отрисовки экрана?
