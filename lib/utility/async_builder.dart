@@ -15,17 +15,31 @@ class AsyncBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return asyncValue.when(
-      data: (value) => builder(value),
-      error: (error, StackTrace stackTrace) => Builder(
-        builder: (context) {
-          debugPrintStack(stackTrace: stackTrace);
-          return const Center(child: Text('Ошибка :('));
-        },
-      ),
-      loading: () => Center(
-          child: CircularProgressIndicator(
-        color: circularProgressIndicatorColor,
-      )),
-    );
+        data: (value) => builder(value),
+        loading: () => Center(
+                child: CircularProgressIndicator(
+              color: circularProgressIndicatorColor,
+            )),
+        error: (error, StackTrace stackTrace) {
+          return SizedBox(
+              height: 10,
+              width: 10,
+              child: AlertDialog(
+                title: const Text('Что-то пошло не так'),
+                content: Text('Произошла ошибка: $error'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      }
+                      //TODO: я не понимаю, как мне откатиться к изначальному состоянию
+                      // с кнопкой "добавить рацион" в таком случае
+                    },
+                  ),
+                ],
+              ));
+        });
   }
 }
