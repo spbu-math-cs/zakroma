@@ -95,6 +95,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 prefs.setBool('isAuthorized', false);
+                                // TODO(tech): сделать метод user.logout, в котором
+                                //  очистить все sharedPreferences при выходе
                                 if (!context.mounted) return;
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
