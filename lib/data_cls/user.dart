@@ -64,7 +64,7 @@ class UserNotifier extends AsyncNotifier<User> {
     // debugPrint('  UserNotifier.build() finished');
 
     await ref.watch(userProvider.notifier).switchCurrentGroup(
-        '997fb7e3e1a7b2a5d70ff1f9ecb7d011466b3c26e9e40f4886769274999c628a'); // TODO(test): переключиться на личную группу
+        '997fb7e3e1a7b2a5d70ff1f9ecb7d011466b3c26e9e40f4886769274999c628a'); // TODO(tape): убрать хардкод-хэш
     return User(
       firstName: prefs.getString('firstName'),
       secondName: prefs.getString('secondName'),
@@ -133,15 +133,6 @@ class UserNotifier extends AsyncNotifier<User> {
       cookie: prefs.getString('cookie'),
       isAuthorized: prefs.getBool('isAuthorized') ?? true,
     );
-    state = AsyncData(User(
-      firstName: prefs.getString('firstName'),
-      secondName: prefs.getString('secondName'),
-      email: prefs.getString('email'),
-      password: prefs.getString('password'),
-      token: prefs.getString('token'),
-      cookie: prefs.getString('cookie'),
-      isAuthorized: prefs.getBool('isAuthorized') ?? true,
-    ));
     // debugPrint('authorize\tuser = ${state.value}');
   }
 
@@ -185,6 +176,15 @@ class UserNotifier extends AsyncNotifier<User> {
             .firstWhere((element) => element.key == 'zakroma_session')
             .value);
     prefs.setBool('isAuthorized', true);
+    _updateStateWith(
+      firstName: prefs.getString('firstName'),
+      secondName: prefs.getString('secondName'),
+      email: prefs.getString('email'),
+      password: prefs.getString('password'),
+      token: prefs.getString('token'),
+      cookie: prefs.getString('cookie'),
+      isAuthorized: prefs.getBool('isAuthorized') ?? true,
+    );
   }
 
   Future<void> createGroup(String groupName) async {
