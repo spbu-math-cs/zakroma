@@ -4,13 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
+import 'package:zakroma_frontend/data_cls/path.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
+import 'package:http/http.dart' show Response;
 
 import '../data_cls/diet_day.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/meal.dart';
-import '../data_cls/path.dart';
 import '../network.dart';
 import '../pages/diet_page.dart';
 import '../utility/alert_text_prompt.dart';
@@ -94,7 +94,7 @@ class Diet {
           .where((element) => element.id == dishId)
           .firstOrNull;
 
-  static void showAddDietDialog(BuildContext context, WidgetRef ref) =>
+  static void showAddDietDialog(BuildContext context, WidgetRef ref) async =>
       showDialog(
           context: context,
           builder: (_) => AlertTextPrompt(
@@ -111,20 +111,27 @@ class Diet {
                   (
                     buttonText: 'Продолжить',
                     needsValidation: true,
-                    onTap: (text) {
-                      // TODO(server): подгрузить новый id
-                      final newDietId = const Uuid().v4();
-                      ref
-                          .read(dietsProvider.notifier)
-                          .add(dietId: newDietId, name: text);
-                      ref
-                          .read(pathProvider.notifier)
-                          .update((state) => state.copyWith(dietId: newDietId));
+                    onTap: (text) async {
                       Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DietPage()));
+                      final dietHash = await ref
+                          .read(dietsProvider.notifier)
+                          .add(name: text);
+                      ref.watch(dietsProvider).when(data: (List<Diet> _) {
+                        debugPrint('DEBUG: data');
+                        ref.read(pathProvider.notifier).update(
+                            (state) => state.copyWith(dietId: dietHash));
+                        return Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const DietPage()));
+                      }, error: (error, _) {
+                        return ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text(error.toString().split(': ').last)));
+                      }, loading: () {
+                        debugPrint('DEBUG: loading');
+                      });
                     }
                   ),
                 ],
@@ -185,6 +192,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
       // Работаем онлайн
       token = user.token!;
       cookie = user.cookie!;
+      assert(token.isNotEmpty && cookie.isNotEmpty);
       try {
         result = await _fetchDietsShort();
       } on HttpException catch (e) {
@@ -197,13 +205,11 @@ class Diets extends AsyncNotifier<List<Diet>> {
     return result;
   }
 
-  void add(
-      {required String dietId,
-      required String name,
-      List<DietDay>? days}) async {
+  Future<String?> add({required String name, List<DietDay>? days}) async {
+    Response? dietHash;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await post(
+      dietHash = await post(
         'api/diets/create',
         <String, dynamic>{'name': name},
         token,
@@ -211,6 +217,7 @@ class Diets extends AsyncNotifier<List<Diet>> {
       );
       return _fetchDietsShort();
     });
+    return dietHash?.body;
   }
 
   void setName({required String dietId, required String newName}) async {
