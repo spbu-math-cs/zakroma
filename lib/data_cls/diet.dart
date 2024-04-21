@@ -126,9 +126,7 @@ class Diet {
                                 builder: (context) => const DietPage()));
                       }, error: (error, _) {
                         return ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text(error.toString().split(': ').last)));
+                            SnackBar(content: Text(error.toString())));
                       }, loading: () {
                         debugPrint('DEBUG: loading');
                       });
