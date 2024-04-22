@@ -1,5 +1,7 @@
 // Вообще, по хорошему, надо и штуки, и миллилитры тоже в граммы переводить
 // TODO(tech): добавить ещё всякие столовые и чайные ложки
+import 'package:flutter/cupertino.dart';
+
 enum IngredientUnit {
   grams,
   mils,
@@ -65,6 +67,7 @@ class Ingredient {
             proteins: proteins,
             fats: fats);
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }

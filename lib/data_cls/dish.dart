@@ -54,6 +54,7 @@ class Dish {
                 (key, value) => MapEntry(
                     Ingredient.fromJson(key as Map<String, dynamic>), value))));
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }

@@ -47,12 +47,13 @@ enum AppTheme {
         primaryContainer: Colors.white,
         onPrimaryContainer: Colors.black54,
         secondary: const Color(0xFF983100),
+        onSecondary: Colors.white,
         background: Colors.white,
         surface: lighten(orangeBackground, 64),
         onSurface: Colors.black,
         onSurfaceVariant: Colors.black45,
         surfaceTint: Colors.white,
-        outline: lighten(orangeBackground, 64),  // FFE6CA
+        outline: lighten(orangeBackground, 64), // FFE6CA
         shadow: Colors.black26,
       ),
       scaffoldBackgroundColor: orangeBackground,

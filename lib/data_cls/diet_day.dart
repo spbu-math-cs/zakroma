@@ -26,7 +26,16 @@ class DietDay {
             index: index,
             meals: List<Meal>.from(
                 meals.map((e) => Meal.fromJson(e as Map<String, dynamic>))));
+      case {
+          'id': int _,
+          'index': int index,
+          'name': String _,
+          'meals-amount': int _,
+          'meals': null,
+        }:
+        return DietDay(index: index, meals: const []);
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }

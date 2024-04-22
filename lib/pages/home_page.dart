@@ -152,7 +152,11 @@ class HomePage extends ConsumerWidget {
                   // Перечисление приёмов пищи на сегодня
                   Expanded(
                       flex: 14,
-                      child: AsyncBuilder(
+                      child: Padding(
+                        padding:
+                            constants.dBlockPadding - constants.dCardPadding,
+                        // TODO(refactor): вынести всю логику child'а
+                        child: AsyncBuilder(
                           asyncValue: ref.watch(dietsProvider),
                           builder: (diets) {
                             final currentDiet = diets.firstOrNull;
@@ -161,89 +165,84 @@ class HomePage extends ConsumerWidget {
                             final List<Meal>? todayMeals = currentDiet
                                 ?.getDay(DateTime.now().weekday - 1)
                                 .meals;
-                            return Padding(
-                              padding: constants.dBlockPadding -
-                                  constants.dCardPadding,
-                              // TODO(refactor): вынести всю логику child'а
-                              child: todayMeals == null || todayMeals.isEmpty
-                                  ? Center(
-                                      child: TextButton.icon(
-                                          onPressed: () {
-                                            if (currentDiet == null) {
-                                              Diet.showAddDietDialog(
-                                                  context, ref);
-                                            } else {
-                                              Meal.showAddMealDialog(
-                                                  context,
-                                                  ref,
-                                                  currentDiet.dietHash,
-                                                  DateTime.now().weekday - 1);
-                                            }
-                                          },
-                                          style: TextButton.styleFrom(
-                                              // padding: EdgeInsets.zero
-                                              ),
-                                          icon: const Icon(Icons.add),
-                                          label: currentDiet == null
-                                              ? const Text('Добавить рацион')
-                                              : const Text('Добавить приём')),
-                                    )
-                                  : SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                          children: List<Widget>.generate(
-                                              todayMeals.length,
-                                              (index) => Padding(
-                                                    padding:
-                                                        constants.dCardPadding,
-                                                    child: SizedBox.square(
-                                                        // 12 — константа, взятая, опять же, из фигмы
-                                                        dimension: 12 *
-                                                            constants
-                                                                .paddingUnit,
-                                                        child: RRButton(
-                                                            onTap: () {
-                                                              showSlidingBottomSheet(
-                                                                  context,
-                                                                  builder:
-                                                                      (context) {
-                                                                return createSlidingSheet(
-                                                                  context,
-                                                                  headingText:
-                                                                      todayMeals[
-                                                                              index]
-                                                                          .name,
-                                                                  body: todayMeals[
-                                                                          index]
-                                                                      .getDishesList(
-                                                                          context,
-                                                                          constants,
-                                                                          dishMiniatures:
-                                                                              true),
-                                                                  constants:
-                                                                      constants,
-                                                                );
-                                                              });
-                                                            },
-                                                            borderRadius:
-                                                                constants
-                                                                    .dInnerRadius,
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            child:
-                                                                StyledHeadline(
-                                                                    // overflow: TextOverflow.clip,
-                                                                    text: todayMeals[
+                            return todayMeals == null || todayMeals.isEmpty
+                                ? Center(
+                                    child: TextButton.icon(
+                                        onPressed: () {
+                                          if (currentDiet == null) {
+                                            Diet.showAddDietDialog(
+                                                context, ref);
+                                          } else {
+                                            Meal.showAddMealDialog(
+                                                context,
+                                                ref,
+                                                currentDiet.dietHash,
+                                                DateTime.now().weekday - 1);
+                                          }
+                                        },
+                                        style: TextButton.styleFrom(
+                                            // padding: EdgeInsets.zero
+                                            ),
+                                        icon: const Icon(Icons.add),
+                                        label: currentDiet == null
+                                            ? const Text('Добавить рацион')
+                                            : const Text('Добавить приём')),
+                                  )
+                                : SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: List<Widget>.generate(
+                                            todayMeals.length,
+                                            (index) => Padding(
+                                                  padding:
+                                                      constants.dCardPadding,
+                                                  child: SizedBox.square(
+                                                      // 12 — константа, взятая, опять же, из фигмы
+                                                      dimension: 12 *
+                                                          constants.paddingUnit,
+                                                      child: RRButton(
+                                                          onTap: () {
+                                                            showSlidingBottomSheet(
+                                                                context,
+                                                                builder:
+                                                                    (context) {
+                                                              return createSlidingSheet(
+                                                                context,
+                                                                headingText:
+                                                                    todayMeals[
                                                                             index]
                                                                         .name,
-                                                                    textStyle: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .headlineSmall))),
-                                                  ))),
-                                    ),
-                            );
-                          })),
+                                                                body: todayMeals[
+                                                                        index]
+                                                                    .getDishesList(
+                                                                        context,
+                                                                        constants,
+                                                                        dishMiniatures:
+                                                                            true),
+                                                                constants:
+                                                                    constants,
+                                                              );
+                                                            });
+                                                          },
+                                                          borderRadius:
+                                                              constants
+                                                                  .dInnerRadius,
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          child: StyledHeadline(
+                                                              // overflow: TextOverflow.clip,
+                                                              text: todayMeals[
+                                                                      index]
+                                                                  .name,
+                                                              textStyle: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .headlineSmall))),
+                                                ))),
+                                  );
+                          },
+                        ),
+                      )),
                 ],
               ))),
           // Мои рецепты
