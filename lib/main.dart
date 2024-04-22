@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'pages/authorization_page.dart';
 import 'pages/diets_page.dart';
 import 'pages/home_page.dart';
 import 'pages/settings_page.dart';
@@ -8,16 +11,20 @@ import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart';
 
-// TODO(tech): переписать все страницы с использованием новых констант
 // TODO(func): регистрация
 // TODO(func): окно входа
 // TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+final sharedPreferencesProvider =
+    Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
-void main() {
-  runApp(const ProviderScope(
-      child: MainPage()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferences = await SharedPreferences.getInstance();
+  runApp(ProviderScope(overrides: [
+    sharedPreferencesProvider.overrideWithValue(preferences),
+  ], child: const MainPage()));
 }
 
 class MainPage extends ConsumerWidget {
@@ -49,23 +56,23 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   void initState() {
     super.initState();
     // считаем константы для текущего устройства
-    // TODO: сохранить константы в local preferences, чтобы не пересчитывать каждый раз
+    // TODO(idea): сохранить константы в local preferences, чтобы не пересчитывать каждый раз?
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('WidgetsBinding');
-    });
+    // TODO(tech): делаем что-то после отрисовки экрана?
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    // debugPrint('WidgetsBinding');
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
-
     final pageController = PageController();
+    final preferences = ref.watch(sharedPreferencesProvider);
+
+    if (!(preferences.getBool('isAuthorized') ?? false)) {
+      return const AuthorizationPage();
+    }
 
     return CustomScaffold(
       bottomNavigationBar: FunctionalBottomBar(

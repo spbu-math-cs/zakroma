@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 
 import '../constants.dart';
 import '../data_cls/dish.dart';
@@ -12,15 +11,52 @@ import 'diet.dart';
 
 @immutable
 class Meal {
-  final String id;
+  final String mealHash;
 
   /// Название приёма пищи, задаётся пользователем.
   final String name;
 
+  /// Порядок приёма пищи в дне, нумерация с 0 (самый первый приём пищи за день).
+  final int index;
+
   /// Список блюд, запланированных на данный приём пищи.
   final List<Dish> dishes;
 
-  const Meal({required this.id, required this.name, required this.dishes});
+  const Meal(
+      {required this.mealHash,
+      required this.name,
+      required this.index,
+      required this.dishes});
+
+  factory Meal.fromJson(Map<String, dynamic> map) {
+    // debugPrint('Meal.fromJson(${map.toString()})');
+    switch (map) {
+      case {
+          'id': int _,
+          'hash': String hash,
+          'name': String name,
+          'index': int index,
+          'dishes-amount': int _,
+          'dishes': List<dynamic> dishes,
+        }:
+        return Meal(
+            mealHash: hash,
+            name: name,
+            index: index,
+            dishes: List<Dish>.from(
+                dishes.map((e) => Dish.fromJson(e as Map<String, dynamic>))));
+      case {
+          'id': int _,
+          'hash': String hash,
+          'name': String name,
+          'index': int index,
+          'dishes-amount': int _,
+        }:
+        return Meal(mealHash: hash, name: name, index: index, dishes: const []);
+      case _:
+        throw UnimplementedError();
+    }
+  }
 
   int get dishesCount => dishes.length;
 
@@ -55,17 +91,18 @@ class Meal {
                           dayIndex: dayIndex,
                           // TODO(server): подгрузить новый id
                           newMeal: Meal(
-                              id: const Uuid().v4(),
+                              mealHash: 'get freaking hash!!',
+                              index: -1,
                               name: text,
                               dishes: const []));
                       Navigator.of(context).pop();
                       final mealId = (await ref
-                          .read(dietsProvider.notifier)
-                          .getDietById(dietId: dietId))!
+                              .read(dietsProvider.notifier)
+                              .getDietByHash(dietHash: dietId))!
                           .days[dayIndex]
                           .meals
                           .last
-                          .id;
+                          .mealHash;
                       ref.read(pathProvider.notifier).update((state) =>
                           state.copyWith(dayIndex: dayIndex, mealId: mealId));
                       if (!context.mounted) return;
@@ -101,7 +138,6 @@ class Meal {
                               Expanded(
                                 child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      debugPrint(constraints.toString());
                                   return SizedBox.square(
                                     dimension: constraints.maxWidth,
                                     child: Material(

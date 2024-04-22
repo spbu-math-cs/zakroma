@@ -11,7 +11,14 @@ class Constants {
   ///
   /// Отсчитывается снизу, оставшееся сверху место остаётся пустым.
   /// Высота используемой части экрана будет равна 85 * paddingUnit.
+  /// Не учитывает высоту панели навигации приложения!
   static const screenHeight = 85;
+
+  /// Высота нижней панели навигации приложения (в единицах paddingUnit).
+  static const bottomNavigationBarHeight = 7;
+
+  /// Высота верхней панели навигации приложения (в единицах paddingUnit).
+  static const topNavigationBarHeight = 3;
 
   /// Продолжительность анимаций (миллисекунды).
   static const dAnimationDuration = Duration(milliseconds: 250);
@@ -60,26 +67,30 @@ class Constants {
   const Constants({required this.paddingUnit});
 
   /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).
-  EdgeInsets get dAppHeadlinePadding => EdgeInsets.fromLTRB(paddingUnit * 4, 0, 0, paddingUnit);
+  EdgeInsets get dAppHeadlinePadding =>
+      EdgeInsets.fromLTRB(paddingUnit * 4, 0, 0, paddingUnit);
 
   /// Отступ блоков — элементов интерфейса, которые делят экран между собой.
   ///
   /// Используется для элементов, размеры которых задаются
   /// в виде дроби размер_элемента / размер_всего_экрана.
-  EdgeInsets get dBlockPadding => EdgeInsets.fromLTRB(paddingUnit * 2, 0, paddingUnit * 2, paddingUnit * 2);
+  EdgeInsets get dBlockPadding =>
+      EdgeInsets.fromLTRB(paddingUnit * 2, 0, paddingUnit * 2, paddingUnit * 2);
 
   /// Отступ карточек — элементов, перечисляемых на экране.
   EdgeInsets get dCardPadding => EdgeInsets.symmetric(horizontal: paddingUnit);
 
   /// Отступ карточек, уменьшенный в два раза.
-  EdgeInsets get dCardPaddingHalf => EdgeInsets.symmetric(horizontal: paddingUnit / 2);
+  EdgeInsets get dCardPaddingHalf =>
+      EdgeInsets.symmetric(horizontal: paddingUnit / 2);
 
   /// Отступ заголовка элемента.
   EdgeInsets get dHeadingPadding => EdgeInsets.fromLTRB(
       paddingUnit * 2, paddingUnit * 2, paddingUnit * 2, paddingUnit);
 
   /// Отступ основного текста.
-  EdgeInsets get dTextPadding => EdgeInsets.symmetric(vertical: paddingUnit / 2, horizontal: paddingUnit);
+  EdgeInsets get dTextPadding =>
+      EdgeInsets.symmetric(vertical: paddingUnit / 2, horizontal: paddingUnit);
 
   /// Отступ короткого текста — пометки для другого элемента.
   ///
@@ -117,4 +128,6 @@ class ConstantsNotifier extends FamilyNotifier<Constants, double> {
   }
 }
 
-final constantsProvider = NotifierProvider.family<ConstantsNotifier, Constants, double>(() => ConstantsNotifier());
+final constantsProvider =
+    NotifierProvider.family<ConstantsNotifier, Constants, double>(
+        () => ConstantsNotifier());

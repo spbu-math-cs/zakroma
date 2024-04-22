@@ -39,92 +39,86 @@ class FlatList extends ConsumerWidget {
     return CustomScrollView(
       physics: scrollPhysics,
       controller: scrollController,
-      slivers: (sliverAppBar == null
-          ? <Widget>[]
-          : <Widget>[sliverAppBar!]) +
-              <Widget>[
-                SliverPadding(
-                  padding: padding ??
-                      EdgeInsets.all(constants.paddingUnit * 2) -
-                          EdgeInsets.only(
-                              bottom: childPadding?.bottom ??
-                                  constants.paddingUnit),
-                  // вычитаем, так как у нижнего элемента есть отступ снизу, равный
-                  // childPadding.bottom или constants.paddingUnit (по умолчанию)
-                  sliver: childHeight == null
-                      ? SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              childCount: children.length,
-                              (context, index) => switch (separator) {
-                                    FlatListSeparator.none => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.symmetric(
-                                                vertical:
-                                                    constants.paddingUnit * 2),
-                                        child: children[index]),
-                                    // TODO: Дописать вариант с разделителями.
-                                    FlatListSeparator.divider => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.symmetric(
-                                                vertical:
-                                                    constants.paddingUnit * 2),
-                                        child: children[index]),
-                                    FlatListSeparator.rrBorder => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.only(
-                                                bottom: constants.paddingUnit),
-                                        child: Material(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        constants.dInnerRadius),
-                                                side: BorderSide(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .outline,
-                                                    width:
-                                                        constants.borderWidth)),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: children[index])),
-                                  }))
-                      : SliverFixedExtentList(
-                          itemExtent: childHeight ?? constants.paddingUnit * 12,
-                          delegate: SliverChildBuilderDelegate(
-                              childCount: children.length,
-                              (context, index) => switch (separator) {
-                                    FlatListSeparator.none => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.symmetric(
-                                                vertical:
-                                                    constants.paddingUnit * 2),
-                                        child: children[index]),
-                                    // TODO: Дописать вариант с разделителями.
-                                    FlatListSeparator.divider => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.symmetric(
-                                                vertical:
-                                                    constants.paddingUnit * 2),
-                                        child: children[index]),
-                                    FlatListSeparator.rrBorder => Padding(
-                                        padding: childPadding ??
-                                            EdgeInsets.only(
-                                                bottom: constants.paddingUnit),
-                                        child: Material(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        constants.dInnerRadius),
-                                                side: BorderSide(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .outline,
-                                                    width:
-                                                        constants.borderWidth)),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: children[index])),
-                                  })),
-                ),
-              ],
+      slivers: (sliverAppBar == null ? <Widget>[] : <Widget>[sliverAppBar!]) +
+          <Widget>[
+            SliverPadding(
+              padding: padding ??
+                  EdgeInsets.all(constants.paddingUnit * 2) -
+                      EdgeInsets.only(
+                          bottom:
+                              childPadding?.bottom ?? constants.paddingUnit),
+              // вычитаем, так как у нижнего элемента есть отступ снизу, равный
+              // childPadding.bottom или constants.paddingUnit (по умолчанию)
+              sliver: childHeight == null
+                  ? SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          childCount: children.length,
+                          (context, index) => switch (separator) {
+                                FlatListSeparator.none => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.symmetric(
+                                            vertical:
+                                                constants.paddingUnit * 2),
+                                    child: children[index]),
+                                // TODO(tech): дописать вариант с разделителями? (а он понадобится где-то?)
+                                FlatListSeparator.divider => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.symmetric(
+                                            vertical:
+                                                constants.paddingUnit * 2),
+                                    child: children[index]),
+                                FlatListSeparator.rrBorder => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.only(
+                                            bottom: constants.paddingUnit),
+                                    child: Material(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                constants.dInnerRadius),
+                                            side: BorderSide(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outline,
+                                                width: constants.borderWidth)),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: children[index])),
+                              }))
+                  : SliverFixedExtentList(
+                      itemExtent: childHeight ?? constants.paddingUnit * 12,
+                      delegate: SliverChildBuilderDelegate(
+                          childCount: children.length,
+                          (context, index) => switch (separator) {
+                                FlatListSeparator.none => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.symmetric(
+                                            vertical:
+                                                constants.paddingUnit * 2),
+                                    child: children[index]),
+                                // TODO(tech): дописать вариант с разделителями? (а он понадобится где-то?)
+                                FlatListSeparator.divider => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.symmetric(
+                                            vertical:
+                                                constants.paddingUnit * 2),
+                                    child: children[index]),
+                                FlatListSeparator.rrBorder => Padding(
+                                    padding: childPadding ??
+                                        EdgeInsets.only(
+                                            bottom: constants.paddingUnit),
+                                    child: Material(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                constants.dInnerRadius),
+                                            side: BorderSide(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outline,
+                                                width: constants.borderWidth)),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: children[index])),
+                              })),
+            ),
+          ],
     );
   }
 }
