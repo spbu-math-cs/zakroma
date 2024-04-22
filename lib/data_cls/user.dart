@@ -120,7 +120,7 @@ class UserNotifier extends AsyncNotifier<User> {
       cookie: prefs.getString('cookie'),
       isAuthorized: prefs.getBool('isAuthorized') ?? true,
     );
-    if (prefs.getString('email') == 'gosling@yandex.com') {
+    if (prefs.getString('email') == 'gosling@yandex.ru') {
       // TODO(tape): убрать
       switchCurrentGroup(
           '997fb7e3e1a7b2a5d70ff1f9ecb7d011466b3c26e9e40f4886769274999c628a');
