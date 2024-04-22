@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
+import 'package:zakroma_frontend/utility/async_builder.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 
 import '../constants.dart';
@@ -72,11 +74,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            StyledHeadline(
-                              text: 'Райан Г.',
-                              textStyle:
-                                  Theme.of(context).textTheme.headlineSmall,
-                            ),
+                            AsyncBuilder(
+                              asyncValue: ref.read(userProvider),
+                              builder: (user) => StyledHeadline(
+                                  text: '${user.firstName ?? ''} ${(user.secondName ?? '')[0]}.',
+                                  textStyle:
+                                  Theme.of(context).textTheme.headlineSmall)),
                             StyledHeadline(
                                 text: '185 см',
                                 textStyle:
