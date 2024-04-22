@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../constants.dart';
 import '../data_cls/diet.dart';
+import '../data_cls/meal.dart';
 import '../data_cls/path.dart';
 import '../pages/diet_page.dart';
 import '../utility/async_builder.dart';
@@ -39,7 +40,16 @@ class DietListPage extends ConsumerWidget {
                       padding: EdgeInsets.all(constants.paddingUnit * 2),
                       child: FloatingActionButton(
                         onPressed: () {
-                          //TODO;
+                          final currentDiet = diets.firstOrNull;
+                          if (currentDiet == null) {
+                            Diet.showAddDietDialog(context, ref);
+                          } else {
+                            Meal.showAddMealDialog(
+                                context,
+                                ref,
+                                currentDiet.dietHash,
+                                DateTime.now().weekday - 1);
+                          }
                         },
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         child: const Icon(Icons.add),
