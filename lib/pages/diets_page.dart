@@ -23,17 +23,28 @@ class DietListPage extends ConsumerWidget {
     return AsyncBuilder(
         asyncValue: asyncDiets,
         builder: (diets) => CustomScaffold(
-              title: 'Питание',
-              body: RRSurface(
-                child: Padding(
-                  padding: EdgeInsets.all(constants.paddingUnit * 2),
-                  child: ListView.builder(
-                      itemCount: diets.length,
-                      itemBuilder: (context, index) =>
-                          DietTile(diet: diets[index])),
-                ),
+            title: 'Питание',
+            body: RRSurface(
+                child: Stack(children: [
+              Padding(
+                padding: EdgeInsets.all(constants.paddingUnit * 2),
+                child: ListView.builder(
+                    itemCount: diets.length,
+                    itemBuilder: (context, index) =>
+                        DietTile(diet: diets[index])),
               ),
-            ));
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                      padding: EdgeInsets.all(constants.paddingUnit * 2),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          //TODO;
+                        },
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: const Icon(Icons.add),
+                      )))
+            ]))));
   }
 }
 
