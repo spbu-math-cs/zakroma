@@ -77,7 +77,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                             AsyncBuilder(
                               asyncValue: ref.read(userProvider),
                               builder: (user) => StyledHeadline(
-                                  text: '${user.firstName ?? ''} ${(user.secondName ?? '').substring(0, 1)}.',
+                                  text: '${user.firstName ?? ''} ${(user.secondName ?? '')[0]}.',
                                   textStyle:
                                   Theme.of(context).textTheme.headlineSmall)),
                             StyledHeadline(
