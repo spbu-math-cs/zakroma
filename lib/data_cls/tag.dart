@@ -24,6 +24,7 @@ class Tag {
             children: List<Tag>.from(
                 children.map((e) => Tag.fromJson(e as Map<String, dynamic>))));
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }

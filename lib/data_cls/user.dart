@@ -115,6 +115,7 @@ class UserNotifier extends AsyncNotifier<User> {
     final body = jsonDecode(response.body) as Map<String, dynamic>;
     // debugPrint('authorize\tresponse.body = ${body.toString()}\n\n');
     // TODO(idea): надо ли хранить email и password локально?
+    // TODO(tech): сделать отдельный метод, который сохраняет всю эту userData в sharedPrefs
     prefs.setString('email', email);
     prefs.setString('password', password);
     prefs.setString('token', body['token']);

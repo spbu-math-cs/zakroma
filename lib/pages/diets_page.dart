@@ -20,20 +20,22 @@ class DietListPage extends ConsumerWidget {
         ref.watch(constantsProvider(MediaQuery.of(context).size.width));
     final asyncDiets = ref.watch(dietsProvider);
 
-    return AsyncBuilder(
-        asyncValue: asyncDiets,
-        builder: (diets) => CustomScaffold(
-              title: 'Питание',
-              body: RRSurface(
-                child: Padding(
-                  padding: EdgeInsets.all(constants.paddingUnit * 2),
-                  child: ListView.builder(
-                      itemCount: diets.length,
-                      itemBuilder: (context, index) =>
-                          DietTile(diet: diets[index])),
-                ),
-              ),
-            ));
+    return CustomScaffold(
+      title: 'Питание',
+      body: RRSurface(
+        child: Padding(
+          padding: EdgeInsets.all(constants.paddingUnit * 2),
+          child: AsyncBuilder(
+              asyncValue: asyncDiets,
+              builder: (diets) {
+                return ListView.builder(
+                    itemCount: diets.length,
+                    itemBuilder: (context, index) =>
+                        DietTile(diet: diets[index]));
+              }),
+        ),
+      ),
+    );
   }
 }
 

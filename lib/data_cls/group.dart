@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Group {
   final int id;
   final String hash;
@@ -14,6 +16,7 @@ class Group {
         }:
         return Group(id: id, hash: hash, name: name);
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }

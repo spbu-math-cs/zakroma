@@ -54,6 +54,7 @@ class Meal {
         }:
         return Meal(mealHash: hash, name: name, index: index, dishes: const []);
       case _:
+        debugPrint('DEBUG: $map');
         throw UnimplementedError();
     }
   }
@@ -87,14 +88,7 @@ class Meal {
                     needsValidation: true,
                     onTap: (text) async {
                       ref.read(dietsProvider.notifier).addMeal(
-                          dietId: dietId,
-                          dayIndex: dayIndex,
-                          // TODO(server): подгрузить новый id
-                          newMeal: Meal(
-                              mealHash: 'get freaking hash!!',
-                              index: -1,
-                              name: text,
-                              dishes: const []));
+                          dietId: dietId, dayIndex: dayIndex, mealName: text);
                       Navigator.of(context).pop();
                       final mealId = (await ref
                               .read(dietsProvider.notifier)
