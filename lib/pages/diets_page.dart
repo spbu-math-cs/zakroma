@@ -51,7 +51,7 @@ class DietListPage extends ConsumerWidget {
                                 DateTime.now().weekday - 1);
                           }
                         },
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         child: const Icon(Icons.add),
                       )))
             ]))));
