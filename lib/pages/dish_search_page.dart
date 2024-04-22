@@ -26,8 +26,7 @@ class _DishSearchPageState extends ConsumerState<DishSearchPage> {
   @override
   Widget build(BuildContext context) {
     final path = ref.read(pathProvider);
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final searchResults = getSearchResults();
 
     // TODO(tech+func): реализовать поиск

@@ -30,8 +30,7 @@ class HomePage extends ConsumerWidget {
         statusBarColor: Colors.transparent));
 
     const dietsDisplayCount = 3;
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final diets = ref.watch(dietsProvider);
 
     return CustomScaffold(
@@ -501,8 +500,7 @@ class DisplayBar extends ConsumerWidget {
                     ],
                   ),
                 ),
-                constants: ref.watch(
-                    constantsProvider(MediaQuery.of(context).size.width)));
+                constants: ref.read(constantsProvider));
           });
         },
         child: Row(

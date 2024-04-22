@@ -22,8 +22,7 @@ class RRSurface extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     return Padding(
         padding: continuous
             ? padding?.copyWith(bottom: 0) ??
@@ -33,7 +32,8 @@ class RRSurface extends ConsumerWidget {
           elevation: continuous ? 0 : elevation ?? constants.dElevation,
           clipBehavior: Clip.antiAlias,
           borderRadius: continuous
-              ? BorderRadius.vertical(top: Radius.circular(borderRadius ?? constants.dOuterRadius))
+              ? BorderRadius.vertical(
+                  top: Radius.circular(borderRadius ?? constants.dOuterRadius))
               : BorderRadius.circular(borderRadius ?? constants.dOuterRadius),
           color:
               backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,

@@ -26,8 +26,7 @@ class _CartPageState extends ConsumerState<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final cart = ref.watch(cartProvider);
     final ScrollController scrollController = ScrollController();
     scrollController.addListener(() => setState(() {
@@ -139,8 +138,7 @@ class IngredientTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final cart = ref.watch(cartProvider);
 
     return Center(

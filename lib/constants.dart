@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 @immutable
 class Constants {
   /// Единичный отступ, на основании которого считаются все остальные отступы.
-  /// Зависит от размеров экрана.
+  /// Зависит от размеров экрана. Равна ширина_экрана / 48.
   final double paddingUnit;
 
   /// Фактически используемая высота экрана (в единицах paddingUnit).
@@ -117,17 +117,10 @@ class Constants {
       Constants(paddingUnit: paddingUnit ?? this.paddingUnit);
 }
 
-class ConstantsNotifier extends FamilyNotifier<Constants, double> {
+class ConstantsNotifier extends Notifier<Constants> {
   @override
-  Constants build(double arg) => Constants(paddingUnit: arg / 48); // 48
-  // это константа, посчитанная с помощью уравнения на горизонтальный размер
-  // виджета с сегодняшними приёмами c домашнего экрана
-
-  void set(double? paddingUnit) {
-    state = state.copyWith(paddingUnit);
-  }
+  Constants build() => const Constants(paddingUnit: 8);
 }
 
 final constantsProvider =
-    NotifierProvider.family<ConstantsNotifier, Constants, double>(
-        () => ConstantsNotifier());
+    Provider<Constants>((ref) => throw UnimplementedError());

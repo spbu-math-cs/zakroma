@@ -45,9 +45,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
                     body: SafeArea(
                       child: RRSurface(
                           child: meal.getDishesList(
-                              context,
-                              ref.read(constantsProvider(
-                                  MediaQuery.of(context).size.width)),
+                              context, ref.read(constantsProvider),
                               dishMiniatures: true)),
                     ),
                     bottomNavigationBar: FunctionalBottomBar(

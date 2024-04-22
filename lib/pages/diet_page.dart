@@ -29,8 +29,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     // TODO(server): подгрузить информацию о рационе, вызвав соотв. метод dietListProvider'а
     final pageController = PageController(initialPage: selectedDay);
 

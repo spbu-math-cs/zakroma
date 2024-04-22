@@ -39,8 +39,7 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
         systemNavigationBarColor: Theme.of(context).colorScheme.primary,
         statusBarColor: Colors.transparent));
 
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
       body: Padding(
@@ -134,9 +133,6 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                               setState(() {
                                 interactedWithFields.first =
                                     interactedWithFields.second = true;
-                                // хз, почему notifyListeners помечен как visibleForTesting
-                                // emailController.notifyListeners();
-                                // passwordController.notifyListeners();
                               });
                               if (formKey.currentState!.validate()) {
                                 setState(() {
@@ -154,8 +150,9 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               const Zakroma()));
-                                } catch (e) {
+                                } catch (e, stackTrace) {
                                   debugPrint(e.toString());
+                                  debugPrintStack(stackTrace: stackTrace);
                                   showDialog(
                                       context: context,
                                       builder: (_) => AlertDialog(
@@ -278,8 +275,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
       topNavigationBar: Align(
@@ -422,8 +418,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onTap: () async {
                     setState(() {
                       interactedWithFields[0] = interactedWithFields[1] = true;
-                      // firstNameController.notifyListeners();
-                      // secondNameController.notifyListeners();
                     });
                     if (nameFormKey.currentState!.validate()) {
                       FocusManager.instance.primaryFocus
@@ -488,7 +482,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 onTap: () async {
                   setState(() {
                     interactedWithFields[2] = true;
-                    // emailController.notifyListeners();
                   });
                   if (emailFormKey.currentState!.validate()) {
                     FocusManager.instance.primaryFocus
@@ -576,8 +569,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   onTap: () async {
                     setState(() {
                       interactedWithFields[3] = interactedWithFields[4] = true;
-                      // passwordController.notifyListeners();
-                      // passwordRepeatController.notifyListeners();
                     });
 
                     if (passwordFormKey.currentState!.validate()) {
@@ -595,8 +586,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                         }
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => const Zakroma()));
-                      } catch (e) {
+                      } catch (e, stackTrace) {
                         debugPrint(e.toString());
+                        debugPrintStack(stackTrace: stackTrace);
                         showDialog(
                             context: context,
                             builder: (_) => AlertDialog(
@@ -645,8 +637,7 @@ class CustomTextFormField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
 
     return Padding(
       padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),

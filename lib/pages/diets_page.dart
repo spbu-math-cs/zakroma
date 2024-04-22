@@ -16,8 +16,7 @@ class DietListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final asyncDiets = ref.watch(dietsProvider);
 
     return CustomScaffold(
@@ -46,8 +45,7 @@ class DietTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     return RRButton(
       onTap: () {
         ref.read(pathProvider.notifier).update((state) => state.copyWith(
@@ -116,8 +114,7 @@ Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
   return AsyncBuilder(
       asyncValue: ref.watch(dietsProvider),
       builder: (diets) {
-        final constants =
-            ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+        final constants = ref.read(constantsProvider);
         if (diets.isEmpty || index == 1) {
           return DottedRRButton(
               onTap: () => Diet.showAddDietDialog(context, ref),

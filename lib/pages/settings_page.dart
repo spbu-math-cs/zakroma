@@ -23,8 +23,7 @@ class SettingsPage extends ConsumerStatefulWidget {
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     final categoryTextStyle = Theme.of(context).textTheme.headlineMedium;
     // TODO(server): подгружать категории настроек
     final categoryList = [

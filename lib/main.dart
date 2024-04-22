@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
+import 'package:zakroma_frontend/utility/async_builder.dart';
 
+import 'constants.dart';
 import 'pages/authorization_page.dart';
 import 'pages/diets_page.dart';
 import 'pages/home_page.dart';
@@ -22,6 +25,8 @@ final sharedPreferencesProvider =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await SharedPreferences.getInstance();
+  final screenWidth =
+      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
   runApp(ProviderScope(overrides: [
     sharedPreferencesProvider.overrideWithValue(preferences),
   ], child: const MainPage()));
@@ -35,6 +40,16 @@ class MainPage extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
+      builder: (context, child) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        return ProviderScope(
+          overrides: [
+            constantsProvider
+                .overrideWithValue(Constants(paddingUnit: screenWidth / 48)),
+          ],
+          child: child!,
+        );
+      },
       theme: ref.watch(themes.themeProvider).getThemeData(),
       home: const Zakroma(),
       navigatorObservers: [routeObserver],
@@ -68,11 +83,15 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   Widget build(BuildContext context) {
     final pageController = PageController();
-    final preferences = ref.watch(sharedPreferencesProvider);
+    final prefs = ref.read(sharedPreferencesProvider);
 
-    if (!(preferences.getBool('isAuthorized') ?? false)) {
+    if (!(prefs.getBool('isAuthorized') ?? false)) {
       return const AuthorizationPage();
     }
+    // else if (ref.read(userProvider).asData?.value == null) {
+    //   ref.read(userProvider.notifier).authorize(
+    //       prefs.getString('email') ?? '', prefs.getString('password') ?? '');
+    // }
 
     return CustomScaffold(
       bottomNavigationBar: FunctionalBottomBar(

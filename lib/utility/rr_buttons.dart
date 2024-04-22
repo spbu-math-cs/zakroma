@@ -36,8 +36,7 @@ class RRButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     return Padding(
         padding: padding,
         child: Container(
@@ -82,8 +81,7 @@ class DottedRRButton extends RRButton {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
     return Padding(
       padding: padding,
       child: DottedBorder(

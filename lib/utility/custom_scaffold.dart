@@ -26,8 +26,7 @@ class CustomScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants =
-        ref.watch(constantsProvider(MediaQuery.of(context).size.width));
+    final constants = ref.read(constantsProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
