@@ -114,9 +114,9 @@ class _ZakromaState extends ConsumerState<Zakroma> {
             selectedIcon: Icons.restaurant_menu,
           ),
           CNavigationDestination(
-            icon: Icons.settings_outlined,
-            label: 'Настройки',
-            selectedIcon: Icons.settings,
+            icon: Icons.person_outline,
+            label: 'Профиль',
+            selectedIcon: Icons.person,
           ),
         ],
       ),
