@@ -83,15 +83,10 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   Widget build(BuildContext context) {
     final pageController = PageController();
-    final prefs = ref.read(sharedPreferencesProvider);
 
-    if (!(prefs.getBool('isAuthorized') ?? false)) {
+    if (!ref.read(userProvider.notifier).isUserAuthorized()) {
       return const AuthorizationPage();
     }
-    // else if (ref.read(userProvider).asData?.value == null) {
-    //   ref.read(userProvider.notifier).authorize(
-    //       prefs.getString('email') ?? '', prefs.getString('password') ?? '');
-    // }
 
     return CustomScaffold(
       bottomNavigationBar: FunctionalBottomBar(
