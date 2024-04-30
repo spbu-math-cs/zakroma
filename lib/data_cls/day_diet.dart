@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import '../data_cls/meal.dart';
 
 @immutable
-class DietDay {
+class DayDiet {
   /// Номер дня недели, от 0 (понедельник) до 6 (воскресенье).
   final int index;
 
   /// Список приёмов пищи в данный день.
   final List<Meal> meals;
 
-  const DietDay({required this.index, required this.meals})
+  const DayDiet({required this.index, required this.meals})
       : assert(index >= 0 && index <= 6);
 
-  factory DietDay.fromJson(Map<String, dynamic> map) {
+  factory DayDiet.fromJson(Map<String, dynamic> map) {
     debugPrint('DietDay.fromJson(${map.toString()})');
     switch (map) {
       case {
@@ -22,7 +22,7 @@ class DietDay {
           'meals-amount': int _,
           'meals': List<dynamic> meals,
         }:
-        return DietDay(
+        return DayDiet(
             index: index,
             meals: List<Meal>.from(
                 meals.map((e) => Meal.fromJson(e as Map<String, dynamic>))));
@@ -33,10 +33,12 @@ class DietDay {
           'meals-amount': int _,
           'meals': null,
         }:
-        return DietDay(index: index, meals: const []);
+        return DayDiet(index: index, meals: const []);
       case _:
-        debugPrint('DEBUG: $map');
-        throw UnimplementedError();
+        throw FormatException('Failed to parse DayDiet from $map');
     }
   }
 }
+
+// TODO(server): подгрузить информацию о приёме пищи (название, список блюд)
+// - Блюдо из списка: id, название, иконка, количество порций

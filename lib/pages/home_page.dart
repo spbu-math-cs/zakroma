@@ -175,7 +175,7 @@ class HomePage extends ConsumerWidget {
                                             Meal.showAddMealDialog(
                                                 context,
                                                 ref,
-                                                currentDiet.dietHash,
+                                                currentDiet.hash,
                                                 DateTime.now().weekday - 1);
                                           }
                                         },

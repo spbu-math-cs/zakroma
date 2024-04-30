@@ -47,3 +47,18 @@ Map<String, String> _createHeader(String? token, String? cookie) {
   }
   return result;
 }
+
+Map<String, dynamic> processResponse(http.Response response) {
+  switch (response.statusCode) {
+    case 200:
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    case 401:
+      throw Exception('Пользователь не авторизован');
+    case 400:
+      throw Exception('Некорректный запрос');
+    case 500:
+      throw Exception('Внутренняя ошибка на сервере');
+    default:
+      throw Exception('Неизвестная ошибка');
+  }
+}

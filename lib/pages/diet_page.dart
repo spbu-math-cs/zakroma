@@ -258,7 +258,7 @@ class _DietPageState extends ConsumerState<DietPage> with RouteAware {
                 animate: animateFAB,
                 visible: editMode,
                 onPressed: () async {
-                  Meal.showAddMealDialog(context, ref, (await diet)!.dietHash,
+                  Meal.showAddMealDialog(context, ref, (await diet)!.hash,
                       pageController.page!.round(),
                       editMode: editMode);
                 }),

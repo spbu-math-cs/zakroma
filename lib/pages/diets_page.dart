@@ -49,7 +49,7 @@ class DietTile extends ConsumerWidget {
     return RRButton(
       onTap: () {
         ref.read(pathProvider.notifier).update((state) => state.copyWith(
-              dietId: diet.dietHash,
+              dietId: diet.hash,
             ));
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const DietPage()));
@@ -58,9 +58,9 @@ class DietTile extends ConsumerWidget {
       childPadding: EdgeInsets.all(constants.paddingUnit * 2)
           .copyWith(right: constants.paddingUnit),
       childAlignment: Alignment.topLeft,
-      backgroundColor: diet.isActive
-          ? Theme.of(context).colorScheme.surface
-          : Theme.of(context).colorScheme.primaryContainer,
+      // backgroundColor: diet.isActive
+      //     ? Theme.of(context).colorScheme.surface
+      //     : Theme.of(context).colorScheme.primaryContainer,
       elevation: 0,
       foregroundDecoration: BoxDecoration(
         borderRadius: BorderRadius.circular(constants.dInnerRadius),
@@ -128,7 +128,7 @@ Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
         return RRButton(
             onTap: () {
               ref.read(pathProvider.notifier).update((state) => state.copyWith(
-                    dietId: diets[index].dietHash,
+                    dietId: diets[index].hash,
                   ));
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const DietPage()));

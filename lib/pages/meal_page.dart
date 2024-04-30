@@ -38,10 +38,12 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
               future: diets.getDietByHash(path.dietId!),
               builder: (BuildContext context, AsyncSnapshot<Diet?> snapshot) {
                 if (snapshot.hasData) {
-                  final meal = snapshot.data!.getMealById(
-                      dayIndex: path.dayIndex!, mealId: path.mealId!)!;
+                  // TODO(tech): переписать, когда будет готов класс Meal
+                  // с запросами к серверу
+                  final meal = null;
                   return CustomScaffold(
-                    title: meal.name,
+                    title: 'TODO',
+                    // title: meal.name,
                     body: SafeArea(
                       child: RRSurface(
                           child: meal.getDishesList(
