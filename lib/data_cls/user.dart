@@ -86,7 +86,7 @@ class UserNotifier extends AsyncNotifier<User> {
         'auth/login',
         {'email': email, 'password': password},
         null,
-        prefs.getString('cookie'));
+        null);
     switch (response.statusCode) {
       case 200:
         break;
@@ -101,7 +101,10 @@ class UserNotifier extends AsyncNotifier<User> {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
+    // debugPrint(body.toString());
     // TODO(idea): надо ли хранить email и password локально?
+    // final response_name = await get('user/get_name', токен = пароль, cookie = логин);
+    // final body_name = jsonDecode(response_name.body) as Map<String, dynamic>;
     _updateSharedPrefs(
       email: email,
       password: password,
@@ -111,7 +114,7 @@ class UserNotifier extends AsyncNotifier<User> {
           .value,
       isAuthorized: true,
     );
-    _updateStateWith(
+    _updateStateWith( // добавляю запрос имени сюда
       firstName: prefs.getString('firstName'),
       secondName: prefs.getString('secondName'),
       email: prefs.getString('email'),
