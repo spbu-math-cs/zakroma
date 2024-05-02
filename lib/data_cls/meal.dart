@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
 
 import '../constants.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/path.dart';
+import '../network.dart';
 import '../pages/meal_page.dart';
 import '../utility/alert_text_prompt.dart';
 import '../utility/flat_list.dart';
@@ -87,25 +89,26 @@ class Meal {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) async {
-                      ref.read(dietsProvider.notifier).addMeal(
-                          dietId: dietId, dayIndex: dayIndex, mealName: text);
-                      Navigator.of(context).pop();
-                      final mealId = (await ref
-                              .read(dietsProvider.notifier)
-                              .getDietByHash(dietHash: dietId))!
-                          .days[dayIndex]
-                          .meals
-                          .last
-                          .mealHash;
-                      ref.read(pathProvider.notifier).update((state) =>
-                          state.copyWith(dayIndex: dayIndex, mealId: mealId));
-                      if (!context.mounted) return;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MealPage(
-                                    initialEdit: editMode,
-                                  )));
+                      final user = ref.read(userProvider).asData!;
+                      final body = processResponse(await post(
+                          'api/meals/create', {
+                        'diet-hash': dietId,
+                        'day-diet-index': dayIndex,
+                        'name': text
+                      }));
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                      ref.read(pathProvider.notifier).update((state) => state
+                          .copyWith(dayIndex: dayIndex, mealId: body['hash']));
+                      if (context.mounted) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MealPage(
+                                      initialEdit: editMode,
+                                    )));
+                      }
                     }
                   ),
                 ],

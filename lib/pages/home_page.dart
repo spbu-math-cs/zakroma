@@ -158,26 +158,21 @@ class HomePage extends ConsumerWidget {
                         child: AsyncBuilder(
                           asyncValue: ref.watch(dietsProvider),
                           builder: (diets) {
-                            final currentDiet = diets.firstOrNull;
+                            final currentDiet = diets.first;
                             debugPrint(
                                 'asyncbuilder speaking, currentDiet: $currentDiet');
-                            final List<Meal>? todayMeals = currentDiet
-                                ?.getDay(DateTime.now().weekday - 1)
+                            final List<Meal> todayMeals = currentDiet
+                                .getDay(DateTime.now().weekday - 1)
                                 .meals;
-                            return todayMeals == null || todayMeals.isEmpty
+                            return todayMeals.isEmpty
                                 ? Center(
                                     child: TextButton.icon(
                                         onPressed: () {
-                                          if (currentDiet == null) {
-                                            Diet.showAddDietDialog(
-                                                context, ref);
-                                          } else {
-                                            Meal.showAddMealDialog(
-                                                context,
-                                                ref,
-                                                currentDiet.hash,
-                                                DateTime.now().weekday - 1);
-                                          }
+                                          Meal.showAddMealDialog(
+                                              context,
+                                              ref,
+                                              currentDiet.hash,
+                                              DateTime.now().weekday - 1);
                                         },
                                         style: TextButton.styleFrom(
                                             // padding: EdgeInsets.zero
