@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/pages/cart_page.dart';
-import 'package:zakroma_frontend/pages/store_page.dart';
+import 'package:zakroma_frontend/pages/main/3_market_page.dart';
+import 'package:zakroma_frontend/pages/main/1_store_page.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
 import 'constants.dart';
 import 'pages/authorization_page.dart';
-import 'pages/diets_page.dart';
-import 'pages/home_page.dart';
-import 'pages/settings_page.dart';
+import 'pages/main/2_diets_page.dart';
+import 'pages/main/0_home_page.dart';
+import 'pages/main/4_profile_page.dart';
 import 'themes.dart' as themes;
 import 'utility/custom_scaffold.dart';
 import 'utility/navigation_bar.dart';
@@ -27,8 +28,6 @@ final sharedPreferencesProvider =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await SharedPreferences.getInstance();
-  final screenWidth =
-      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
   runApp(ProviderScope(overrides: [
     sharedPreferencesProvider.overrideWithValue(preferences),
   ], child: const MainPage()));
@@ -43,6 +42,7 @@ class MainPage extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
       builder: (context, child) {
+        // считаем константы для текущего устройства
         final screenWidth = MediaQuery.of(context).size.width;
         return ProviderScope(
           overrides: [
@@ -72,14 +72,8 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   void initState() {
     super.initState();
-    // считаем константы для текущего устройства
-    // TODO(idea): сохранить константы в local preferences, чтобы не пересчитывать каждый раз?
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    // TODO(tech): делаем что-то после отрисовки экрана?
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // debugPrint('WidgetsBinding');
-    // });
   }
 
   @override
@@ -90,10 +84,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     if (!(prefs.getBool('isAuthorized') ?? false)) {
       return const AuthorizationPage();
     }
-    // else if (ref.read(userProvider).asData?.value == null) {
-    //   ref.read(userProvider.notifier).authorize(
-    //       prefs.getString('email') ?? '', prefs.getString('password') ?? '');
-    // }
 
     return CustomScaffold(
       bottomNavigationBar: FunctionalBottomBar(
@@ -122,7 +112,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           ),
           CNavigationDestination(
             icon: Icons.local_mall_outlined,
-            label: 'Корзина',
+            label: 'Маркет',
             selectedIcon: Icons.local_mall,
           ),
           CNavigationDestination(
@@ -141,8 +131,8 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           HomePage(),
           StorePage(),
           DietListPage(),
-          CartPage(),
-          SettingsPage(),
+          MarketPage(),
+          ProfilePage(),
         ],
       ),
     );

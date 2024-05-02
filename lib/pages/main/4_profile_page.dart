@@ -5,22 +5,22 @@ import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 import 'package:zakroma_frontend/utility/custom_scaffold.dart';
 
-import '../constants.dart';
-import '../main.dart';
-import '../utility/flat_list.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
+import '../../constants.dart';
+import '../../main.dart';
+import '../../utility/flat_list.dart';
+import '../../utility/rr_surface.dart';
+import '../../utility/styled_headline.dart';
 
 // TODO(design): переписать в новом дизайне
 
-class SettingsPage extends ConsumerStatefulWidget {
-  const SettingsPage({super.key});
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  ConsumerState<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _SettingsPageState extends ConsumerState<SettingsPage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
@@ -36,11 +36,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ];
 
     return CustomScaffold(
-      title: 'Настройки',
+      title: 'Профиль',
       body: RRSurface(
         child: Column(
           children: [
-            // TODO(server): подгружать данные профиля (имя, аватарку, ...)
             // Профиль пользователя
             Expanded(
                 flex: 2,
@@ -74,11 +73,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AsyncBuilder(
-                              asyncValue: ref.read(userProvider),
-                              builder: (user) => StyledHeadline(
-                                  text: '${user.firstName ?? ''} ${(user.secondName ?? '')[0]}.',
-                                  textStyle:
-                                  Theme.of(context).textTheme.headlineSmall)),
+                                asyncValue: ref.read(userProvider),
+                                builder: (user) => StyledHeadline(
+                                    text:
+                                        '${user.firstName ?? ''} ${(user.secondName ?? '')[0]}.',
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall)),
                             StyledHeadline(
                                 text: '185 см',
                                 textStyle:

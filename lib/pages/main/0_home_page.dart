@@ -5,18 +5,18 @@ import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
-import '../constants.dart';
-import '../data_cls/cart.dart';
-import '../data_cls/diet.dart';
-import '../data_cls/group.dart';
-import '../data_cls/ingredient.dart';
-import '../data_cls/meal.dart';
-import '../utility/custom_scaffold.dart';
-import '../utility/get_current_date.dart';
-import '../utility/rr_buttons.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
-import 'cart_page.dart';
+import '../../constants.dart';
+import '../../data_cls/cart.dart';
+import '../../data_cls/diet.dart';
+import '../../data_cls/group.dart';
+import '../../data_cls/ingredient.dart';
+import '../../data_cls/meal.dart';
+import '../../utility/custom_scaffold.dart';
+import '../../utility/get_current_date.dart';
+import '../../utility/rr_buttons.dart';
+import '../../utility/rr_surface.dart';
+import '../../utility/styled_headline.dart';
+import '../cart_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
