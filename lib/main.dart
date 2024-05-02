@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
+import 'package:zakroma_frontend/pages/cart_page.dart';
+import 'package:zakroma_frontend/pages/store_page.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
 import 'constants.dart';
@@ -109,9 +111,19 @@ class _ZakromaState extends ConsumerState<Zakroma> {
             selectedIcon: Icons.home,
           ),
           CNavigationDestination(
+            icon: Icons.kitchen,
+            label: 'Продукты',
+            selectedIcon: Icons.kitchen,
+          ),
+          CNavigationDestination(
             icon: Icons.restaurant_menu,
             label: 'Питание',
             selectedIcon: Icons.restaurant_menu,
+          ),
+          CNavigationDestination(
+            icon: Icons.local_mall_outlined,
+            label: 'Корзина',
+            selectedIcon: Icons.local_mall,
           ),
           CNavigationDestination(
             icon: Icons.person_outline,
@@ -127,7 +139,9 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         }),
         children: const [
           HomePage(),
+          StorePage(),
           DietListPage(),
+          CartPage(),
           SettingsPage(),
         ],
       ),
