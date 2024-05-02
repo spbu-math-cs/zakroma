@@ -186,15 +186,13 @@ class Diets extends AsyncNotifier<List<Diet>> {
     final user = ref.watch(userProvider).asData?.value;
     debugPrint('DEBUG: user = ${user.toString()}');
     if (user != null) {
-      if (user.isAuthorized && user.token != null) {
-        token = user.token!;
-        cookie = user.cookie!;
-        assert(token.isNotEmpty && cookie.isNotEmpty);
-        try {
-          result = await _fetchDietsHashes();
-        } on HttpException catch (e) {
-          debugPrint(e.message);
-        }
+      token = user.token;
+      cookie = user.cookie;
+      assert(token.isNotEmpty && cookie.isNotEmpty);
+      try {
+        result = await _fetchDietsHashes();
+      } on HttpException catch (e) {
+        debugPrint(e.message);
       }
     }
     return result;
