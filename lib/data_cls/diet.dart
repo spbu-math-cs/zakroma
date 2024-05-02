@@ -67,19 +67,8 @@ class Diet {
 }
 
 extension GetDiet on Pair<Diet, Diet?> {
-  Diet? getDiet({String? dietHash, bool? isPersonal}) {
-    if (dietHash != null) {
-      if (dietHash == first.hash) {
-        return first;
-      } else if (dietHash == second?.hash) {
-        return second;
-      }
-    } else if (isPersonal != null) {
-      return isPersonal ? first : second;
-    } else {
-      throw ArgumentError('getDiet: both arguments are null');
-    }
-    return null;
+  Diet? getDiet(bool isPersonal) {
+    return isPersonal ? first : second;
   }
 }
 
@@ -94,6 +83,9 @@ extension Update on Pair<Diet, Diet?> {
   }
 }
 
+/// Хранит в себе пару рационов (личный, групповой?).
+///
+/// Если пользователь не состоит в группе, групповой рацион будет null.
 class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
   @override
   FutureOr<Pair<Diet, Diet?>> build() {
@@ -138,21 +130,17 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
                     ]))));
   }
 
-  Future<void> rename(String newName,
-      [String? dietHash, bool? isPersonal]) async {
-    assert(dietHash != null || isPersonal != null);
-    final diet =
-        state.asData!.value.getDiet(dietHash: dietHash, isPersonal: isPersonal);
+  Future<void> rename(String newName, bool isPersonal) async {
+    final diet = state.asData!.value.getDiet(isPersonal);
     if (diet == null) {
       throw Exception('Диета не найдена');
     }
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final userAsync = ref.read(userProvider).asData;
-      if (userAsync == null) {
+      final user = ref.read(userProvider).asData?.value;
+      if (user == null) {
         throw Exception('Пользователь не авторизован');
       }
-      final user = userAsync.value;
       processResponse(
         await patch(
             'api/diets/name',
@@ -168,14 +156,12 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
     });
   }
 
-  AsyncValue<DayDiet> getDay(int index, [String? dietHash, bool? isPersonal]) {
+  AsyncValue<DayDiet> getDay(int index, bool isPersonal) {
     assert(index >= 0 && index < 7);
     if (state.hasError) {
       return AsyncError(state.error!, state.stackTrace ?? StackTrace.current);
     } else if (state.hasValue) {
-      return AsyncData(state.value!
-          .getDiet(dietHash: dietHash, isPersonal: isPersonal)!
-          .days[index]);
+      return AsyncData(state.value!.getDiet(isPersonal)!.days[index]);
     }
     return const AsyncLoading();
   }
