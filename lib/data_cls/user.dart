@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' show Response;
+import 'package:http/http.dart' show Response, Client;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/network.dart';
@@ -44,6 +44,8 @@ class User {
 }
 
 class UserNotifier extends AsyncNotifier<User> {
+  Client client = Client();
+
   @override
   FutureOr<User> build() async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
@@ -82,11 +84,9 @@ class UserNotifier extends AsyncNotifier<User> {
 
   Future<void> authorize(String email, String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await post(
-        'auth/login',
-        {'email': email, 'password': password},
-        null,
-        prefs.getString('cookie'));
+    final response = await client.post(makeUri('auth/login'),
+        body: {'email': email, 'password': password},
+        headers: makeHeader(null, prefs.getString('cookie')));
     switch (response.statusCode) {
       case 200:
         break;
@@ -131,7 +131,7 @@ class UserNotifier extends AsyncNotifier<User> {
   Future<void> register(String firstName, String secondName, String email,
       String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await post('auth/register', {
+    final response = await client.post(makeUri('auth/register'), body: {
       'firstName': firstName,
       'secondName': secondName,
       'email': email,
@@ -177,14 +177,12 @@ class UserNotifier extends AsyncNotifier<User> {
   }
 
   Future<void> createGroup(String groupName) async {
-    final response = await post(
-      'api/groups/create',
-      {
-        'name': groupName,
-      },
-      state.value?.token,
-      state.value?.cookie,
-    );
+    final response = await client.post(makeUri('api/groups/create'),
+        body: {'name': groupName},
+        headers: makeHeader(
+          state.value?.token,
+          state.value?.cookie,
+        ));
     switch (response.statusCode) {
       case 200:
         break;
@@ -200,14 +198,11 @@ class UserNotifier extends AsyncNotifier<User> {
   }
 
   Future<void> switchCurrentGroup(String groupHash) async {
-    final response = await patch(
-      'api/groups/change',
-      {
-        'group-hash': groupHash,
-      },
-      state.value!.token!,
-      state.value!.cookie!,
-    );
+    final response = await client.patch(makeUri('api/groups/change'),
+        body: {
+          'group-hash': groupHash,
+        },
+        headers: makeHeader(state.value!.token!, state.value!.cookie!));
     switch (response.statusCode) {
       case 200:
         final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
@@ -226,11 +221,8 @@ class UserNotifier extends AsyncNotifier<User> {
   }
 
   Future<List<Group>> get groups async {
-    final response = await get(
-      'api/groups/list',
-      state.value!.token!,
-      state.value!.cookie!,
-    );
+    final response = await client.get(makeUri('api/groups/list'),
+        headers: makeHeader(state.value!.token!, state.value!.cookie!));
     switch (response.statusCode) {
       case 200:
         break;

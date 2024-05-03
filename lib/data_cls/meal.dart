@@ -9,7 +9,6 @@ import '../network.dart';
 import '../pages/meal_page.dart';
 import '../utility/alert_text_prompt.dart';
 import '../utility/flat_list.dart';
-import 'diet.dart';
 
 @immutable
 class Meal {
@@ -89,13 +88,15 @@ class Meal {
                     buttonText: 'Продолжить',
                     needsValidation: true,
                     onTap: (text) async {
-                      final user = ref.read(userProvider).asData!;
-                      final body = processResponse(await post(
-                          'api/meals/create', {
-                        'diet-hash': dietId,
-                        'day-diet-index': dayIndex,
-                        'name': text
-                      }));
+                      final user = ref.read(userProvider).asData!.value;
+                      final body = processResponse(await client.post(
+                          makeUri('api/meals/create'),
+                          body: {
+                            'diet-hash': dietId,
+                            'day-diet-index': dayIndex,
+                            'name': text
+                          },
+                          headers: makeHeader(user.token, user.cookie)));
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }

@@ -7,9 +7,9 @@ const serverAddress = 'http://10.0.2.2:8080';
 
 http.Client client = http.Client();
 
-Uri createUri(String request) => Uri.parse('$serverAddress/$request');
+Uri makeUri(String request) => Uri.parse('$serverAddress/$request');
 
-Map<String, String> createHeader(String? token, String? cookie) {
+Map<String, String> makeHeader(String? token, String? cookie) {
   Map<String, String> result = {
     'content-type': 'application/json',
     'accept': 'application/json',

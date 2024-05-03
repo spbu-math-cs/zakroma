@@ -97,8 +97,8 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
     if (user == null) {
       throw Exception('Пользователь не авторизован');
     }
-    var diet = processResponse(await client.get(createUri('api/diets/personal'),
-        headers: createHeader(user.token, user.cookie)));
+    var diet = processResponse(await client.get(makeUri('api/diets/personal'),
+        headers: makeHeader(user.token, user.cookie)));
     // TODO(tape): убрать заглушки
     return Pair(
         Diet(
@@ -151,8 +151,8 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
         throw Exception('Пользователь не авторизован');
       }
       processResponse(
-        await client.patch(createUri('api/diets/name'),
-            headers: createHeader(user.token, user.cookie),
+        await client.patch(makeUri('api/diets/name'),
+            headers: makeHeader(user.token, user.cookie),
             body: {'is-personal': isPersonal, 'name': newName}),
       );
       return state.value!.update(Diet(
