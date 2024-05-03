@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // TODO(server): по готовности сервера заменить на адрес сервера
-const serverAddress = 'http://10.0.2.2:8080';
+const serverAddress = 'http://192.168.0.100:8080'; //172.23.28.234     192.168.0.100
 
 Future<http.Response> get(String request, String token, String cookie) async {
   // debugPrint('---GET---\n($request, $token, $cookie)');
