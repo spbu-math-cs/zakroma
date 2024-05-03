@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,9 +88,17 @@ extension Update on Pair<Diet, Diet?> {
 ///
 /// Если пользователь не состоит в группе, групповой рацион будет null.
 class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
+  http.Client client = http.Client();
+
   @override
-  FutureOr<Pair<Diet, Diet?>> build() {
+  FutureOr<Pair<Diet, Diet?>> build() async {
     // TODO(server): запрос к бэку при инициализации
+    final user = ref.read(userProvider).asData?.value;
+    if (user == null) {
+      throw Exception('Пользователь не авторизован');
+    }
+    var diet = processResponse(await client.get(createUri('api/diets/personal'),
+        headers: createHeader(user.token, user.cookie)));
     // TODO(tape): убрать заглушки
     return Pair(
         Diet(
@@ -142,11 +151,9 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
         throw Exception('Пользователь не авторизован');
       }
       processResponse(
-        await patch(
-            'api/diets/name',
-            {'is-personal': isPersonal, 'name': newName},
-            user.token!,
-            user.cookie!),
+        await client.patch(createUri('api/diets/name'),
+            headers: createHeader(user.token, user.cookie),
+            body: {'is-personal': isPersonal, 'name': newName}),
       );
       return state.value!.update(Diet(
           hash: diet.hash,
