@@ -287,7 +287,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               });
             }
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_new),
           padding: EdgeInsets.zero,
         ),
       ),
