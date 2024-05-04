@@ -2,45 +2,53 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' show Response, Client;
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/network.dart';
-
 import 'group.dart';
 
-class User {
-  final String firstName;
-  final String secondName;
-  final String userPicUrl;
-  final String email;
-  final String password;
-  final String token;
-  final String cookie;
+part 'user.freezed.dart';
+part 'user.g.dart';
 
-  const User(
-      {required this.firstName,
-      required this.secondName,
-      required this.userPicUrl,
-      required this.email,
-      required this.password,
-      required this.token,
-      required this.cookie});
+@Freezed(toJson: false, fromJson: false)
+class UserData with _$UserData {
+  const UserData._();
 
-  const User.error(
-      {this.firstName = 'error',
-      this.secondName = 'error',
-      this.userPicUrl =
-          'https://cdn4.iconfinder.com/data/icons/smiley-vol-3-2/48/134-1024.png',
-      this.email = 'error',
-      this.password = 'error',
-      this.token = '',
-      this.cookie = ''});
+  const factory UserData(
+      {required String firstName,
+      required String secondName,
+      required String userPicUrl,
+      required String email,
+      required String password,
+      required String token,
+      required String cookie}) = _UserData;
+
+  const factory UserData.error(
+      [@Default('error') String firstName,
+      @Default('error') String secondName,
+      @Default('error') String userPicUrl,
+      @Default('error') String email,
+      @Default('error') String password,
+      @Default('') String token,
+      @Default('') String cookie]) = UserDataError;
+
+  const factory UserData.empty(
+      [@Default('null') String firstName,
+      @Default('null') String secondName,
+      @Default('null') String userPicUrl,
+      @Default('null') String email,
+      @Default('null') String password,
+      @Default('') String token,
+      @Default('') String cookie]) = UserDataEmpty;
 
   @override
   String toString() {
-    return 'User{\n'
+    return 'UserData{\n'
         'firstName: $firstName,\n'
         'secondName: $secondName,\n'
         'userPicUrl ${userPicUrl.substring(0, 10)},\n'
@@ -51,15 +59,16 @@ class User {
   }
 }
 
-class UserNotifier extends AsyncNotifier<User> {
+@riverpod
+class User extends _$User {
   Client client = Client();
 
   @override
-  FutureOr<User> build() async {
+  FutureOr<UserData> build() async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
 
     if (isUserAuthorized()) {
-      return User(
+      return UserData(
           // TODO(server): сделать запросы firstName, secondName и userPicUrl к серверу
           firstName: 'firstName',
           secondName: 'secondName',
@@ -80,7 +89,7 @@ class UserNotifier extends AsyncNotifier<User> {
           debugPrintStack(stackTrace: stackTrace);
         }
       }
-      return const User.error();
+      return const UserData.error();
     }
   }
 
@@ -160,7 +169,7 @@ class UserNotifier extends AsyncNotifier<User> {
 
   void logout() {
     _updateSharedPrefs(token: null, cookie: null);
-    state = const AsyncData(User.error());
+    state = const AsyncData(UserData.empty());
   }
 
   Future<void> createGroup(String groupName) async {
@@ -244,7 +253,7 @@ class UserNotifier extends AsyncNotifier<User> {
       String? password,
       String? token,
       String? cookie}) {
-    state = AsyncData(User(
+    state = AsyncData(UserData(
       firstName: firstName ?? state.value!.firstName,
       secondName: secondName ?? state.value!.secondName,
       userPicUrl: userPicUrl ?? state.value!.userPicUrl,
@@ -269,6 +278,3 @@ class UserNotifier extends AsyncNotifier<User> {
     }
   }
 }
-
-final userProvider =
-    AsyncNotifierProvider<UserNotifier, User>(UserNotifier.new);

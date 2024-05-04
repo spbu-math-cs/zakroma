@@ -9,24 +9,8 @@ import 'package:zakroma_frontend/data_cls/user.dart';
 
 import 'diet_test.mocks.dart';
 
-class MockUser extends Mock implements UserNotifier {}
-
-class Listener<T> extends Mock {
-  void call(T? previous, T next);
-}
-
 @GenerateMocks([http.Client])
 void main() {
-  ProviderContainer makeProviderContainer(MockUser userNotifier) {
-    final container = ProviderContainer(
-      overrides: [
-        userProvider.overrideWith(() => userNotifier),
-      ],
-    );
-    addTearDown(container.dispose);
-    return container;
-  }
-
   group('Personal diet only', () {
     test('Personal diet empty', () async {
       // TODO(test): https://docs.flutter.dev/testing/overview#widget-tests
