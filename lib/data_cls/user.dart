@@ -59,7 +59,7 @@ class UserData with _$UserData {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class User extends _$User {
   Client client = Client();
 
@@ -78,19 +78,15 @@ class User extends _$User {
           password: 'password',
           token: prefs.getString('token')!,
           cookie: prefs.getString('cookie')!);
-    } else {
-      try {
-        await authorize(
-            prefs.getString('email')!, prefs.getString('password')!);
-        return state.value!;
-      } catch (e, stackTrace) {
-        if (e.toString() != 'Null check operator used on a null value') {
-          debugPrint(e.toString());
-          debugPrintStack(stackTrace: stackTrace);
-        }
-      }
-      return const UserData.error();
     }
+    return const UserData.error();
+  }
+
+  UserData getUser() {
+    if (state.asData == null) {
+      throw Exception('Пользователь не авторизован');
+    }
+    return state.asData!.value;
   }
 
   bool isUserAuthorized() {
@@ -103,7 +99,7 @@ class User extends _$User {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
     final response = await client.post(makeUri('auth/login'),
         body: jsonEncode({'email': email, 'password': password}),
-        headers: makeHeader(null, prefs.getString('cookie')));
+        headers: makeHeader());
     switch (response.statusCode) {
       case 200:
         break;
@@ -135,8 +131,9 @@ class User extends _$User {
       token: prefs.getString('token'),
       cookie: prefs.getString('cookie'),
     );
-    if (prefs.getString('email') == 'gosling@yandex.ru') {
+    if (email == 'gosling@yandex.ru') {
       // TODO(tape): убрать
+      debugPrint('DEBUG: it\'s Ryan Gosling in the flesh!!!');
       switchCurrentGroup(
           '997fb7e3e1a7b2a5d70ff1f9ecb7d011466b3c26e9e40f4886769274999c628a');
     }

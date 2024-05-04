@@ -101,8 +101,6 @@ class HomePage extends ConsumerWidget {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
-                                // TODO(tape): убрать заполнение корзины
-                                _addIngredients(ref);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const CartPage()));
                               },
@@ -405,20 +403,6 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  // TODO(tape): убрать
-  void _addIngredients(WidgetRef ref) {
-    final cart = ref.read(cartProvider.notifier);
-    cart.add(
-        const Ingredient(id: 0, name: 'огурцы', marketName: 'огурцы свежие'),
-        1);
-    cart.add(
-        const Ingredient(id: 0, name: 'помидоры', marketName: 'помидоры'), 1);
-    cart.add(
-        const Ingredient(
-            id: 0, name: 'лук репчатый', marketName: 'лук репчатый'),
-        1);
   }
 }
 

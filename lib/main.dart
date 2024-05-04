@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
@@ -25,8 +26,6 @@ final sharedPreferencesProvider =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await SharedPreferences.getInstance();
-  final screenWidth =
-      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
   runApp(ProviderScope(overrides: [
     sharedPreferencesProvider.overrideWithValue(preferences),
   ], child: const MainPage()));

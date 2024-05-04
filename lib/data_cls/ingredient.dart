@@ -18,9 +18,9 @@ class Ingredient with _$Ingredient {
 
       /// Название продукта на торговой площадке.
       ///
-      /// Используется при заказе доставки данного продукта
-      required String marketName}) = _Ingredient;
+      /// Используется при заказе доставки данного продукта.
+      @JsonKey(name: 'market-name') required String marketName}) = _Ingredient;
 
-  factory Ingredient.fromJson(Map<String, Object?> json) =>
+  factory Ingredient.fromJson(Map<String, dynamic> json) =>
       _$IngredientFromJson(json);
 }

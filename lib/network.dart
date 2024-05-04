@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 // TODO(server): по готовности сервера заменить на адрес сервера
-const serverAddress = 'http://10.0.2.2:8080';
+const serverAddress = 'http://192.168.0.103:8080';
 
 http.Client client = http.Client();
 
@@ -23,16 +24,28 @@ Map<String, String> makeHeader([String? token, String? cookie]) {
   return result;
 }
 
-Map<String, dynamic>? processResponse(http.Response response) {
+List<Map<String, dynamic>> processResponse(http.Response response) {
+  // debugPrint('DEBUG: statusCode = ${response.statusCode.toString()}');
+  // debugPrint('DEBUG: body = ${response.body}');
   switch (response.statusCode) {
     case 200:
-      return response.body != 'null'
-          ? jsonDecode(response.body) as Map<String, dynamic>
-          : null;
+      final body = response.body;
+      if (body.isEmpty || body == 'null') {
+        return [];
+      } else {
+        try {
+          final entries = jsonDecode(response.body) as List<dynamic>;
+          return entries.map((e) => e as Map<String, dynamic>).toList();
+        } catch (e) {
+          return [jsonDecode(response.body) as Map<String, dynamic>];
+        }
+      }
     case 401:
       throw Exception('Пользователь не авторизован');
     case 400:
       throw Exception('Некорректный запрос');
+    case 404:
+      throw Exception('Страница не найдена');
     case 500:
       throw Exception('Внутренняя ошибка на сервере');
     default:

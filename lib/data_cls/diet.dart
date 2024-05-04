@@ -74,18 +74,15 @@ class Diets extends _$Diets {
 
   @override
   FutureOr<Pair<Diet, Diet?>> build() async {
-    // TODO(server): запрос к бэку при инициализации
-    final user = ref.read(userProvider).asData?.value;
-    if (user == null) {
-      throw Exception('Пользователь не авторизован');
-    }
+    final user = ref.watch(userProvider.notifier).getUser();
     try {
       var json = processResponse(await client.get(makeUri('api/diets/personal'),
           headers: makeHeader(user.token, user.cookie)));
-      final personalDiet = Diet.fromJson(json!);
+      final personalDiet = Diet.fromJson(json.first);
       json = processResponse(await client.get(makeUri('api/diets/family'),
           headers: makeHeader(user.token, user.cookie)));
-      final familyDiet = json != null ? Diet.fromJson(json) : null;
+      final familyDiet =
+          json.firstOrNull != null ? Diet.fromJson(json.first) : null;
       return Pair(personalDiet, familyDiet);
     } catch (error) {
       // TODO(tape): убрать заглушки
@@ -138,10 +135,7 @@ class Diets extends _$Diets {
     }
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final user = ref.read(userProvider).asData?.value;
-      if (user == null) {
-        throw Exception('Пользователь не авторизован');
-      }
+      final user = ref.read(userProvider.notifier).getUser();
       processResponse(
         await client.patch(makeUri('api/diets/name'),
             headers: makeHeader(user.token, user.cookie),

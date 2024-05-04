@@ -9,11 +9,11 @@ import '../constants.dart';
 import '../data_cls/cart.dart';
 import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';
-import '../utility/styled_headline.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
+import '../utility/styled_headline.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
@@ -39,77 +39,73 @@ class _CartPageState extends ConsumerState<CartPage> {
     return CustomScaffold(
       title: 'Корзина',
       body: RRSurface(
-          child: AsyncBuilder(
-              asyncValue: ref.watch(cartProvider),
-              builder: (cart) {
-                return Stack(children: [
-                  FlatList(
-                      childHeight: constants.paddingUnit * 12,
-                      separator: FlatListSeparator.rrBorder,
-                      scrollController: scrollController,
-                      children: List<Widget>.generate(
-                          cart.length,
-                          (index) =>
-                              IngredientTile(cart.keys.elementAt(index)))),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      height: constants.paddingUnit * 8,
-                      child: AnimatedSlide(
-                        offset: orderButtonVisible
-                            ? Offset.zero
-                            : const Offset(0, 3),
-                        duration: Constants.dAnimationDuration,
-                        child: RRButton(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                        title: const Text('Внимание!'),
-                                        content: const Text(
-                                            'Вы будете перенаправлены в приложение Яндекс для оформления заказа продуктов.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Назад'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              await Clipboard.setData(ClipboardData(
-                                                  text:
-                                                      'Закажи в лавке ${cart.entries.expand((element) => [
-                                                            "${element.key.marketName} ${cart[element.key]} штуки"
-                                                          ]).join(', ')}.'));
-                                              await LaunchApp.openApp(
-                                                  androidPackageName:
-                                                      'com.yandex.searchapp',
-                                                  iosUrlScheme:
-                                                      'shortcuts://run-shortcut?name=яндекс',
-                                                  appStoreLink:
-                                                      'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
-                                                  openStore: true);
-                                            },
-                                            child: const Text('Продолжить'),
-                                          ),
-                                        ],
-                                      ));
-                            },
-                            borderRadius: constants.dInnerRadius,
-                            padding: constants.dBlockPadding,
-                            child: Text(
-                              'Перейти к оформлению',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            )),
-                      ),
-                    ),
-                  )
-                ]);
-              })),
+          child: Stack(children: [
+        AsyncBuilder(
+            asyncValue: ref.watch(cartProvider),
+            builder: (cart) => FlatList(
+                childHeight: constants.paddingUnit * 12,
+                separator: FlatListSeparator.rrBorder,
+                scrollController: scrollController,
+                children: List<Widget>.generate(cart.length,
+                    (index) => IngredientTile(cart.keys.elementAt(index))))),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox(
+            height: constants.paddingUnit * 8,
+            child: AnimatedSlide(
+              offset: orderButtonVisible ? Offset.zero : const Offset(0, 3),
+              duration: Constants.dAnimationDuration,
+              child: RRButton(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: const Text('Внимание!'),
+                              content: const Text(
+                                  'Вы будете перенаправлены в приложение Яндекс для оформления заказа продуктов.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Назад'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final cart =
+                                        ref.read(cartProvider).asData!.value;
+                                    await Clipboard.setData(ClipboardData(
+                                        text:
+                                            'Закажи в лавке ${cart.entries.expand((element) => [
+                                                  '${element.key.marketName} ${cart[element.key]} штук'
+                                                ]).join(', ')}.'));
+                                    await LaunchApp.openApp(
+                                        androidPackageName:
+                                            'com.yandex.searchapp',
+                                        iosUrlScheme:
+                                            'shortcuts://run-shortcut?name=яндекс',
+                                        appStoreLink:
+                                            'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
+                                        openStore: true);
+                                  },
+                                  child: const Text('Продолжить'),
+                                ),
+                              ],
+                            ));
+                  },
+                  borderRadius: constants.dInnerRadius,
+                  padding: constants.dBlockPadding,
+                  child: Text(
+                    'Перейти к оформлению',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  )),
+            ),
+          ),
+        )
+      ])),
       bottomNavigationBar: FunctionalBottomBar(
         selectedIndex: -1, // никогда не хотим выделять никакую кнопку
         destinations: [
@@ -153,8 +149,8 @@ class IngredientTile extends ConsumerWidget {
         children: [
           // Миниатюра продукта
           Expanded(
-              child: Image.asset(
-            'assets/images/${ingredient.name}.jpeg',
+              child: Image.network(
+            'https://editorialge.com/wp-content/uploads/2023/07/Kencore-fashion.jpg',
             fit: BoxFit.fill,
           )),
           // Информация о продукте и кнопки для изменения

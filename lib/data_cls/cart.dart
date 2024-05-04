@@ -2,36 +2,45 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/network.dart';
 
 import 'ingredient.dart';
 
 part 'cart.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Cart extends _$Cart {
   @override
   FutureOr<Map<Ingredient, int>> build() async {
-    // TODO(server): подгрузить список продуктов в корзине
-    return <Ingredient, int>{};
+    final user = ref.watch(userProvider.notifier).getUser();
+    debugPrint('DEBUG: api/groups/cart');
+    final json = processResponse(await client.get(makeUri('api/groups/cart'),
+        headers: makeHeader(user.token, user.cookie)));
+    return {
+      for (var el in json)
+        Ingredient.fromJson({
+          'id': el['product-id'],
+          'name': el['name'],
+          'market-name': el[
+              'name'] // TODO(back): изменить на market-name как только подоспеет бэк
+        }): el['amount']
+    };
   }
-
-  // Map<Ingredient, int> get map => state;
-  //
-  // List<Ingredient> get ingredients => state.keys.toList();
-  //
-  // int get ingredientsCount => state.keys.length;
 
   Future<void> add(Ingredient ingredient, int amount) async {
     assert(amount > 0);
+    final user = ref.watch(userProvider.notifier).getUser();
     if (state.asData == null) {
       return;
     }
     final previousValue = state.asData!.value;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      processResponse(await client.patch(makeUri('api/groups/cart/add'),
-          body: jsonEncode({'product-id': ingredient.id, 'amount': amount})));
+      debugPrint('DEBUG: api/groups/cart/add');
+      processResponse(await client.post(makeUri('api/groups/cart/add'),
+          body: jsonEncode({'product-id': ingredient.id, 'amount': amount}),
+          headers: makeHeader(user.token, user.cookie)));
       previousValue[ingredient] = amount;
       return previousValue;
     });
@@ -42,11 +51,14 @@ class Cart extends _$Cart {
     if (state.asData == null) {
       return;
     }
+    final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      processResponse(await client.patch(makeUri('api/groups/cart/remove'),
-          body: jsonEncode({'product-id': ingredient.id})));
+      debugPrint('DEBUG: api/groups/cart/remove');
+      processResponse(await client.post(makeUri('api/groups/cart/remove'),
+          body: jsonEncode({'product-id': ingredient.id}),
+          headers: makeHeader(user.token, user.cookie)));
       previousValue.remove(ingredient);
       return previousValue;
     });
@@ -56,6 +68,7 @@ class Cart extends _$Cart {
     if (state.asData == null) {
       return;
     }
+    final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
     if (previousValue[ingredient] == 1) {
       await showDialog(
@@ -81,11 +94,13 @@ class Cart extends _$Cart {
     } else {
       state = const AsyncValue.loading();
       state = await AsyncValue.guard(() async {
+        debugPrint('DEBUG: api/groups/cart/change (decrement)');
         processResponse(await client.patch(makeUri('api/groups/cart/change'),
-            body: {
+            body: jsonEncode({
               'product-id': ingredient.id,
               'amount': previousValue[ingredient]! - 1
-            }));
+            }),
+            headers: makeHeader(user.token, user.cookie)));
         previousValue[ingredient] = previousValue[ingredient]! - 1;
         return previousValue;
       });
@@ -96,14 +111,17 @@ class Cart extends _$Cart {
     if (state.asData == null) {
       return;
     }
+    final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      debugPrint('DEBUG: api/groups/cart/change (increment)');
       processResponse(await client.patch(makeUri('api/groups/cart/change'),
-          body: {
+          body: jsonEncode({
             'product-id': ingredient.id,
             'amount': previousValue[ingredient]! + 1
-          }));
+          }),
+          headers: makeHeader(user.token, user.cookie)));
       previousValue[ingredient] = previousValue[ingredient]! + 1;
       return previousValue;
     });
