@@ -11,6 +11,26 @@ import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
+List<Gag> gagList = [
+  Gag(date: '2 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
+  Gag(date: '3 мая', soloRatio: [], familyRatio: []),
+  Gag(date: '4 мая', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(
+      date: '5 мая',
+      soloRatio: ['Завтрак', 'Ужин'],
+      familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '6 мая', soloRatio: ['Ужин'], familyRatio: [])
+  // Добавьте сюда остальные объекты
+];
+
+class Gag {
+  String date;
+  List<String> soloRatio;
+  List<String> familyRatio;
+
+  Gag({required this.date, required this.soloRatio, required this.familyRatio});
+}
+
 class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});
 
@@ -20,21 +40,56 @@ class DietListPage extends ConsumerWidget {
     final asyncDiets = ref.watch(dietsProvider);
 
     return CustomScaffold(
-      title: 'Питание',
-      body: RRSurface(
-        child: Padding(
-          padding: EdgeInsets.all(constants.paddingUnit * 2),
-          child: AsyncBuilder(
-              asyncValue: asyncDiets,
-              builder: (diets) {
-                return ListView.builder(
-                    itemCount: diets.length,
-                    itemBuilder: (context, index) =>
-                        DietTile(diet: diets[index]));
-              }),
-        ),
-      ),
-    );
+        title: 'Питание',
+        body: RRSurface(
+            child: Padding(
+                padding: EdgeInsets.all(constants.paddingUnit * 2),
+                child: ListView.builder(
+                    itemCount: gagList.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                          padding: EdgeInsets.all(constants.paddingUnit / 2),
+                          margin: EdgeInsets.only(
+                              top: constants.paddingUnit / 2,
+                              bottom: constants.paddingUnit / 2),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).colorScheme.surface,
+                                width: constants.borderWidth),
+                            borderRadius:
+                                BorderRadius.circular(constants.dInnerRadius),
+                          ),
+                          child: ListTile(
+                            title: StyledHeadline(
+                                text: gagList[index].date,
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      height: 1,
+                                      leadingDistribution:
+                                          TextLeadingDistribution.proportional,
+                                    )),
+                            // subtitle: Text(yourObjectList[index].solo_ratio),
+                            onTap: () {
+                              // Действие при нажатии на элемент списка
+                            },
+                            trailing: gagList[index].familyRatio.isEmpty &&
+                                    gagList[index].soloRatio.isEmpty
+                                ? SizedBox(
+                                    height: double.infinity,
+                                    child: TextButton(
+                                        child: const Icon(
+                                          Icons.add_circle_outline,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          // Обработчик нажатия на кнопку
+                                        }))
+                                : null,
+                          ));
+                    }))));
   }
 }
 
