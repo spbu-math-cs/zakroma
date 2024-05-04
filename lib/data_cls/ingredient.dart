@@ -8,6 +8,11 @@ part 'ingredient.g.dart';
 class Ingredient with _$Ingredient {
   const factory Ingredient(
       {
+      /// Id продукта.
+      ///
+      /// Используется в запросах
+      required int id,
+
       /// Название продукта.
       required String name,
 
