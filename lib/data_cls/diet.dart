@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:http/http.dart' as http;
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
 
@@ -11,60 +12,40 @@ import '../data_cls/dish.dart';
 import '../network.dart';
 import '../utility/pair.dart';
 
-@immutable
-class Diet {
-  /// Хэш рациона, равен хэшу группы, которая владеет этим рационом.
-  final String hash;
+part 'diet.freezed.dart';
+part 'diet.g.dart';
 
-  /// Имя рациона: по умолчанию «Личный рацион» для личной диеты,
-  /// «Групповой рацион» для групповой.
-  final String name;
+@Freezed(toJson: false)
+class Diet with _$Diet {
+  const Diet._();
+  // TODO(tech): сделать days словарём с ключом — номером недели,
+  // значением — списком из 7 day-diets соответствующей недели
+  const factory Diet(
+      {
+      /// Хэш рациона.
+      ///
+      /// Равен хэшу группы, которая владеет этим рационом
+      // ignore: invalid_annotation_target
+      @JsonKey(name: 'hash') required String hash,
 
-  /// Флаг личного рациона: true, если рацион личный, false иначе.
-  final bool isPersonal;
+      /// Имя рациона: по умолчанию «Личный рацион» для личной диеты,
+      /// «Групповой рацион» для групповой.
+      // ignore: invalid_annotation_target
+      @JsonKey(name: 'name') required String name,
 
-  /// Текущая неделя в данном рационе: список из 7 дней DayDiet.
-  /// Какие-то из дней могут быть пустыми, то есть не содержать приёмов пищи.
-  final List<DayDiet> days;
+      /// Флаг личного рациона: true, если рацион личный, false иначе.
+      // ignore: invalid_annotation_target
+      @JsonKey(name: 'is-personal') required bool isPersonal,
 
-  const Diet(
-      {required this.hash,
-      required this.name,
-      required this.isPersonal,
-      required this.days})
-      : assert(days.length == 7);
+      /// Текущая неделя в данном рационе: список из 7 дней DayDiet.
+      ///
+      /// Какие-то из дней могут быть пустыми, то есть не содержать приёмов пищи
+      // ignore: invalid_annotation_target
+      @JsonKey(name: 'day-diets') required List<DayDiet> days}) = _Diet;
 
-  factory Diet.fromJson(Map<String, dynamic> map) {
-    switch (map) {
-      case {
-          'hash': String hash,
-          'name': String name,
-          'is-personal': bool isPersonal,
-          'day-diets': List<dynamic> days,
-        }:
-        return Diet(
-            hash: hash,
-            name: name,
-            isPersonal: isPersonal,
-            days: List<DayDiet>.from(
-                days.map((e) => DayDiet.fromJson(e as Map<String, dynamic>))));
-      case _:
-        throw FormatException('Failed to parse Diet from $map');
-    }
-  }
+  factory Diet.fromJson(Map<String, dynamic> json) => _$DietFromJson(json);
 
   DayDiet getDay(int index) => days[index];
-
-  Diet copyWith(
-          {String? hash,
-          String? name,
-          bool? isPersonal,
-          List<DayDiet>? days}) =>
-      Diet(
-          hash: hash ?? this.hash,
-          name: name ?? this.name,
-          isPersonal: isPersonal ?? this.isPersonal,
-          days: days ?? this.days);
 }
 
 extension GetDiet on Pair<Diet, Diet?> {
@@ -87,7 +68,8 @@ extension Update on Pair<Diet, Diet?> {
 /// Хранит в себе пару рационов (личный, групповой?).
 ///
 /// Если пользователь не состоит в группе, групповой рацион будет null.
-class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
+@riverpod
+class Diets extends _$Diets {
   http.Client client = http.Client();
 
   @override
@@ -116,16 +98,17 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
                   7,
                   (index) => DayDiet(index: index, meals: const [
                         Meal(
-                            mealHash: 'meal-0',
+                            hash: 'meal-0',
                             name: 'Завтрак',
                             index: 0,
                             dishes: [
                               Dish(
-                                  id: 'dish-0',
+                                  hash: 'dish-0',
                                   name: 'Овсянка',
-                                  recipe: [],
+                                  recipe: '',
                                   tags: [],
-                                  ingredients: {})
+                                  ingredients: {},
+                                  imageUrl: '')
                             ])
                       ]))),
           Diet(
@@ -135,18 +118,15 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
               days: List<DayDiet>.generate(
                   7,
                   (index) => DayDiet(index: index, meals: const [
-                        Meal(
-                            mealHash: 'meal-1',
-                            name: 'Обед',
-                            index: 0,
-                            dishes: [
-                              Dish(
-                                  id: 'dish-1',
-                                  name: 'Борщ',
-                                  recipe: [],
-                                  tags: [],
-                                  ingredients: {})
-                            ])
+                        Meal(hash: 'meal-1', name: 'Обед', index: 0, dishes: [
+                          Dish(
+                              hash: 'dish-1',
+                              name: 'Борщ',
+                              recipe: '',
+                              imageUrl: '',
+                              tags: [],
+                              ingredients: {})
+                        ])
                       ]))));
     }
   }
@@ -165,7 +145,7 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
       processResponse(
         await client.patch(makeUri('api/diets/name'),
             headers: makeHeader(user.token, user.cookie),
-            body: {'is-personal': isPersonal, 'name': newName}),
+            body: jsonEncode({'is-personal': isPersonal, 'name': newName})),
       );
       return state.value!.update(Diet(
           hash: diet.hash,
@@ -185,12 +165,3 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
     return const AsyncLoading();
   }
 }
-
-extension DietGetter on List<Diet> {
-  Future<Diet?> getDietByHash(String dietHash) async {
-    return where((element) => element.hash == dietHash).first;
-  }
-}
-
-final dietsProvider =
-    AsyncNotifierProvider<DietNotifier, Pair<Diet, Diet?>>(DietNotifier.new);

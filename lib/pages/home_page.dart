@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
 import '../constants.dart';
 import '../data_cls/cart.dart';
 import '../data_cls/diet.dart';
-import '../data_cls/group.dart';
 import '../data_cls/ingredient.dart';
 import '../data_cls/meal.dart';
 import '../utility/custom_scaffold.dart';
@@ -167,13 +165,7 @@ class HomePage extends ConsumerWidget {
                             return todayMeals.isEmpty
                                 ? Center(
                                     child: TextButton.icon(
-                                        onPressed: () {
-                                          Meal.showAddMealDialog(
-                                              context,
-                                              ref,
-                                              currentDiet.hash,
-                                              DateTime.now().weekday - 1);
-                                        },
+                                        onPressed: () {},
                                         style: TextButton.styleFrom(
                                             // padding: EdgeInsets.zero
                                             ),
@@ -418,16 +410,10 @@ class HomePage extends ConsumerWidget {
 
   // TODO(tape): убрать
   void _addIngredients(CartNotifier cart) {
-    cart.add(const Ingredient(
-        name: 'огурцы',
-        marketName: 'огурцы свежие',
-        unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'помидоры', marketName: 'помидоры', unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'лук репчатый',
-        marketName: 'лук репчатый',
-        unit: IngredientUnit.grams));
+    cart.add(const Ingredient(name: 'огурцы', marketName: 'огурцы свежие'));
+    cart.add(const Ingredient(name: 'помидоры', marketName: 'помидоры'));
+    cart.add(
+        const Ingredient(name: 'лук репчатый', marketName: 'лук репчатый'));
   }
 }
 

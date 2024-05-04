@@ -9,7 +9,7 @@ http.Client client = http.Client();
 
 Uri makeUri(String request) => Uri.parse('$serverAddress/$request');
 
-Map<String, String> makeHeader(String? token, String? cookie) {
+Map<String, String> makeHeader([String? token, String? cookie]) {
   Map<String, String> result = {
     'content-type': 'application/json',
     'accept': 'application/json',

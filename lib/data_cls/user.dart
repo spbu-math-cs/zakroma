@@ -85,7 +85,7 @@ class UserNotifier extends AsyncNotifier<User> {
   Future<void> authorize(String email, String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
     final response = await client.post(makeUri('auth/login'),
-        body: {'email': email, 'password': password},
+        body: jsonEncode({'email': email, 'password': password}),
         headers: makeHeader(null, prefs.getString('cookie')));
     switch (response.statusCode) {
       case 200:
@@ -131,14 +131,16 @@ class UserNotifier extends AsyncNotifier<User> {
   Future<void> register(String firstName, String secondName, String email,
       String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await client.post(makeUri('auth/register'), body: {
-      'firstName': firstName,
-      'secondName': secondName,
-      'email': email,
-      'password': password,
-      // TODO(design): при регистрации спрашивать дату рождения
-      'birth-date': '2023-12-12',
-    });
+    final response = await client.post(makeUri('auth/register'),
+        body: jsonEncode({
+          'firstName': firstName,
+          'secondName': secondName,
+          'email': email,
+          'password': password,
+          // TODO(design): при регистрации спрашивать дату рождения
+          'birth-date': '2023-12-12',
+        }),
+        headers: makeHeader());
     switch (response.statusCode) {
       case 200:
         break;
@@ -178,7 +180,7 @@ class UserNotifier extends AsyncNotifier<User> {
 
   Future<void> createGroup(String groupName) async {
     final response = await client.post(makeUri('api/groups/create'),
-        body: {'name': groupName},
+        body: jsonEncode({'name': groupName}),
         headers: makeHeader(
           state.value?.token,
           state.value?.cookie,
@@ -199,9 +201,7 @@ class UserNotifier extends AsyncNotifier<User> {
 
   Future<void> switchCurrentGroup(String groupHash) async {
     final response = await client.patch(makeUri('api/groups/change'),
-        body: {
-          'group-hash': groupHash,
-        },
+        body: jsonEncode({'group-hash': groupHash}),
         headers: makeHeader(state.value!.token!, state.value!.cookie!));
     switch (response.statusCode) {
       case 200:
