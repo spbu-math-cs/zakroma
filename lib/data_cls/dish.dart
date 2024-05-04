@@ -47,9 +47,7 @@ class Dish with _$Dish {
       /// Количество жиров на 100 гр/мл.
       @Default(0.0) double fats}) = _Dish;
 
-  factory Dish.fromJson(Map<String, dynamic> json) => dishFromJson(json);
-
-  static Dish dishFromJson(Map<String, dynamic> json) {
+  factory Dish.fromJson(Map<String, dynamic> json) {
     switch (json) {
       case {
           'hash': String hash,

@@ -5,7 +5,7 @@ import '../data_cls/meal.dart';
 part 'day_diet.freezed.dart';
 part 'day_diet.g.dart';
 
-@Freezed(toJson: false, fromJson: true)
+@Freezed(toJson: false)
 class DayDiet with _$DayDiet {
   @Assert('index >= 0 && index <= 6')
   const factory DayDiet(
