@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
+import 'package:zakroma_frontend/data_cls/ingredient.dart';
 
 import '../constants.dart';
 import '../data_cls/cart.dart';
-import '../data_cls/ingredient.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/flat_list.dart';
 import '../utility/navigation_bar.dart';
@@ -40,14 +39,19 @@ class _CartPageState extends ConsumerState<CartPage> {
       title: 'Корзина',
       body: RRSurface(
           child: Stack(children: [
-        AsyncBuilder(
-            asyncValue: ref.watch(cartProvider),
-            builder: (cart) => FlatList(
-                childHeight: constants.paddingUnit * 12,
-                separator: FlatListSeparator.rrBorder,
-                scrollController: scrollController,
-                children: List<Widget>.generate(cart.length,
-                    (index) => IngredientTile(cart.keys.elementAt(index))))),
+        FutureBuilder(
+            future: ref.watch(cartProvider.selectAsync((data) => data.length)),
+            builder: (_, snapshot) {
+              if (!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              }
+              return FlatList(
+                  childHeight: constants.paddingUnit * 12,
+                  separator: FlatListSeparator.rrBorder,
+                  scrollController: scrollController,
+                  children: List<Widget>.generate(
+                      snapshot.data!, (index) => IngredientTile(index)));
+            }),
         Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox(
@@ -136,23 +140,30 @@ class _CartPageState extends ConsumerState<CartPage> {
 }
 
 class IngredientTile extends ConsumerWidget {
-  final Ingredient ingredient;
+  final int ingredientIndex;
 
-  const IngredientTile(this.ingredient, {super.key});
+  const IngredientTile(this.ingredientIndex, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.read(constantsProvider);
+    final constants = ref.watch(constantsProvider);
+    final ingredient =
+        ref.watch(cartProvider).value!.keys.elementAt(ingredientIndex);
 
     return Center(
       child: Row(
         children: [
           // Миниатюра продукта
-          Expanded(
-              child: Image.network(
-            'https://editorialge.com/wp-content/uploads/2023/07/Kencore-fashion.jpg',
-            fit: BoxFit.fill,
-          )),
+          FutureBuilder(
+              future: ref.watch(cartProvider.selectAsync(
+                  (data) => data.keys.elementAt(ingredientIndex).imageUrl)),
+              builder: (_, snapshot) => snapshot.hasData
+                  ? Expanded(
+                      child: Image.network(
+                      snapshot.requireData,
+                      fit: BoxFit.fill,
+                    ))
+                  : const CircularProgressIndicator()),
           // Информация о продукте и кнопки для изменения
           Expanded(
               flex: 3,
@@ -163,9 +174,15 @@ class IngredientTile extends ConsumerWidget {
                     // Название блюда
                     Align(
                       alignment: Alignment.topLeft,
-                      child: StyledHeadline(
-                          text: ingredient.name.capitalize(),
-                          textStyle: Theme.of(context).textTheme.titleLarge),
+                      child: FutureBuilder(
+                          future: ref.watch(cartProvider.selectAsync((data) =>
+                              data.keys.elementAt(ingredientIndex).marketName)),
+                          builder: (context, snapshot) => snapshot.hasData
+                              ? StyledHeadline(
+                                  text: snapshot.requireData.capitalize(),
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleLarge)
+                              : const CircularProgressIndicator()),
                     ),
                     // Кнопки для изменения количества
                     Align(
@@ -190,16 +207,19 @@ class IngredientTile extends ConsumerWidget {
                                   ),
                                 )),
                             // Счётчик, показывающий текущее количество
-                            AsyncBuilder(
-                                asyncValue: ref.watch(cartProvider),
-                                builder: (cart) {
-                                  return SizedBox(
-                                      width: 3 * constants.paddingUnit,
-                                      child: Center(
-                                        child:
-                                            Text(cart[ingredient].toString()),
-                                      ));
-                                }),
+                            SizedBox(
+                                width: 3 * constants.paddingUnit,
+                                child: Center(
+                                  child: FutureBuilder(
+                                      future: ref.watch(cartProvider
+                                          .selectAsync((data) => data.values
+                                              .elementAt(ingredientIndex))),
+                                      builder: (_, snapshot) => snapshot.hasData
+                                          ? Text(snapshot.requireData
+                                              .toString()
+                                              .toString())
+                                          : const CircularProgressIndicator()),
+                                )),
                             // Кнопка «уменьшить количество» (aka минус)
                             RRButton(
                                 onTap: () => ref

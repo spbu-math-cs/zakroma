@@ -13,6 +13,12 @@ class Ingredient with _$Ingredient {
       /// Используется в запросах
       required int id,
 
+      /// Ссылка на картинку продукта.
+      // TODO(hehe): поменять картинку по умолчанию
+      @Default(
+          'https://editorialge.com/wp-content/uploads/2023/07/Kencore-fashion.jpg')
+      String imageUrl,
+
       /// Название продукта.
       required String name,
 

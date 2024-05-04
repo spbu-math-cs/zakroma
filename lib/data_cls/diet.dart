@@ -106,7 +106,16 @@ class Diets extends _$Diets {
                                   tags: [],
                                   ingredients: {},
                                   imageUrl: '')
-                            ])
+                            ]),
+                        Meal(hash: 'meal-2', name: 'Обед', index: 0, dishes: [
+                          Dish(
+                              hash: 'dish-2',
+                              name: 'Борщ',
+                              recipe: '',
+                              tags: [],
+                              ingredients: {},
+                              imageUrl: '')
+                        ]),
                       ]))),
           Diet(
               hash: '1',
