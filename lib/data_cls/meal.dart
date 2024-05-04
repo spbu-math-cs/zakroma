@@ -101,7 +101,7 @@ class Meal {
                         Navigator.of(context).pop();
                       }
                       ref.read(pathProvider.notifier).update((state) => state
-                          .copyWith(dayIndex: dayIndex, mealId: body['hash']));
+                          .copyWith(dayIndex: dayIndex, mealId: body!['hash']));
                       if (context.mounted) {
                         Navigator.push(
                             context,

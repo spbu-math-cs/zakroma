@@ -23,10 +23,12 @@ Map<String, String> makeHeader(String? token, String? cookie) {
   return result;
 }
 
-Map<String, dynamic> processResponse(http.Response response) {
+Map<String, dynamic>? processResponse(http.Response response) {
   switch (response.statusCode) {
     case 200:
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      return response.body != 'null'
+          ? jsonDecode(response.body) as Map<String, dynamic>
+          : null;
     case 401:
       throw Exception('Пользователь не авторизован');
     case 400:

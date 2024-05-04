@@ -97,46 +97,58 @@ class DietNotifier extends AsyncNotifier<Pair<Diet, Diet?>> {
     if (user == null) {
       throw Exception('Пользователь не авторизован');
     }
-    var diet = processResponse(await client.get(makeUri('api/diets/personal'),
-        headers: makeHeader(user.token, user.cookie)));
-    // TODO(tape): убрать заглушки
-    return Pair(
-        Diet(
-            hash: 'diet-0',
-            name: 'Личный рацион',
-            isPersonal: true,
-            days: List<DayDiet>.generate(
-                7,
-                (index) => DayDiet(index: index, meals: const [
-                      Meal(
-                          mealHash: 'meal-0',
-                          name: 'Завтрак',
-                          index: 0,
-                          dishes: [
-                            Dish(
-                                id: 'dish-0',
-                                name: 'Овсянка',
-                                recipe: [],
-                                tags: [],
-                                ingredients: {})
-                          ])
-                    ]))),
-        Diet(
-            hash: '1',
-            name: 'Семейный рацион',
-            isPersonal: false,
-            days: List<DayDiet>.generate(
-                7,
-                (index) => DayDiet(index: index, meals: const [
-                      Meal(mealHash: 'meal-1', name: 'Обед', index: 0, dishes: [
-                        Dish(
-                            id: 'dish-1',
-                            name: 'Борщ',
-                            recipe: [],
-                            tags: [],
-                            ingredients: {})
-                      ])
-                    ]))));
+    try {
+      var json = processResponse(await client.get(makeUri('api/diets/personal'),
+          headers: makeHeader(user.token, user.cookie)));
+      final personalDiet = Diet.fromJson(json!);
+      json = processResponse(await client.get(makeUri('api/diets/family'),
+          headers: makeHeader(user.token, user.cookie)));
+      final familyDiet = json != null ? Diet.fromJson(json) : null;
+      return Pair(personalDiet, familyDiet);
+    } catch (error) {
+      // TODO(tape): убрать заглушки
+      return Pair(
+          Diet(
+              hash: 'diet-0',
+              name: 'Личный рацион',
+              isPersonal: true,
+              days: List<DayDiet>.generate(
+                  7,
+                  (index) => DayDiet(index: index, meals: const [
+                        Meal(
+                            mealHash: 'meal-0',
+                            name: 'Завтрак',
+                            index: 0,
+                            dishes: [
+                              Dish(
+                                  id: 'dish-0',
+                                  name: 'Овсянка',
+                                  recipe: [],
+                                  tags: [],
+                                  ingredients: {})
+                            ])
+                      ]))),
+          Diet(
+              hash: '1',
+              name: 'Семейный рацион',
+              isPersonal: false,
+              days: List<DayDiet>.generate(
+                  7,
+                  (index) => DayDiet(index: index, meals: const [
+                        Meal(
+                            mealHash: 'meal-1',
+                            name: 'Обед',
+                            index: 0,
+                            dishes: [
+                              Dish(
+                                  id: 'dish-1',
+                                  name: 'Борщ',
+                                  recipe: [],
+                                  tags: [],
+                                  ingredients: {})
+                            ])
+                      ]))));
+    }
   }
 
   Future<void> rename(String newName, bool isPersonal) async {
