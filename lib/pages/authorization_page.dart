@@ -169,12 +169,9 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                                           ));
                                 }
                                 setState(() {
-                                  isAuthorized = ref
-                                      .watch(userProvider)
-                                      .maybeWhen(
-                                          data: (user) =>
-                                              AsyncData(user.isAuthorized),
-                                          orElse: () => const AsyncData(false));
+                                  isAuthorized = AsyncData(ref
+                                      .watch(userProvider.notifier)
+                                      .isUserAuthorized());
                                 });
                               }
                             },
