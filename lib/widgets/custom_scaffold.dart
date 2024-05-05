@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/constants.dart';
 
+import '../utility/constants.dart';
 import 'styled_headline.dart';
 
 class CustomScaffold extends ConsumerWidget {

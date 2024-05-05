@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/utility/network.dart';
 
+import '../data_cls/user.dart';
+import '../utility/network.dart';
 import 'ingredient.dart';
 
 part 'cart.g.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../widgets/custom_scaffold.dart';
 
 class StorePage extends ConsumerWidget {

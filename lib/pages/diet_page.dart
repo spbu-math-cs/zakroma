@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utility/constants.dart';
 import '../main.dart';
+import '../utility/constants.dart';
 
 class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});
