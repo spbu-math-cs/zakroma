@@ -106,6 +106,27 @@ class UserNotifier extends AsyncNotifier<User> {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
+    // TODO(idea): надо ли хранить email и password локально?
+    final responseName = await get(
+      'api/user/name', 
+      body['token'],
+      cookies
+          .firstWhere((element) => element.key == 'zakroma_session')
+          .value, 
+      );
+     switch (response.statusCode) {
+      case 200:
+        break;
+      case 401:
+        throw Exception('Неверный логин или пароль');
+      case 400:
+        throw Exception('Неверный запрос');
+      default:
+        throw Exception('Неизвестная ошибка');
+    } 
+    debugPrint('nameee = ' + responseName.body);
+    final bodyName = jsonDecode(responseName.body) as Map<String, dynamic>;
+    debugPrint('nameee = ' + bodyName.toString());
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
