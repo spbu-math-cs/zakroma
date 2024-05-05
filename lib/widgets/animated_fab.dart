@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../utility/constants.dart';
 
 class AnimatedFAB extends StatelessWidget {
   final String text;

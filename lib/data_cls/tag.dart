@@ -1,31 +1,24 @@
-// TODO(tech): написать класс для поиска блюд по тегам/категориям
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:flutter/cupertino.dart';
+part 'tag.freezed.dart';
+part 'tag.g.dart';
 
-@immutable
-class Tag {
-  final String name;
-  final Tag parent;
-  final List<Tag> children;
+@Freezed(toJson: false)
+class Tag with _$Tag {
+  const factory Tag(
+      {
+      /// Название тега.
+      required String name,
 
-  const Tag({required this.name, required this.parent, required this.children});
+      /// Родительский тег. Может быть пустым.
+      ///
+      /// Блюда, описываемые данным тегом, должны быть подмножеством блюд, описываемых [parent].
+      /// Пример: тег "Высококалорийное" является родителем тега "Хлебобулочное"
+      required String parent,
 
-  factory Tag.fromJson(Map<String, dynamic> map) {
-    // debugPrint('Tag.fromJson(${map.toString()})');
-    switch (map) {
-      case {
-          'name': String name,
-          'parent': Tag parent,
-          'children': List<dynamic> children,
-        }:
-        return Tag(
-            name: name,
-            parent: parent,
-            children: List<Tag>.from(
-                children.map((e) => Tag.fromJson(e as Map<String, dynamic>))));
-      case _:
-        debugPrint('DEBUG: $map');
-        throw UnimplementedError();
-    }
-  }
+      /// Список подтегов. Может быть пустым.
+      required List<Tag> children}) = _Tag;
+
+  factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 }

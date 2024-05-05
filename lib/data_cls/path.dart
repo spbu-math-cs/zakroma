@@ -1,31 +1,42 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-@immutable
-class Path {
-  final String? dietId, mealId, dishId;
-  final int? dayIndex;
+part 'path.freezed.dart';
+part 'path.g.dart';
 
-  const Path({
-    this.dietId,
-    this.dayIndex,
-    this.mealId,
-    this.dishId,
-  });
+@Freezed(toJson: false, fromJson: false)
+class PathData with _$PathData {
+  const factory PathData(
+      {
+      /// Хэш просматриваемой диеты.
+      ///
+      /// По умолчанию пустой.
+      @Default('') String dietHash,
 
-  Path copyWith({
-    String? dietId,
-    String? mealId,
-    String? dishId,
-    int? dayIndex,
-  }) {
-    return Path(
-      dietId: dietId ?? this.dietId,
-      dayIndex: dayIndex ?? this.dayIndex,
-      mealId: mealId ?? this.mealId,
-      dishId: dishId ?? this.dishId,
-    );
-  }
+      /// Номер просматриваемой недели.
+      ///
+      /// По умолчанию равен 1.
+      @Default(1) int weekIndex,
+
+      /// Хэш просматриваемого дня диеты.
+      ///
+      /// По умолчанию равен 1.
+      @Default(1) int dayIndex,
+
+      /// Хэш выбранного приёма пищи.
+      ///
+      /// По умолчанию пустой.
+      @Default('') String mealHash,
+
+      /// Хэш выбранного блюда.
+      ///
+      /// По умолчанию пустой.
+      @Default('') String dishHash}) = _PathData;
 }
 
-final pathProvider = StateProvider((ref) => const Path());
+@riverpod
+class Path extends _$Path {
+  @override
+  PathData build() => const PathData();
+}

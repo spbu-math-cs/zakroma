@@ -2,15 +2,15 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/constants.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
-import 'package:zakroma_frontend/utility/custom_scaffold.dart';
-import 'package:zakroma_frontend/utility/rr_buttons.dart';
+import 'package:zakroma_frontend/utility/constants.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
+import 'package:zakroma_frontend/widgets/custom_scaffold.dart';
+import 'package:zakroma_frontend/widgets/rr_buttons.dart';
 
 import '../data_cls/user.dart';
 import '../main.dart';
 import '../utility/pair.dart';
-import '../utility/styled_headline.dart';
+import '../widgets/styled_headline.dart';
 
 // Величина вертикального расширения поля ввода при некорректном вводе (в paddingUnit)
 const fieldExtension = 3;
@@ -169,12 +169,9 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
                                           ));
                                 }
                                 setState(() {
-                                  isAuthorized = ref
-                                      .watch(userProvider)
-                                      .maybeWhen(
-                                          data: (user) =>
-                                              AsyncData(user.isAuthorized),
-                                          orElse: () => const AsyncData(false));
+                                  isAuthorized = AsyncData(ref
+                                      .watch(userProvider.notifier)
+                                      .isUserAuthorized());
                                 });
                               }
                             },
@@ -290,7 +287,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               });
             }
           },
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_new),
           padding: EdgeInsets.zero,
         ),
       ),

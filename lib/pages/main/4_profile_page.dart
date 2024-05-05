@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
-import 'package:zakroma_frontend/utility/custom_scaffold.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
+import 'package:zakroma_frontend/widgets/custom_scaffold.dart';
 
-import '../../constants.dart';
+import '../../utility/constants.dart';
 import '../../main.dart';
-import '../../utility/flat_list.dart';
-import '../../utility/rr_surface.dart';
-import '../../utility/styled_headline.dart';
+import '../../widgets/flat_list.dart';
+import '../../widgets/rr_surface.dart';
+import '../../widgets/styled_headline.dart';
 
 // TODO(design): переписать в новом дизайне
 
@@ -56,12 +55,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 BorderRadius.circular(constants.dInnerRadius),
                             clipBehavior: Clip.antiAlias,
                             elevation: constants.dElevation,
-                            child: SizedBox.square(
-                              dimension: constants.paddingUnit * 12,
-                              child: Image.asset(
-                                'assets/images/ryan_gosling.jpeg',
-                              ),
-                            ),
+                            child: FutureBuilder(
+                                future: ref.watch(userProvider
+                                    .selectAsync((user) => user.userPicUrl)),
+                                builder: (_, userPicUrl) => userPicUrl.hasData
+                                    ? SizedBox.square(
+                                        dimension: constants.paddingUnit * 12,
+                                        child: Image.network(
+                                          userPicUrl.requireData,
+                                          cacheHeight:
+                                              (constants.paddingUnit * 12)
+                                                  .ceil(),
+                                          cacheWidth:
+                                              (constants.paddingUnit * 12)
+                                                  .ceil(),
+                                        ),
+                                      )
+                                    : const CircularProgressIndicator()),
                           ),
                         ),
                       )),
@@ -76,7 +86,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 asyncValue: ref.read(userProvider),
                                 builder: (user) => StyledHeadline(
                                     text:
-                                        '${user.firstName ?? ''} ${(user.secondName ?? '')[0]}.',
+                                        '${user.firstName} ${(user.secondName)[0]}.',
                                     textStyle: Theme.of(context)
                                         .textTheme
                                         .headlineSmall)),
@@ -95,11 +105,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       Expanded(
                           child: IconButton(
                               onPressed: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.setBool('isAuthorized', false);
-                                // TODO(tech): сделать метод user.logout, в котором
-                                //  очистить все sharedPreferences при выходе
+                                ref.read(userProvider.notifier).logout();
                                 if (!context.mounted) return;
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(

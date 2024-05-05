@@ -2,7 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 
 class RRButton extends ConsumerWidget {
   final Color? backgroundColor;

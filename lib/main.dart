@@ -3,27 +3,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/pages/cart_page.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
+
+import 'utility/constants.dart';
+import 'utility/shared_preferences.dart';
+import 'pages/authorization_page.dart';
 import 'package:zakroma_frontend/pages/main/3_market_page.dart';
 import 'package:zakroma_frontend/pages/main/1_store_page.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
-
-import 'constants.dart';
-import 'pages/authorization_page.dart';
 import 'pages/main/2_diets_page.dart';
 import 'pages/main/0_home_page.dart';
 import 'pages/main/4_profile_page.dart';
-import 'themes.dart' as themes;
-import 'utility/custom_scaffold.dart';
-import 'utility/navigation_bar.dart';
+import 'utility/themes.dart' as themes;
+import 'widgets/custom_scaffold.dart';
+import 'widgets/navigation_bar.dart';
 
 // TODO(func): регистрация
 // TODO(func): окно входа
 // TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-final sharedPreferencesProvider =
-    Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,9 +77,8 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   Widget build(BuildContext context) {
     final pageController = PageController();
-    final prefs = ref.read(sharedPreferencesProvider);
 
-    if (!(prefs.getBool('isAuthorized') ?? false)) {
+    if (!ref.read(userProvider.notifier).isUserAuthorized()) {
       return const AuthorizationPage();
     }
 

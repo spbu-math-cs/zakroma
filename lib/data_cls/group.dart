@@ -1,23 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Group {
-  final int id;
-  final String hash;
-  final String name;
+part 'group.freezed.dart';
+part 'group.g.dart';
 
-  const Group({required this.id, required this.hash, required this.name});
+@Freezed(toJson: false)
+class Group with _$Group {
+  const factory Group(
+      {
+      /// Хэш группы.
+      required String hash,
 
-  factory Group.fromJson(Map<String, dynamic> map) {
-    switch (map) {
-      case {
-          'id': int id,
-          'hash': String hash,
-          'name': String name,
-        }:
-        return Group(id: id, hash: hash, name: name);
-      case _:
-        debugPrint('DEBUG: $map');
-        throw UnimplementedError();
-    }
-  }
+      /// Название группы.
+      required String name}) = _Group;
+
+  factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
 }

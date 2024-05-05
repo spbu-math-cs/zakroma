@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/custom_scaffold.dart';
+import '../../widgets/custom_scaffold.dart';
 
 class StorePage extends ConsumerWidget {
   const StorePage({super.key});

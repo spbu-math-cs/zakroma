@@ -2,91 +2,102 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show Response;
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zakroma_frontend/main.dart';
-import 'package:zakroma_frontend/network.dart';
 
+import 'package:zakroma_frontend/utility/network.dart';
+import '../utility/shared_preferences.dart';
 import 'group.dart';
 
-class User {
-  final String? firstName;
-  final String? secondName;
-  final String? email;
-  final String? password;
-  final String? token;
-  final String? cookie;
-  final bool isAuthorized;
+part 'user.freezed.dart';
+part 'user.g.dart';
 
-  const User(
-      {this.firstName,
-      this.secondName,
-      this.email,
-      this.password,
-      this.token,
-      this.cookie,
-      this.isAuthorized = false})
-      : assert(!isAuthorized ||
-            (isAuthorized && (token ?? '') != '' && (cookie ?? '') != ''));
+@Freezed(toJson: false, fromJson: false)
+class UserData with _$UserData {
+  const UserData._();
+
+  const factory UserData(
+      {required String firstName,
+      required String secondName,
+      required String userPicUrl,
+      required String email,
+      required String password,
+      required String token,
+      required String cookie}) = _UserData;
+
+  const factory UserData.error(
+      [@Default('error') String firstName,
+      @Default('error') String secondName,
+      @Default('error') String userPicUrl,
+      @Default('error') String email,
+      @Default('error') String password,
+      @Default('') String token,
+      @Default('') String cookie]) = UserDataError;
+
+  const factory UserData.empty(
+      [@Default('null') String firstName,
+      @Default('null') String secondName,
+      @Default('null') String userPicUrl,
+      @Default('null') String email,
+      @Default('null') String password,
+      @Default('') String token,
+      @Default('') String cookie]) = UserDataEmpty;
 
   @override
   String toString() {
-    return 'User{\n'
+    return 'UserData{\n'
         'firstName: $firstName,\n'
         'secondName: $secondName,\n'
+        'userPicUrl ${userPicUrl.substring(0, 10)},\n'
         'email: $email,\n'
         'password: $password,\n'
         'token: $token,\n'
-        'cookie: $cookie,\n'
-        'isAuthorized: $isAuthorized}';
+        'cookie: $cookie,\n';
   }
 }
 
-class UserNotifier extends AsyncNotifier<User> {
+@Riverpod(keepAlive: true)
+class User extends _$User {
   @override
-  FutureOr<User> build() async {
+  FutureOr<UserData> build() async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
 
-    final tokenValid =
-        await _isTokenValid(prefs.getString('email'), prefs.getString('token'));
-    if (!(prefs.getBool('isAuthorized') ?? false) || !tokenValid) {
-      // пользователь не авторизован или не имеет действующего токена
-      try {
-        await authorize(
-            prefs.getString('email')!, prefs.getString('password')!);
-      } catch (e, stackTrace) {
-        debugPrint(e.toString());
-        debugPrintStack(stackTrace: stackTrace);
-      }
+    if (isUserAuthorized()) {
+      return UserData(
+          // TODO(server): сделать запросы firstName, secondName и userPicUrl к серверу
+          firstName: 'firstName',
+          secondName: 'secondName',
+          userPicUrl:
+              'https://w7.pngwing.com/pngs/356/733/png-transparent-emoticon-smiley-yellow-ball-happy-emoji-emotion-funny-emoticons-cartoon.png',
+          email: 'email',
+          password: 'password',
+          token: prefs.getString('token')!,
+          cookie: prefs.getString('cookie')!);
     }
-    return User(
-      firstName: prefs.getString('firstName'),
-      secondName: prefs.getString('secondName'),
-      email: prefs.getString('email'),
-      password: prefs.getString('password'),
-      token: prefs.getString('token'),
-      cookie: prefs.getString('cookie'),
-      isAuthorized: prefs.getBool('isAuthorized') ?? false,
-    );
+    return const UserData.error();
   }
 
-  Future<bool> _isTokenValid(String? email, String? token) async {
-    if (email == null || token == null) {
-      return false;
-    } else {
-      return false;
-      // TODO(server): по готовности добавить запрос на проверку токена?
+  UserData getUser() {
+    if (state.asData == null) {
+      throw Exception('Пользователь не авторизован');
     }
+    return state.asData!.value;
+  }
+
+  bool isUserAuthorized() {
+    final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getString('token') != null &&
+        prefs.getString('cookie') != null;
   }
 
   Future<void> authorize(String email, String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await post(
-        'auth/login',
-        {'email': email, 'password': password},
-        null,
-        prefs.getString('cookie'));
+    final response = await ref.watch(clientProvider).post(makeUri('auth/login'),
+        body: jsonEncode({'email': email, 'password': password}),
+        headers: makeHeader());
     switch (response.statusCode) {
       case 200:
         break;
@@ -101,44 +112,44 @@ class UserNotifier extends AsyncNotifier<User> {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
-    // TODO(idea): надо ли хранить email и password локально?
     _updateSharedPrefs(
-      email: email,
-      password: password,
       token: body['token'],
       cookie: cookies
           .firstWhere((element) => element.key == 'zakroma_session')
           .value,
-      isAuthorized: true,
     );
     _updateStateWith(
-      firstName: prefs.getString('firstName'),
-      secondName: prefs.getString('secondName'),
-      email: prefs.getString('email'),
-      password: prefs.getString('password'),
+      // TODO(server): сделать запросы firstName, secondName и userPicUrl к серверу
+      firstName: 'firstName',
+      secondName: 'secondName',
+      userPicUrl:
+          'https://w7.pngwing.com/pngs/356/733/png-transparent-emoticon-smiley-yellow-ball-happy-emoji-emotion-funny-emoticons-cartoon.png',
+      email: email,
+      password: password,
       token: prefs.getString('token'),
       cookie: prefs.getString('cookie'),
-      isAuthorized: prefs.getBool('isAuthorized') ?? true,
     );
-    if (prefs.getString('email') == 'gosling@yandex.ru') {
+    if (email == 'gosling@yandex.ru') {
       // TODO(tape): убрать
+      debugPrint('DEBUG: it\'s Ryan Gosling in the flesh!!!');
       switchCurrentGroup(
           '997fb7e3e1a7b2a5d70ff1f9ecb7d011466b3c26e9e40f4886769274999c628a');
     }
-    // debugPrint('authorize\tuser = ${state.value}');
   }
 
   Future<void> register(String firstName, String secondName, String email,
       String password) async {
-    final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await post('auth/register', {
-      'firstName': firstName,
-      'secondName': secondName,
-      'email': email,
-      'password': password,
-      // TODO(design): при регистрации спрашивать дату рождения
-      'birth-date': '2023-12-12',
-    });
+    final response =
+        await ref.watch(clientProvider).post(makeUri('auth/register'),
+            body: jsonEncode({
+              'firstName': firstName,
+              'secondName': secondName,
+              'email': email,
+              'password': password,
+              // TODO(design): при регистрации спрашивать дату рождения
+              'birth-date': '2023-12-12',
+            }),
+            headers: makeHeader());
     switch (response.statusCode) {
       case 200:
         break;
@@ -149,42 +160,22 @@ class UserNotifier extends AsyncNotifier<User> {
       default:
         throw Exception('Неизвестная ошибка');
     }
-    final cookies = response.headers['set-cookie']!
-        .split(';')
-        .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
-    debugPrint('register\tresponse.body: ${body.toString()}');
-    _updateSharedPrefs(
-      firstName: firstName,
-      secondName: secondName,
-      email: email,
-      password: password,
-      token: body['token'],
-      cookie: cookies
-          .firstWhere((element) => element.key == 'zakroma_session')
-          .value,
-      isAuthorized: true,
-    );
-    _updateStateWith(
-      firstName: prefs.getString('firstName'),
-      secondName: prefs.getString('secondName'),
-      email: prefs.getString('email'),
-      password: prefs.getString('password'),
-      token: prefs.getString('token'),
-      cookie: prefs.getString('cookie'),
-      isAuthorized: prefs.getBool('isAuthorized'),
-    );
+    await authorize(email, password);
+  }
+
+  void logout() {
+    _updateSharedPrefs(token: null, cookie: null);
+    state = const AsyncData(UserData.empty());
   }
 
   Future<void> createGroup(String groupName) async {
-    final response = await post(
-      'api/groups/create',
-      {
-        'name': groupName,
-      },
-      state.value?.token,
-      state.value?.cookie,
-    );
+    final response =
+        await ref.watch(clientProvider).post(makeUri('api/groups/create'),
+            body: jsonEncode({'name': groupName}),
+            headers: makeHeader(
+              state.value?.token,
+              state.value?.cookie,
+            ));
     switch (response.statusCode) {
       case 200:
         break;
@@ -200,14 +191,10 @@ class UserNotifier extends AsyncNotifier<User> {
   }
 
   Future<void> switchCurrentGroup(String groupHash) async {
-    final response = await patch(
-      'api/groups/change',
-      {
-        'group-hash': groupHash,
-      },
-      state.value!.token!,
-      state.value!.cookie!,
-    );
+    final response = await ref.watch(clientProvider).patch(
+        makeUri('api/groups/change'),
+        body: jsonEncode({'group-hash': groupHash}),
+        headers: makeHeader(state.value!.token, state.value!.cookie));
     switch (response.statusCode) {
       case 200:
         final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
@@ -226,11 +213,9 @@ class UserNotifier extends AsyncNotifier<User> {
   }
 
   Future<List<Group>> get groups async {
-    final response = await get(
-      'api/groups/list',
-      state.value!.token!,
-      state.value!.cookie!,
-    );
+    final response = await ref.watch(clientProvider).get(
+        makeUri('api/groups/list'),
+        headers: makeHeader(state.value!.token, state.value!.cookie));
     switch (response.statusCode) {
       case 200:
         break;
@@ -262,54 +247,33 @@ class UserNotifier extends AsyncNotifier<User> {
   void _updateStateWith(
       {String? firstName,
       String? secondName,
+      String? userPicUrl,
       String? email,
       String? password,
       String? token,
-      String? cookie,
-      bool? isAuthorized}) {
-    state = AsyncData(User(
-      firstName: firstName ?? state.value?.firstName,
-      secondName: secondName ?? state.value?.secondName,
-      email: email ?? state.value?.email,
-      password: password ?? state.value?.password,
-      token: token ?? state.value?.token,
-      cookie: cookie ?? state.value?.cookie,
-      isAuthorized: isAuthorized ?? state.value?.isAuthorized ?? false,
+      String? cookie}) {
+    state = AsyncData(UserData(
+      firstName: firstName ?? state.value!.firstName,
+      secondName: secondName ?? state.value!.secondName,
+      userPicUrl: userPicUrl ?? state.value!.userPicUrl,
+      email: email ?? state.value!.email,
+      password: password ?? state.value!.password,
+      token: token ?? state.value!.token,
+      cookie: cookie ?? state.value!.cookie,
     ));
   }
 
-  void _updateSharedPrefs(
-      {String? firstName,
-      String? secondName,
-      String? email,
-      String? password,
-      String? token,
-      String? cookie,
-      bool? isAuthorized}) async {
+  void _updateSharedPrefs({String? token, String? cookie}) async {
     final prefs = ref.watch(sharedPreferencesProvider);
-    if (firstName != null) {
-      prefs.setString('firstName', firstName);
-    }
-    if (secondName != null) {
-      prefs.setString('secondName', secondName);
-    }
-    if (email != null) {
-      prefs.setString('email', email);
-    }
-    if (password != null) {
-      prefs.setString('password', password);
-    }
     if (token != null) {
       prefs.setString('token', token);
+    } else {
+      prefs.remove('token');
     }
     if (cookie != null) {
       prefs.setString('cookie', cookie);
-    }
-    if (isAuthorized != null) {
-      prefs.setBool('isAuthorized', isAuthorized);
+    } else {
+      prefs.remove('cookie');
     }
   }
 }
-
-final userProvider =
-    AsyncNotifierProvider<UserNotifier, User>(UserNotifier.new);

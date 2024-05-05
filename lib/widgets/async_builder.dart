@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/rr_buttons.dart';
-import 'package:zakroma_frontend/utility/rr_surface.dart';
+import 'package:zakroma_frontend/widgets/rr_buttons.dart';
+import 'package:zakroma_frontend/widgets/rr_surface.dart';
 
 class AsyncBuilder<T> extends StatelessWidget {
   final AsyncValue<T> asyncValue;
