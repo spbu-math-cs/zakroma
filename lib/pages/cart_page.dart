@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 import '../data_cls/cart.dart';
-import '../utility/custom_scaffold.dart';
-import '../utility/flat_list.dart';
-import '../utility/navigation_bar.dart';
-import '../utility/rr_buttons.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
+import '../widgets/custom_scaffold.dart';
+import '../widgets/flat_list.dart';
+import '../widgets/navigation_bar.dart';
+import '../widgets/rr_buttons.dart';
+import '../widgets/rr_surface.dart';
+import '../widgets/styled_headline.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});

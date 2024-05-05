@@ -8,8 +8,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:zakroma_frontend/network.dart';
-import '../shared_preferences.dart';
+import 'package:zakroma_frontend/utility/network.dart';
+import '../utility/shared_preferences.dart';
 import 'group.dart';
 
 part 'user.freezed.dart';

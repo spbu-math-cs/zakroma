@@ -1,4 +1,4 @@
-import '../constants.dart';
+import 'constants.dart';
 
 String getCurrentDate() {
   final date = DateTime.now();

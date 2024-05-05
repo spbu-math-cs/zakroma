@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utility/async_builder.dart';
+import '../widgets/async_builder.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/meal.dart';
 import '../data_cls/path.dart';
 import '../main.dart';
 import '../pages/meal_page.dart';
-import '../utility/animated_fab.dart';
-import '../utility/custom_scaffold.dart';
-import '../utility/flat_list.dart';
-import '../utility/navigation_bar.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
+import '../widgets/animated_fab.dart';
+import '../widgets/custom_scaffold.dart';
+import '../widgets/flat_list.dart';
+import '../widgets/navigation_bar.dart';
+import '../widgets/rr_surface.dart';
+import '../widgets/styled_headline.dart';
 
 class DietPage extends ConsumerStatefulWidget {
   const DietPage({super.key});

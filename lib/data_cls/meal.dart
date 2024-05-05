@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/path.dart';
-import '../network.dart';
+import '../utility/network.dart';
 import '../pages/meal_page.dart';
-import '../utility/alert_text_prompt.dart';
-import '../utility/flat_list.dart';
+import '../widgets/alert_text_prompt.dart';
+import '../widgets/flat_list.dart';
 
 part 'meal.freezed.dart';
 part 'meal.g.dart';

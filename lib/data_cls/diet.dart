@@ -9,7 +9,7 @@ import 'package:zakroma_frontend/data_cls/user.dart';
 
 import '../data_cls/day_diet.dart';
 import '../data_cls/dish.dart';
-import '../network.dart';
+import '../utility/network.dart';
 import '../utility/pair.dart';
 
 part 'diet.freezed.dart';
