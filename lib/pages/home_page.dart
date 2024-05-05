@@ -5,9 +5,7 @@ import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../utility/constants.dart';
-import '../data_cls/cart.dart';
 import '../data_cls/diet.dart';
-import '../data_cls/ingredient.dart';
 import '../data_cls/meal.dart';
 import '../widgets/custom_scaffold.dart';
 import '../utility/get_current_date.dart';
@@ -162,14 +160,14 @@ class HomePage extends ConsumerWidget {
                             return todayMeals.isEmpty
                                 ? Center(
                                     child: TextButton.icon(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          // TODO(feat): всплывающее окно добавления блюда
+                                        },
                                         style: TextButton.styleFrom(
                                             // padding: EdgeInsets.zero
                                             ),
                                         icon: const Icon(Icons.add),
-                                        label: currentDiet == null
-                                            ? const Text('Добавить рацион')
-                                            : const Text('Добавить приём')),
+                                        label: const Text('Добавить блюдо')),
                                   )
                                 : SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,

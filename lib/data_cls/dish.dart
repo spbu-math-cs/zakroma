@@ -81,3 +81,5 @@ class Dish with _$Dish {
     }
   }
 }
+
+// ignore_for_file: invalid_annotation_target

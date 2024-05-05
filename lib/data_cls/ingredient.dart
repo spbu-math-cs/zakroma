@@ -30,3 +30,5 @@ class Ingredient with _$Ingredient {
   factory Ingredient.fromJson(Map<String, dynamic> json) =>
       _$IngredientFromJson(json);
 }
+
+// ignore_for_file: invalid_annotation_target

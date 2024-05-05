@@ -2,14 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utility/constants.dart';
-import '../data_cls/diet.dart';
-import '../data_cls/path.dart';
-import '../pages/diet_page.dart';
-import '../widgets/async_builder.dart';
 import '../widgets/custom_scaffold.dart';
-import '../widgets/rr_buttons.dart';
 import '../widgets/rr_surface.dart';
-import '../widgets/styled_headline.dart';
 
 class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});

@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../utility/constants.dart';
 import '../data_cls/dish.dart';
-import '../data_cls/path.dart';
-import '../utility/network.dart';
-import '../pages/meal_page.dart';
-import '../widgets/alert_text_prompt.dart';
 import '../widgets/flat_list.dart';
 
 part 'meal.freezed.dart';

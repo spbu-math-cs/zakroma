@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
@@ -25,22 +24,18 @@ class Diet with _$Diet {
       /// Хэш рациона.
       ///
       /// Равен хэшу группы, которая владеет этим рационом
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'hash') required String hash,
 
       /// Имя рациона: по умолчанию «Личный рацион» для личной диеты,
       /// «Групповой рацион» для групповой.
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'name') required String name,
 
       /// Флаг личного рациона: true, если рацион личный, false иначе.
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'is-personal') required bool isPersonal,
 
       /// Текущая неделя в данном рационе: список из 7 дней DayDiet.
       ///
       /// Какие-то из дней могут быть пустыми, то есть не содержать приёмов пищи
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'day-diets') required List<DayDiet> days}) = _Diet;
 
   factory Diet.fromJson(Map<String, dynamic> json) => _$DietFromJson(json);
@@ -67,7 +62,7 @@ extension Update on Pair<Diet, Diet?> {
 
 /// Хранит в себе пару рационов (личный, групповой?).
 ///
-/// Если пользователь не состоит в группе, групповой рацион будет null.
+/// Если пользователь не состоит в группе, групповой рацион равен null.
 @Riverpod(keepAlive: true)
 class Diets extends _$Diets {
   @override
@@ -168,3 +163,5 @@ class Diets extends _$Diets {
     return const AsyncLoading();
   }
 }
+
+// ignore_for_file: invalid_annotation_target

@@ -11,11 +11,9 @@ class DayDiet with _$DayDiet {
   const factory DayDiet(
       {
       /// Номер дня недели, от 0 (понедельник) до 6 (воскресенье).
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'index') required int index,
 
       /// Список приёмов пищи в данный день.
-      // ignore: invalid_annotation_target
       @JsonKey(name: 'meals') required List<Meal> meals}) = _DayDiet;
 
   factory DayDiet.fromJson(Map<String, dynamic> json) =>
@@ -24,3 +22,4 @@ class DayDiet with _$DayDiet {
 
 // TODO(server): подгрузить информацию о приёме пищи (название, список блюд)
 // - Блюдо из списка: id, название, иконка, количество порций
+// ignore_for_file: invalid_annotation_target

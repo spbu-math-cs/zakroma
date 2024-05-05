@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
-import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../utility/constants.dart';
-import '../data_cls/diet.dart';
 import '../data_cls/dish.dart';
-import '../data_cls/ingredient.dart';
 import '../data_cls/path.dart';
 import '../data_cls/tag.dart';
-import '../widgets/custom_scaffold.dart';
-import '../widgets/flat_list.dart';
-import '../widgets/navigation_bar.dart';
-import '../widgets/rr_surface.dart';
-import '../widgets/styled_headline.dart';
 
 class DishSearchPage extends ConsumerStatefulWidget {
   const DishSearchPage({super.key});
