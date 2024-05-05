@@ -3,30 +3,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
 
-import 'constants.dart';
+import 'utility/constants.dart';
+import 'utility/shared_preferences.dart';
 import 'pages/authorization_page.dart';
 import 'pages/diets_page.dart';
 import 'pages/home_page.dart';
 import 'pages/settings_page.dart';
-import 'themes.dart' as themes;
-import 'utility/custom_scaffold.dart';
-import 'utility/navigation_bar.dart';
+import 'utility/themes.dart' as themes;
+import 'widgets/custom_scaffold.dart';
+import 'widgets/navigation_bar.dart';
 
 // TODO(func): регистрация
 // TODO(func): окно входа
 // TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-final sharedPreferencesProvider =
-    Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final preferences = await SharedPreferences.getInstance();
-  final screenWidth =
-      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
   runApp(ProviderScope(overrides: [
     sharedPreferencesProvider.overrideWithValue(preferences),
   ], child: const MainPage()));

@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
 
-import '../constants.dart';
-import '../data_cls/cart.dart';
+import '../utility/constants.dart';
 import '../data_cls/diet.dart';
-import '../data_cls/group.dart';
-import '../data_cls/ingredient.dart';
 import '../data_cls/meal.dart';
-import '../utility/custom_scaffold.dart';
+import '../widgets/custom_scaffold.dart';
 import '../utility/get_current_date.dart';
-import '../utility/rr_buttons.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
+import '../widgets/rr_buttons.dart';
+import '../widgets/rr_surface.dart';
+import '../widgets/styled_headline.dart';
 import 'cart_page.dart';
 
 class HomePage extends ConsumerWidget {
@@ -103,9 +99,6 @@ class HomePage extends ConsumerWidget {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
-                                // TODO(tape): убрать заполнение корзины
-                                _addIngredients(
-                                    ref.read(cartProvider.notifier));
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const CartPage()));
                               },
@@ -158,34 +151,23 @@ class HomePage extends ConsumerWidget {
                         child: AsyncBuilder(
                           asyncValue: ref.watch(dietsProvider),
                           builder: (diets) {
-                            final currentDiet = diets.firstOrNull;
+                            final currentDiet = diets.first;
                             debugPrint(
                                 'asyncbuilder speaking, currentDiet: $currentDiet');
-                            final List<Meal>? todayMeals = currentDiet
-                                ?.getDay(DateTime.now().weekday - 1)
+                            final List<Meal> todayMeals = currentDiet
+                                .getDay(DateTime.now().weekday - 1)
                                 .meals;
-                            return todayMeals == null || todayMeals.isEmpty
+                            return todayMeals.isEmpty
                                 ? Center(
                                     child: TextButton.icon(
                                         onPressed: () {
-                                          if (currentDiet == null) {
-                                            Diet.showAddDietDialog(
-                                                context, ref);
-                                          } else {
-                                            Meal.showAddMealDialog(
-                                                context,
-                                                ref,
-                                                currentDiet.dietHash,
-                                                DateTime.now().weekday - 1);
-                                          }
+                                          // TODO(feat): всплывающее окно добавления блюда
                                         },
                                         style: TextButton.styleFrom(
                                             // padding: EdgeInsets.zero
                                             ),
                                         icon: const Icon(Icons.add),
-                                        label: currentDiet == null
-                                            ? const Text('Добавить рацион')
-                                            : const Text('Добавить приём')),
+                                        label: const Text('Добавить блюдо')),
                                   )
                                 : SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
@@ -419,20 +401,6 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  // TODO(tape): убрать
-  void _addIngredients(CartNotifier cart) {
-    cart.add(const Ingredient(
-        name: 'огурцы',
-        marketName: 'огурцы свежие',
-        unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'помидоры', marketName: 'помидоры', unit: IngredientUnit.grams));
-    cart.add(const Ingredient(
-        name: 'лук репчатый',
-        marketName: 'лук репчатый',
-        unit: IngredientUnit.grams));
   }
 }
 

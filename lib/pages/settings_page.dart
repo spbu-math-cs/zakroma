@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/utility/async_builder.dart';
-import 'package:zakroma_frontend/utility/custom_scaffold.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
+import 'package:zakroma_frontend/widgets/custom_scaffold.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 import '../main.dart';
-import '../utility/flat_list.dart';
-import '../utility/rr_surface.dart';
-import '../utility/styled_headline.dart';
+import '../widgets/flat_list.dart';
+import '../widgets/rr_surface.dart';
+import '../widgets/styled_headline.dart';
 
 // TODO(design): переписать в новом дизайне
 

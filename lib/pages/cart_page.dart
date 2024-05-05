@@ -4,15 +4,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../constants.dart';
+import '../utility/constants.dart';
 import '../data_cls/cart.dart';
-import '../data_cls/ingredient.dart';
-import '../utility/custom_scaffold.dart';
-import '../utility/styled_headline.dart';
-import '../utility/flat_list.dart';
-import '../utility/navigation_bar.dart';
-import '../utility/rr_buttons.dart';
-import '../utility/rr_surface.dart';
+import '../widgets/custom_scaffold.dart';
+import '../widgets/flat_list.dart';
+import '../widgets/navigation_bar.dart';
+import '../widgets/rr_buttons.dart';
+import '../widgets/rr_surface.dart';
+import '../widgets/styled_headline.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
@@ -27,7 +26,6 @@ class _CartPageState extends ConsumerState<CartPage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
-    final cart = ref.watch(cartProvider);
     final ScrollController scrollController = ScrollController();
     scrollController.addListener(() => setState(() {
           orderButtonVisible = scrollController.position.userScrollDirection ==
@@ -40,12 +38,19 @@ class _CartPageState extends ConsumerState<CartPage> {
       title: 'Корзина',
       body: RRSurface(
           child: Stack(children: [
-        FlatList(
-            childHeight: constants.paddingUnit * 12,
-            separator: FlatListSeparator.rrBorder,
-            scrollController: scrollController,
-            children: List<Widget>.generate(cart.length,
-                (index) => IngredientTile(cart.keys.elementAt(index)))),
+        FutureBuilder(
+            future: ref.watch(cartProvider.selectAsync((data) => data.length)),
+            builder: (_, snapshot) {
+              if (!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              }
+              return FlatList(
+                  childHeight: constants.paddingUnit * 12,
+                  separator: FlatListSeparator.rrBorder,
+                  scrollController: scrollController,
+                  children: List<Widget>.generate(
+                      snapshot.data!, (index) => IngredientTile(index)));
+            }),
         Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox(
@@ -70,10 +75,12 @@ class _CartPageState extends ConsumerState<CartPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
+                                    final cart =
+                                        ref.read(cartProvider).asData!.value;
                                     await Clipboard.setData(ClipboardData(
                                         text:
                                             'Закажи в лавке ${cart.entries.expand((element) => [
-                                                  "${element.key.marketName} ${cart[element.key]} штуки"
+                                                  '${element.key.marketName} ${cart[element.key]} штук'
                                                 ]).join(', ')}.'));
                                     await LaunchApp.openApp(
                                         androidPackageName:
@@ -132,24 +139,30 @@ class _CartPageState extends ConsumerState<CartPage> {
 }
 
 class IngredientTile extends ConsumerWidget {
-  final Ingredient ingredient;
+  final int ingredientIndex;
 
-  const IngredientTile(this.ingredient, {super.key});
+  const IngredientTile(this.ingredientIndex, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.read(constantsProvider);
-    final cart = ref.watch(cartProvider);
+    final constants = ref.watch(constantsProvider);
+    final ingredient =
+        ref.watch(cartProvider).value!.keys.elementAt(ingredientIndex);
 
     return Center(
       child: Row(
         children: [
           // Миниатюра продукта
-          Expanded(
-              child: Image.asset(
-            'assets/images/${ingredient.name}.jpeg',
-            fit: BoxFit.fill,
-          )),
+          FutureBuilder(
+              future: ref.watch(cartProvider.selectAsync(
+                  (data) => data.keys.elementAt(ingredientIndex).imageUrl)),
+              builder: (_, snapshot) => snapshot.hasData
+                  ? Expanded(
+                      child: Image.network(
+                      snapshot.requireData,
+                      fit: BoxFit.fill,
+                    ))
+                  : const CircularProgressIndicator()),
           // Информация о продукте и кнопки для изменения
           Expanded(
               flex: 3,
@@ -160,9 +173,15 @@ class IngredientTile extends ConsumerWidget {
                     // Название блюда
                     Align(
                       alignment: Alignment.topLeft,
-                      child: StyledHeadline(
-                          text: ingredient.name.capitalize(),
-                          textStyle: Theme.of(context).textTheme.titleLarge),
+                      child: FutureBuilder(
+                          future: ref.watch(cartProvider.selectAsync((data) =>
+                              data.keys.elementAt(ingredientIndex).marketName)),
+                          builder: (context, snapshot) => snapshot.hasData
+                              ? StyledHeadline(
+                                  text: snapshot.requireData.capitalize(),
+                                  textStyle:
+                                      Theme.of(context).textTheme.titleLarge)
+                              : const CircularProgressIndicator()),
                     ),
                     // Кнопки для изменения количества
                     Align(
@@ -190,7 +209,15 @@ class IngredientTile extends ConsumerWidget {
                             SizedBox(
                                 width: 3 * constants.paddingUnit,
                                 child: Center(
-                                  child: Text(cart[ingredient].toString()),
+                                  child: FutureBuilder(
+                                      future: ref.watch(cartProvider
+                                          .selectAsync((data) => data.values
+                                              .elementAt(ingredientIndex))),
+                                      builder: (_, snapshot) => snapshot.hasData
+                                          ? Text(snapshot.requireData
+                                              .toString()
+                                              .toString())
+                                          : const CircularProgressIndicator()),
                                 )),
                             // Кнопка «уменьшить количество» (aka минус)
                             RRButton(

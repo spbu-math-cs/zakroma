@@ -1,74 +1,34 @@
-// Вообще, по хорошему, надо и штуки, и миллилитры тоже в граммы переводить
-// TODO(tech): добавить ещё всякие столовые и чайные ложки
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-enum IngredientUnit {
-  grams,
-  mils,
-  pieces,
+part 'ingredient.freezed.dart';
+part 'ingredient.g.dart';
+
+@Freezed(toJson: false)
+class Ingredient with _$Ingredient {
+  const factory Ingredient(
+      {
+      /// Id продукта.
+      ///
+      /// Используется в запросах
+      required int id,
+
+      /// Ссылка на картинку продукта.
+      // TODO(hehe): поменять картинку по умолчанию
+      @Default(
+          'https://editorialge.com/wp-content/uploads/2023/07/Kencore-fashion.jpg')
+      String imageUrl,
+
+      /// Название продукта.
+      required String name,
+
+      /// Название продукта на торговой площадке.
+      ///
+      /// Используется при заказе доставки данного продукта.
+      @JsonKey(name: 'market-name') required String marketName}) = _Ingredient;
+
+  factory Ingredient.fromJson(Map<String, dynamic> json) =>
+      _$IngredientFromJson(json);
 }
 
-class Ingredient {
-  /// Название продукта.
-  final String name;
-
-  /// Название продукта на торговой площадке.
-  ///
-  /// Используется при заказе доставки данного продукта.
-  final String marketName;
-
-  /// Единица измерения продукта: граммы, миллилитры или штуки.
-  final IngredientUnit unit;
-
-  /// Количество ккал на 100 гр/мл или 1 штуку.
-  final double kcal;
-
-  /// Количество углеводов на 100 гр/мл или 1 штуку.
-  final double carbs;
-
-  /// Количество белков на 100 гр/мл или 1 штуку.
-  final double proteins;
-
-  /// Количество жиров на 100 гр/мл или 1 штуку.
-  final double fats;
-
-  const Ingredient(
-      {required this.name,
-      required this.marketName,
-      required this.unit,
-      // TODO(tech): убрать нули и вернуть required
-      this.kcal = 0,
-      this.carbs = 0,
-      this.proteins = 0,
-      this.fats = 0})
-      : assert(kcal >= 0),
-        assert(carbs >= 0 && carbs <= 100),
-        assert(proteins >= 0 && proteins <= 100),
-        assert(fats >= 0 && fats <= 100);
-
-  factory Ingredient.fromJson(Map<String, dynamic> map) {
-    // debugPrint('Ingredient.fromJson(${map.toString()})');
-    switch (map) {
-      case {
-          'name': String name,
-          'marketName': String marketName,
-          'unit': IngredientUnit unit,
-          'kcal': double kcal,
-          'carbs': double carbs,
-          'proteins': double proteins,
-          'fats': double fats,
-        }:
-        return Ingredient(
-            name: name,
-            marketName: marketName,
-            unit: unit,
-            kcal: kcal,
-            carbs: carbs,
-            proteins: proteins,
-            fats: fats);
-      case _:
-        debugPrint('DEBUG: $map');
-        throw UnimplementedError();
-    }
-  }
-}
+// ignore_for_file: invalid_annotation_target
