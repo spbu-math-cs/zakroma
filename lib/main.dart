@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zakroma_frontend/data_cls/user.dart';
 import 'package:zakroma_frontend/utility/async_builder.dart';
 
 import 'constants.dart';
+import 'shared_preferences.dart';
 import 'pages/authorization_page.dart';
 import 'pages/diets_page.dart';
 import 'pages/home_page.dart';
@@ -20,8 +20,6 @@ import 'utility/navigation_bar.dart';
 // TODO(func): холодильник
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-final sharedPreferencesProvider =
-    Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

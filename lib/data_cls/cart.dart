@@ -15,7 +15,8 @@ class Cart extends _$Cart {
   FutureOr<Map<Ingredient, int>> build() async {
     final user = ref.watch(userProvider.notifier).getUser();
     debugPrint('DEBUG: api/groups/cart');
-    final json = processResponse(await client.get(makeUri('api/groups/cart'),
+    final json = processResponse(await ref.watch(clientProvider).get(
+        makeUri('api/groups/cart'),
         headers: makeHeader(user.token, user.cookie)));
     return {
       for (var el in json)
@@ -38,7 +39,8 @@ class Cart extends _$Cart {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/add');
-      processResponse(await client.post(makeUri('api/groups/cart/add'),
+      processResponse(await ref.watch(clientProvider).post(
+          makeUri('api/groups/cart/add'),
           body: jsonEncode({'product-id': ingredient.id, 'amount': amount}),
           headers: makeHeader(user.token, user.cookie)));
       previousValue[ingredient] = amount;
@@ -56,7 +58,8 @@ class Cart extends _$Cart {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/remove');
-      processResponse(await client.post(makeUri('api/groups/cart/remove'),
+      processResponse(await ref.watch(clientProvider).post(
+          makeUri('api/groups/cart/remove'),
           body: jsonEncode({'product-id': ingredient.id}),
           headers: makeHeader(user.token, user.cookie)));
       previousValue.remove(ingredient);
@@ -95,7 +98,8 @@ class Cart extends _$Cart {
       state = const AsyncValue.loading();
       state = await AsyncValue.guard(() async {
         debugPrint('DEBUG: api/groups/cart/change (decrement)');
-        processResponse(await client.patch(makeUri('api/groups/cart/change'),
+        processResponse(await ref.watch(clientProvider).patch(
+            makeUri('api/groups/cart/change'),
             body: jsonEncode({
               'product-id': ingredient.id,
               'amount': previousValue[ingredient]! - 1
@@ -116,7 +120,8 @@ class Cart extends _$Cart {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/change (increment)');
-      processResponse(await client.patch(makeUri('api/groups/cart/change'),
+      processResponse(await ref.watch(clientProvider).patch(
+          makeUri('api/groups/cart/change'),
           body: jsonEncode({
             'product-id': ingredient.id,
             'amount': previousValue[ingredient]! + 1

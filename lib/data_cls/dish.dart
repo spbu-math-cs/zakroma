@@ -80,6 +80,4 @@ class Dish with _$Dish {
         throw UnimplementedError();
     }
   }
-
-  // Map<String, dynamic> toJson() => _DishToJson(this);
 }

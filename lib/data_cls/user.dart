@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' show Response, Client;
+import 'package:http/http.dart' show Response;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:zakroma_frontend/main.dart';
 import 'package:zakroma_frontend/network.dart';
+import '../shared_preferences.dart';
 import 'group.dart';
 
 part 'user.freezed.dart';
@@ -61,8 +61,6 @@ class UserData with _$UserData {
 
 @Riverpod(keepAlive: true)
 class User extends _$User {
-  Client client = Client();
-
   @override
   FutureOr<UserData> build() async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
@@ -97,7 +95,7 @@ class User extends _$User {
 
   Future<void> authorize(String email, String password) async {
     final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    final response = await client.post(makeUri('auth/login'),
+    final response = await ref.watch(clientProvider).post(makeUri('auth/login'),
         body: jsonEncode({'email': email, 'password': password}),
         headers: makeHeader());
     switch (response.statusCode) {
@@ -141,16 +139,17 @@ class User extends _$User {
 
   Future<void> register(String firstName, String secondName, String email,
       String password) async {
-    final response = await client.post(makeUri('auth/register'),
-        body: jsonEncode({
-          'firstName': firstName,
-          'secondName': secondName,
-          'email': email,
-          'password': password,
-          // TODO(design): при регистрации спрашивать дату рождения
-          'birth-date': '2023-12-12',
-        }),
-        headers: makeHeader());
+    final response =
+        await ref.watch(clientProvider).post(makeUri('auth/register'),
+            body: jsonEncode({
+              'firstName': firstName,
+              'secondName': secondName,
+              'email': email,
+              'password': password,
+              // TODO(design): при регистрации спрашивать дату рождения
+              'birth-date': '2023-12-12',
+            }),
+            headers: makeHeader());
     switch (response.statusCode) {
       case 200:
         break;
@@ -170,12 +169,13 @@ class User extends _$User {
   }
 
   Future<void> createGroup(String groupName) async {
-    final response = await client.post(makeUri('api/groups/create'),
-        body: jsonEncode({'name': groupName}),
-        headers: makeHeader(
-          state.value?.token,
-          state.value?.cookie,
-        ));
+    final response =
+        await ref.watch(clientProvider).post(makeUri('api/groups/create'),
+            body: jsonEncode({'name': groupName}),
+            headers: makeHeader(
+              state.value?.token,
+              state.value?.cookie,
+            ));
     switch (response.statusCode) {
       case 200:
         break;
@@ -191,7 +191,8 @@ class User extends _$User {
   }
 
   Future<void> switchCurrentGroup(String groupHash) async {
-    final response = await client.patch(makeUri('api/groups/change'),
+    final response = await ref.watch(clientProvider).patch(
+        makeUri('api/groups/change'),
         body: jsonEncode({'group-hash': groupHash}),
         headers: makeHeader(state.value!.token, state.value!.cookie));
     switch (response.statusCode) {
@@ -212,7 +213,8 @@ class User extends _$User {
   }
 
   Future<List<Group>> get groups async {
-    final response = await client.get(makeUri('api/groups/list'),
+    final response = await ref.watch(clientProvider).get(
+        makeUri('api/groups/list'),
         headers: makeHeader(state.value!.token, state.value!.cookie));
     switch (response.statusCode) {
       case 200:

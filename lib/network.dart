@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-// TODO(server): по готовности сервера заменить на адрес сервера
-const serverAddress = 'http://192.168.0.103:8080';
+part 'network.g.dart';
 
-http.Client client = http.Client();
+// TODO(server): по готовности сервера заменить на адрес сервера
+const serverAddress = 'http://10.2.0:8080';
 
 Uri makeUri(String request) => Uri.parse('$serverAddress/$request');
 
@@ -51,4 +52,9 @@ List<Map<String, dynamic>> processResponse(http.Response response) {
     default:
       throw Exception('Неизвестная ошибка');
   }
+}
+
+@Riverpod(keepAlive: true)
+http.Client client(ClientRef ref) {
+  return http.Client();
 }
