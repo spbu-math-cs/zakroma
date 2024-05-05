@@ -111,9 +111,9 @@ class _ZakromaState extends ConsumerState<Zakroma> {
             selectedIcon: Icons.restaurant_menu,
           ),
           CNavigationDestination(
-            icon: Icons.local_mall_outlined,
-            label: 'Маркет',
-            selectedIcon: Icons.local_mall,
+            icon: Icons.add_shopping_cart,
+            label: 'Корзина',
+            selectedIcon: Icons.add_shopping_cart,
           ),
           CNavigationDestination(
             icon: Icons.person_outline,
