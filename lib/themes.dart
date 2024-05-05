@@ -109,3 +109,4 @@ const textTheme = TextTheme(
 );
 
 const orangeBackground = Color(0xFFFFBA6C);
+const buttonFamilyRatio = Color(0xFFCFF9FF);

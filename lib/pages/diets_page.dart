@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/themes.dart';
 
 import '../constants.dart';
 import '../data_cls/diet.dart';
@@ -12,15 +15,16 @@ import '../utility/rr_surface.dart';
 import '../utility/styled_headline.dart';
 
 List<Gag> gagList = [
-  Gag(date: '2 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
+  Gag(date: '2 мая', soloRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'], familyRatio: []),
   Gag(date: '3 мая', soloRatio: [], familyRatio: []),
-  Gag(date: '4 мая', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(
-      date: '5 мая',
-      soloRatio: ['Завтрак', 'Ужин'],
-      familyRatio: ['Завтрак', 'Ужин']),
-  Gag(date: '6 мая', soloRatio: ['Ужин'], familyRatio: [])
-  // Добавьте сюда остальные объекты
+  Gag(date: '4 мая', soloRatio: [], familyRatio: ['Ужин']),
+  Gag(date: '5 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '6 мая', soloRatio: ['Ужин'], familyRatio: []),
+  Gag(date: '7 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
+  Gag(date: '8 мая', soloRatio: ['Завтрак'], familyRatio: []),
+  Gag(date: '9 мая', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '10 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '11 мая', soloRatio: ['Супердлинный альфа Ужин'], familyRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'])
 ];
 
 class Gag {
@@ -38,7 +42,6 @@ class DietListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
     final asyncDiets = ref.watch(dietsProvider);
-
     return CustomScaffold(
         title: 'Питание',
         body: RRSurface(
@@ -50,45 +53,64 @@ class DietListPage extends ConsumerWidget {
                       return Container(
                           padding: EdgeInsets.all(constants.paddingUnit / 2),
                           margin: EdgeInsets.only(
-                              top: constants.paddingUnit / 2,
-                              bottom: constants.paddingUnit / 2),
+                              top: constants.paddingUnit / 2, bottom: constants.paddingUnit / 2),
                           decoration: BoxDecoration(
                             border: Border.all(
                                 color: Theme.of(context).colorScheme.surface,
                                 width: constants.borderWidth),
-                            borderRadius:
-                                BorderRadius.circular(constants.dInnerRadius),
+                            borderRadius: BorderRadius.circular(constants.dInnerRadius),
                           ),
                           child: ListTile(
-                            title: StyledHeadline(
-                                text: gagList[index].date,
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      height: 1,
-                                      leadingDistribution:
-                                          TextLeadingDistribution.proportional,
-                                    )),
-                            // subtitle: Text(yourObjectList[index].solo_ratio),
-                            onTap: () {
-                              // Действие при нажатии на элемент списка
-                            },
-                            trailing: gagList[index].familyRatio.isEmpty &&
-                                    gagList[index].soloRatio.isEmpty
-                                ? SizedBox(
-                                    height: double.infinity,
-                                    child: TextButton(
-                                        child: const Icon(
-                                          Icons.add_circle_outline,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {
-                                          // Обработчик нажатия на кнопку
-                                        }))
-                                : null,
-                          ));
+                              title: StyledHeadline(
+                                  text: gagList[index].date,
+                                  textStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                        leadingDistribution: TextLeadingDistribution.proportional,
+                                      )),
+                              onTap: () {},
+                              trailing: gagList[index].familyRatio.isEmpty &&
+                                      gagList[index].soloRatio.isEmpty
+                                  ? SizedBox(
+                                      height: double.infinity,
+                                      child: TextButton(
+                                          child: const Icon(
+                                            Icons.add_circle_outline,
+                                            color: Colors.black,
+                                          ),
+                                          onPressed: () {}))
+                                  : null,
+                              subtitle: Wrap(
+                                  spacing: constants.paddingUnit / 2,
+                                  runSpacing: -constants.paddingUnit,
+                                  children: List.generate(
+                                      gagList[index].soloRatio.length +
+                                          gagList[index].familyRatio.length, (itemIndex) {
+                                    return ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.only(
+                                                  top: constants.paddingUnit / 2,
+                                                  bottom: constants.paddingUnit / 2,
+                                                  left: constants.paddingUnit,
+                                                  right: constants.paddingUnit),
+                                              minimumSize: Size.zero,
+                                              backgroundColor:
+                                                  itemIndex < gagList[index].soloRatio.length
+                                                      ? Theme.of(context).colorScheme.surface
+                                                      : buttonFamilyRatio,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(
+                                                      constants.dInnerRadius))),
+                                          child: Text(
+                                              itemIndex < gagList[index].soloRatio.length
+                                                  ? gagList[index].soloRatio[itemIndex]
+                                                  : gagList[index].familyRatio[
+                                                      itemIndex - gagList[index].soloRatio.length],
+                                              style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.secondary)),
+                                    );
+                                  }))));
                     }))));
   }
 }
@@ -106,12 +128,11 @@ class DietTile extends ConsumerWidget {
         ref.read(pathProvider.notifier).update((state) => state.copyWith(
               dietId: diet.dietHash,
             ));
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const DietPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
       },
       padding: EdgeInsets.only(bottom: constants.paddingUnit),
-      childPadding: EdgeInsets.all(constants.paddingUnit * 2)
-          .copyWith(right: constants.paddingUnit),
+      childPadding:
+          EdgeInsets.all(constants.paddingUnit * 2).copyWith(right: constants.paddingUnit),
       childAlignment: Alignment.topLeft,
       backgroundColor: diet.isActive
           ? Theme.of(context).colorScheme.surface
@@ -131,8 +152,8 @@ class DietTile extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, constants.paddingUnit * 2,
-                      constants.paddingUnit * 3),
+                  padding: EdgeInsets.fromLTRB(
+                      0, 0, constants.paddingUnit * 2, constants.paddingUnit * 3),
                   child: StyledHeadline(
                     text: diet.name,
                     textStyle: Theme.of(context)
@@ -185,8 +206,7 @@ Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
               ref.read(pathProvider.notifier).update((state) => state.copyWith(
                     dietId: diets[index].dietHash,
                   ));
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const DietPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
             },
             child: Padding(
               padding: EdgeInsets.all(constants.paddingUnit * 2),
