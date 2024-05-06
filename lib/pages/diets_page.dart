@@ -26,7 +26,7 @@ List<Gag> gagList = [
   Gag(date: '10 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
   Gag(
       date: '11 мая',
-      soloRatio: ['Супердлинный альфа Ужин'],
+      soloRatio: ['Супердлинный Ужин'],
       familyRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'])
 ];
 
@@ -45,14 +45,14 @@ class GagDish {
 }
 
 List<GagDish> gagDishList = [
-  GagDish(name: "AAAA"),
-  GagDish(name: "базированное блюдо"),
-  GagDish(name: "СУПЕР ЕДА"),
-  GagDish(name: "яблоко"),
-  GagDish(name: "Джем"),
-  GagDish(name: "что-то супердлинное что-то"),
-  GagDish(name: "к"),
-  GagDish(name: "овсянка"),
+  GagDish(name: 'AAAA'),
+  GagDish(name: 'базированное блюдо'),
+  GagDish(name: 'СУПЕР ЕДА'),
+  GagDish(name: 'яблоко'),
+  GagDish(name: 'Джем'),
+  GagDish(name: 'что-то супердлинное что-то'),
+  GagDish(name: 'к'),
+  GagDish(name: 'овсянка'),
 ];
 
 class DietListPage extends ConsumerWidget {
@@ -114,7 +114,7 @@ class DietListPage extends ConsumerWidget {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => SecondScreen(index)),
+                                                  builder: (context) => DailyDishesScreen(index)),
                                             );
                                           })),
                               subtitle: Wrap(
@@ -262,22 +262,22 @@ showInputDialog(BuildContext context, int indexDay) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Введите название рациона'),
+        title: const Text('Введите название рациона'),
         content: TextField(
           onChanged: (value) {
             inputText = value;
           },
-          decoration: InputDecoration(hintText: ''),
+          decoration: const InputDecoration(),
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Отмена'),
+            child: const Text('Отмена'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('Подтвердить'),
+            child: const Text('Подтвердить'),
             onPressed: () {
               gagList[indexDay].soloRatio.add(inputText);
               Navigator.of(context).pop();
@@ -289,10 +289,10 @@ showInputDialog(BuildContext context, int indexDay) {
   );
 }
 
-class SecondScreen extends ConsumerWidget {
+class DailyDishesScreen extends ConsumerWidget {
   final int index;
 
-  const SecondScreen(this.index, {super.key});
+  const DailyDishesScreen(this.index, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -301,7 +301,11 @@ class SecondScreen extends ConsumerWidget {
         title: gagList[index].date,
         body: RRSurface(
             child: Padding(
-                padding: EdgeInsets.all(constants.paddingUnit * 2),
+                padding: EdgeInsets.only(
+                    top: constants.paddingUnit * 2,
+                    bottom: constants.paddingUnit * 2,
+                    left: constants.paddingUnit * 2,
+                    right: 0),
                 child: ListView.builder(
                     itemCount: gagList[index].soloRatio.length + gagList[index].familyRatio.length,
                     itemBuilder: (context, rIndex) {
@@ -318,16 +322,22 @@ class SecondScreen extends ConsumerWidget {
                           child: ListTile(
                               contentPadding:
                                   EdgeInsets.only(left: constants.paddingUnit, right: 0),
-                              title: StyledHeadline(
-                                  text: gagList[index].soloRatio.length > rIndex
-                                      ? gagList[index].soloRatio[rIndex]
-                                      : gagList[index]
-                                          .familyRatio[rIndex - gagList[index].soloRatio.length],
-                                  textStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        height: 1,
-                                        leadingDistribution: TextLeadingDistribution.proportional,
-                                      )),
+                              title: Row(children: [
+                                StyledHeadline(
+                                    text:
+                                        '${gagList[index].soloRatio.length > rIndex ? gagList[index].soloRatio[rIndex] : gagList[index].familyRatio[rIndex - gagList[index].soloRatio.length]} ',
+                                    textStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          height: 1,
+                                          leadingDistribution: TextLeadingDistribution.proportional,
+                                        )),
+                                gagList[index].soloRatio.length <= rIndex
+                                    ? Icon(
+                                        Icons.group,
+                                        color: Theme.of(context).colorScheme.secondary,
+                                      )
+                                    : const SizedBox()
+                              ]),
                               onTap: () {},
                               trailing: gagList[index].familyRatio.isEmpty &&
                                       gagList[index].soloRatio.isEmpty
@@ -347,38 +357,30 @@ class SecondScreen extends ConsumerWidget {
                                             color: Colors.black,
                                           ),
                                           onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => SecondScreen(index)),
-                                            );
+                                            // TODO: что здесь ожидается?
                                           })),
                               subtitle: SizedBox(
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemExtent: constants.paddingUnit /2.5 * gagDishList.length,
-                                    itemCount: gagDishList.length,
-                                    padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),
-                                    itemBuilder: (BuildContext context, int dishIndex) {
-                                      return ListTile(
-                                          contentPadding: EdgeInsets.all(0),
-                                          leading: Container(
-                                              padding: EdgeInsets.all(0),
-                                              width: constants.paddingUnit / 1.5,
-                                              height: constants.paddingUnit / 1.5,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.black26,
-                                              )),
-                                          title: Text(
-                                            gagDishList[dishIndex].name,
-                                            style: TextStyle(fontSize: constants.paddingUnit * 2),
-                                          )); // Точки перечисления
-                                    }),
-                              )));
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemExtent: constants.paddingUnit / 2.5 * gagDishList.length,
+                                      itemCount: gagDishList.length,
+                                      padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),
+                                      itemBuilder: (BuildContext context, int dishIndex) {
+                                        return ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: Container(
+                                                padding: EdgeInsets.zero,
+                                                width: constants.paddingUnit / 1.5,
+                                                height: constants.paddingUnit / 1.5,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.black26,
+                                                )),
+                                            title: Text(
+                                              gagDishList[dishIndex].name,
+                                              style: TextStyle(fontSize: constants.paddingUnit * 2),
+                                            ));
+                                      }))));
                     }))));
   }
 }
-// )))),
-// ),
-// ],}
