@@ -1,13 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:zakroma_frontend/data_cls/day_diet.dart';
-import 'package:zakroma_frontend/data_cls/diet.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
-
-import 'diet_test.mocks.dart';
 
 @GenerateMocks([http.Client])
 void main() {

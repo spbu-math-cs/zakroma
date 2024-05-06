@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/widgets/async_builder.dart';
-import 'package:zakroma_frontend/widgets/custom_scaffold.dart';
 
-import '../utility/constants.dart';
-import '../main.dart';
-import '../widgets/flat_list.dart';
-import '../widgets/rr_surface.dart';
-import '../widgets/styled_headline.dart';
+import '../../data_cls/user.dart';
+import '../../main.dart';
+import '../../utility/constants.dart';
+import '../../widgets/async_builder.dart';
+import '../../widgets/custom_scaffold.dart';
+import '../../widgets/flat_list.dart';
+import '../../widgets/rr_surface.dart';
+import '../../widgets/styled_headline.dart';
 
 // TODO(design): переписать в новом дизайне
 
-class SettingsPage extends ConsumerStatefulWidget {
-  const SettingsPage({super.key});
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  ConsumerState<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _SettingsPageState extends ConsumerState<SettingsPage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
@@ -35,11 +35,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ];
 
     return CustomScaffold(
-      title: 'Настройки',
+      title: 'Профиль',
       body: RRSurface(
         child: Column(
           children: [
-            // TODO(server): подгружать данные профиля (имя, аватарку, ...)
             // Профиль пользователя
             Expanded(
                 flex: 2,

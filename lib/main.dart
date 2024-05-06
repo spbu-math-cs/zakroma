@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
-import 'package:zakroma_frontend/widgets/async_builder.dart';
 
+import 'data_cls/user.dart';
+import 'pages/authorization_page.dart';
+import 'pages/main/0_home_page.dart';
+import 'pages/main/1_store_page.dart';
+import 'pages/main/2_diets_page.dart';
+import 'pages/main/3_market_page.dart';
+import 'pages/main/4_profile_page.dart';
 import 'utility/constants.dart';
 import 'utility/shared_preferences.dart';
-import 'pages/authorization_page.dart';
-import 'pages/diets_page.dart';
-import 'pages/home_page.dart';
-import 'pages/settings_page.dart';
 import 'utility/themes.dart' as themes;
 import 'widgets/custom_scaffold.dart';
 import 'widgets/navigation_bar.dart';
@@ -38,6 +39,7 @@ class MainPage extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'zakroma',
       builder: (context, child) {
+        // считаем константы для текущего устройства
         final screenWidth = MediaQuery.of(context).size.width;
         return ProviderScope(
           overrides: [
@@ -67,14 +69,8 @@ class _ZakromaState extends ConsumerState<Zakroma> {
   @override
   void initState() {
     super.initState();
-    // считаем константы для текущего устройства
-    // TODO(idea): сохранить константы в local preferences, чтобы не пересчитывать каждый раз?
     // блокируем переворот экрана
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    // TODO(tech): делаем что-то после отрисовки экрана?
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // debugPrint('WidgetsBinding');
-    // });
   }
 
   @override
@@ -101,14 +97,24 @@ class _ZakromaState extends ConsumerState<Zakroma> {
             selectedIcon: Icons.home,
           ),
           CNavigationDestination(
+            icon: Icons.kitchen,
+            label: 'Продукты',
+            selectedIcon: Icons.kitchen,
+          ),
+          CNavigationDestination(
             icon: Icons.restaurant_menu,
             label: 'Питание',
             selectedIcon: Icons.restaurant_menu,
           ),
           CNavigationDestination(
-            icon: Icons.settings_outlined,
-            label: 'Настройки',
-            selectedIcon: Icons.settings,
+            icon: Icons.add_shopping_cart,
+            label: 'Корзина',
+            selectedIcon: Icons.add_shopping_cart,
+          ),
+          CNavigationDestination(
+            icon: Icons.person_outline,
+            label: 'Профиль',
+            selectedIcon: Icons.person,
           ),
         ],
       ),
@@ -119,8 +125,10 @@ class _ZakromaState extends ConsumerState<Zakroma> {
         }),
         children: const [
           HomePage(),
+          StorePage(),
           DietListPage(),
-          SettingsPage(),
+          MarketPage(),
+          ProfilePage(),
         ],
       ),
     );

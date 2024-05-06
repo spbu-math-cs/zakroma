@@ -115,7 +115,7 @@ class CNavigationDestination extends StatelessWidget {
               child: Icon(
                 (isSelected ?? false) ? selectedIcon : icon,
                 color: (isSelected ?? false) ? selectedColor : color,
-                size: 5 * constraints.maxHeight / 8,
+                size: 6 * constraints.maxHeight / 10,
               ),
             ),
             Align(
@@ -124,7 +124,7 @@ class CNavigationDestination extends StatelessWidget {
                 label,
                 textAlign: TextAlign.end,
                 style: labelStyle?.copyWith(
-                  fontSize: 2 * constraints.maxHeight / 8,
+                  fontSize: 2 * constraints.maxHeight / 10,
                   color: color,
                 ),
               ),

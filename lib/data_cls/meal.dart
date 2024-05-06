@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../utility/constants.dart';
 import '../data_cls/dish.dart';
+import '../utility/constants.dart';
 import '../widgets/flat_list.dart';
 
 part 'meal.freezed.dart';

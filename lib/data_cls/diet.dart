@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:zakroma_frontend/data_cls/meal.dart';
-import 'package:zakroma_frontend/data_cls/user.dart';
 
 import '../data_cls/day_diet.dart';
 import '../data_cls/dish.dart';
+import '../data_cls/meal.dart';
+import '../data_cls/user.dart';
 import '../utility/network.dart';
 import '../utility/pair.dart';
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/widgets/async_builder.dart';
 
-import '../utility/constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
 import '../main.dart';
 import '../pages/dish_search_page.dart';
+import '../utility/constants.dart';
 import '../widgets/animated_fab.dart';
+import '../widgets/async_builder.dart';
 import '../widgets/custom_scaffold.dart';
 import '../widgets/navigation_bar.dart';
 import '../widgets/rr_surface.dart';

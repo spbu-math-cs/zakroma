@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utility/constants.dart';
 import '../data_cls/dish.dart';
 import '../data_cls/path.dart';
 import '../data_cls/tag.dart';
+import '../utility/constants.dart';
 
 class DishSearchPage extends ConsumerStatefulWidget {
   const DishSearchPage({super.key});
