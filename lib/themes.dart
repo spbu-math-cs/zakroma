@@ -53,8 +53,10 @@ enum AppTheme {
         onSurface: Colors.black,
         onSurfaceVariant: Colors.black45,
         surfaceTint: Colors.white,
-        outline: lighten(orangeBackground, 64), // FFE6CA
+        outline: lighten(orangeBackground, 64),
+        // FFE6CA
         shadow: Colors.black26,
+        surfaceVariant: const Color(0x00CFF9FF),
       ),
       scaffoldBackgroundColor: orangeBackground,
       dividerColor: lighten(orangeBackground, 30),
@@ -86,8 +88,7 @@ enum AppTheme {
 
   AppTheme copyWith(AppTheme theme) => theme;
 
-  AppTheme switchTheme() =>
-      AppTheme.values[(index + 1) % AppTheme.values.length];
+  AppTheme switchTheme() => AppTheme.values[(index + 1) % AppTheme.values.length];
 }
 
 const textTheme = TextTheme(
@@ -109,4 +110,4 @@ const textTheme = TextTheme(
 );
 
 const orangeBackground = Color(0xFFFFBA6C);
-const buttonFamilyRatio = Color(0xFFCFF9FF);
+const buttonFamilyRatio = Color(0x00CFF9FF);
