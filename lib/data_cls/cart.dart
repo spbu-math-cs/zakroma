@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:zakroma_frontend/data_cls/diet.dart';
 
 import '../data_cls/user.dart';
 import '../utility/network.dart';
@@ -15,6 +12,8 @@ part 'cart.g.dart';
 
 @Freezed(toJson: false, fromJson: false)
 class CartData with _$CartData {
+  const CartData._();
+
   const factory CartData(
       {
       /// Флаг личной корзины: true, если корзина личная.
@@ -98,51 +97,36 @@ class Cart extends _$Cart {
     });
   }
 
-  Future<void> decrement(
-      bool isCartPersonal, Ingredient ingredient, BuildContext context) async {
+  bool shouldShowAlert(bool isCartPersonal, Ingredient ingredient) {
+    if (state.asData == null) {
+      return false;
+    }
+    final previousValue = state.asData!.value;
+    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
+    return selectedCart[ingredient] == 1;
+  }
+
+  Future<void> decrement(bool isCartPersonal, Ingredient ingredient) async {
     if (state.asData == null) {
       return;
     }
     final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
     final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
-    if (selectedCart[ingredient] == 1) {
-      await showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-                title: const Text('Внимание!'),
-                content: Text(
-                    'Продукт «${ingredient.name}» будет безвозвратно удалён из корзины'),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Отмена')),
-                  TextButton(
-                      onPressed: () {
-                        selectedCart.remove(ingredient);
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Продолжить'))
-                ],
-              ));
-    } else {
-      state = const AsyncValue.loading();
-      state = await AsyncValue.guard(() async {
-        debugPrint('DEBUG: api/groups/cart/change (decrement)');
-        processResponse(await ref.watch(clientProvider.notifier).patch(
-            'api/groups/cart/change',
-            body: {
-              'product-id': ingredient.id,
-              'amount': selectedCart[ingredient]! - 1
-            },
-            token: user.token,
-            cookie: user.cookie));
-        selectedCart[ingredient] = selectedCart[ingredient]! - 1;
-        return previousValue;
-      });
-    }
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      debugPrint('DEBUG: api/groups/cart/change (decrement)');
+      processResponse(await ref.watch(clientProvider.notifier).patch(
+          'api/groups/cart/change',
+          body: {
+            'product-id': ingredient.id,
+            'amount': selectedCart[ingredient]! - 1
+          },
+          token: user.token,
+          cookie: user.cookie));
+      selectedCart[ingredient] = selectedCart[ingredient]! - 1;
+      return previousValue;
+    });
   }
 
   Future<void> increment(bool isCartPersonal, Ingredient ingredient) async {

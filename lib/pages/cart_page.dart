@@ -198,9 +198,23 @@ class IngredientTile extends ConsumerWidget {
                           children: [
                             // Кнопка «уменьшить количество» (aka минус)
                             RRButton(
-                                onTap: () => ref
-                                    .read(cartProvider.notifier)
-                                    .decrement(isPersonal, ingredient, context),
+                                onTap: () {
+                                  if (ref
+                                      .read(cartProvider.notifier)
+                                      .shouldShowAlert(
+                                          isPersonal, ingredient)) {
+                                    ingredient.showAlert(
+                                        context,
+                                        (ingredient_) => ref
+                                            .read(cartProvider.notifier)
+                                            .decrement(
+                                                isPersonal, ingredient_));
+                                  } else {
+                                    ref
+                                        .read(cartProvider.notifier)
+                                        .decrement(isPersonal, ingredient);
+                                  }
+                                },
                                 borderRadius: constants.paddingUnit / 2,
                                 padding: EdgeInsets.zero,
                                 child: SizedBox.square(
@@ -243,9 +257,11 @@ class IngredientTile extends ConsumerWidget {
                         dimension: constants.paddingUnit * 3,
                         child: RRButton(
                             elevation: 0,
-                            onTap: () => ref
-                                .read(cartProvider.notifier)
-                                .remove(isPersonal, ingredient),
+                            onTap: () => ingredient.showAlert(
+                                context,
+                                (ingredient_) => ref
+                                    .read(cartProvider.notifier)
+                                    .remove(isPersonal, ingredient_)),
                             backgroundColor: Colors.transparent,
                             borderRadius: constants.paddingUnit / 2,
                             padding: EdgeInsets.zero,

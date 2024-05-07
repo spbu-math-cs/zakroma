@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ingredient.freezed.dart';
@@ -6,6 +7,8 @@ part 'ingredient.g.dart';
 
 @Freezed(toJson: false)
 class Ingredient with _$Ingredient {
+  const Ingredient._();
+
   const factory Ingredient(
       {
       /// Id продукта.
@@ -41,6 +44,25 @@ class Ingredient with _$Ingredient {
             // TODO(back): изменить на market-name как только подоспеет бэк
           }): el['amount']
       };
+
+  void showAlert(BuildContext context, void Function(Ingredient) onTap) async =>
+      await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: const Text('Внимание!'),
+                content: Text(
+                    'Продукт «$name» будет безвозвратно удалён из корзины'),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Отмена')),
+                  TextButton(
+                      onPressed: () => onTap(this),
+                      child: const Text('Продолжить'))
+                ],
+              ));
 }
 
 extension ParseIngredients on List<Map<String, dynamic>> {
