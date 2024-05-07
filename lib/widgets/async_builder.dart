@@ -30,51 +30,15 @@ class AsyncBuilder<T> extends StatelessWidget {
               builder: (context, constraints) => RRSurface(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     padding: EdgeInsets.zero,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Что-то пошло не так',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary),
-                          ),
-                        )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Произошла ошибка: $error',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary),
-                          ),
-                        )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.centerRight,
-                          child: RRButton(
-                            onTap: () {
-                              if (Navigator.of(context).canPop()) {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: const Text('Назад'),
-                          ),
-                        ))
-                      ],
-                    ),
+                    child: Expanded(
+                        child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Произошла ошибка: $error',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondary),
+                      ),
+                    )),
                   ));
         });
   }

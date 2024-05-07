@@ -1,35 +1,64 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:zakroma_frontend/data_cls/diet.dart';
 
 import '../data_cls/user.dart';
 import '../utility/network.dart';
+import '../utility/pair.dart';
 import 'ingredient.dart';
 
+part 'cart.freezed.dart';
 part 'cart.g.dart';
+
+@Freezed(toJson: false, fromJson: false)
+class CartData with _$CartData {
+  const factory CartData(
+      {
+      /// Флаг личной корзины: true, если корзина личная.
+      required bool isPersonal,
+
+      /// Продукты в холодильнике.
+      required Map<Ingredient, int> cart}) = _CartData;
+}
 
 @Riverpod(keepAlive: true)
 class Cart extends _$Cart {
   @override
-  FutureOr<Map<Ingredient, int>> build() async {
+  FutureOr<Pair<CartData, CartData?>> build() async {
     final user = ref.watch(userProvider.notifier).getUser();
-    debugPrint('DEBUG: api/groups/cart');
-    final json = processResponse(await ref.watch(clientProvider).get(
-        makeUri('api/groups/cart'),
-        headers: makeHeader(user.token, user.cookie)));
-    return {
-      for (var el in json)
-        Ingredient.fromJson({
-          'id': el['product-id'],
-          'name': el['name'],
-          'market-name': el[
-              'name'] // TODO(back): изменить на market-name как только подоспеет бэк
-        }): el['amount']
-    };
+    try {
+      var json = processResponse(await ref
+          .watch(clientProvider.notifier)
+          .get('api/cart/personal', token: user.token, cookie: user.cookie));
+      final personalCart =
+          CartData(isPersonal: true, cart: json.parseIngredients());
+      json = processResponse(await ref
+          .watch(clientProvider.notifier)
+          .get('api/cart/family', token: user.token, cookie: user.cookie));
+      final familyCart = json.firstOrNull != null
+          ? CartData(isPersonal: false, cart: json.parseIngredients())
+          : null;
+      return Pair(personalCart, familyCart);
+    } catch (error) {
+      return Pair(
+          CartData(isPersonal: true, cart: {
+            const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 3,
+            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 2
+          }),
+          CartData(isPersonal: false, cart: {
+            const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
+                3,
+            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 2,
+            const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 4,
+          }));
+    }
   }
 
-  Future<void> add(Ingredient ingredient, int amount) async {
+  Future<void> add(
+      bool isCartPersonal, Ingredient ingredient, int amount) async {
     assert(amount > 0);
     final user = ref.watch(userProvider.notifier).getUser();
     if (state.asData == null) {
@@ -39,16 +68,17 @@ class Cart extends _$Cart {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/add');
-      processResponse(await ref.watch(clientProvider).post(
-          makeUri('api/groups/cart/add'),
-          body: jsonEncode({'product-id': ingredient.id, 'amount': amount}),
-          headers: makeHeader(user.token, user.cookie)));
-      previousValue[ingredient] = amount;
+      processResponse(await ref.watch(clientProvider.notifier).post(
+          'api/groups/cart/add',
+          body: {'product-id': ingredient.id, 'amount': amount},
+          token: user.token,
+          cookie: user.cookie));
+      previousValue.getPersonal(isCartPersonal)?.cart[ingredient] = amount;
       return previousValue;
     });
   }
 
-  Future<void> remove(Ingredient ingredient) async {
+  Future<void> remove(bool isCartPersonal, Ingredient ingredient) async {
     // TODO(func): добавить предупреждение как в decrement
     if (state.asData == null) {
       return;
@@ -58,22 +88,25 @@ class Cart extends _$Cart {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/remove');
-      processResponse(await ref.watch(clientProvider).post(
-          makeUri('api/groups/cart/remove'),
-          body: jsonEncode({'product-id': ingredient.id}),
-          headers: makeHeader(user.token, user.cookie)));
-      previousValue.remove(ingredient);
+      processResponse(await ref.watch(clientProvider.notifier).post(
+          'api/groups/cart/remove',
+          body: {'product-id': ingredient.id},
+          token: user.token,
+          cookie: user.cookie));
+      previousValue.getPersonal(isCartPersonal)?.cart.remove(ingredient);
       return previousValue;
     });
   }
 
-  Future<void> decrement(Ingredient ingredient, BuildContext context) async {
+  Future<void> decrement(
+      bool isCartPersonal, Ingredient ingredient, BuildContext context) async {
     if (state.asData == null) {
       return;
     }
     final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
-    if (previousValue[ingredient] == 1) {
+    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
+    if (selectedCart[ingredient] == 1) {
       await showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -88,7 +121,7 @@ class Cart extends _$Cart {
                       child: const Text('Отмена')),
                   TextButton(
                       onPressed: () {
-                        remove(ingredient);
+                        selectedCart.remove(ingredient);
                         Navigator.of(context).pop();
                       },
                       child: const Text('Продолжить'))
@@ -98,36 +131,39 @@ class Cart extends _$Cart {
       state = const AsyncValue.loading();
       state = await AsyncValue.guard(() async {
         debugPrint('DEBUG: api/groups/cart/change (decrement)');
-        processResponse(await ref.watch(clientProvider).patch(
-            makeUri('api/groups/cart/change'),
-            body: jsonEncode({
+        processResponse(await ref.watch(clientProvider.notifier).patch(
+            'api/groups/cart/change',
+            body: {
               'product-id': ingredient.id,
-              'amount': previousValue[ingredient]! - 1
-            }),
-            headers: makeHeader(user.token, user.cookie)));
-        previousValue[ingredient] = previousValue[ingredient]! - 1;
+              'amount': selectedCart[ingredient]! - 1
+            },
+            token: user.token,
+            cookie: user.cookie));
+        selectedCart[ingredient] = selectedCart[ingredient]! - 1;
         return previousValue;
       });
     }
   }
 
-  Future<void> increment(Ingredient ingredient) async {
+  Future<void> increment(bool isCartPersonal, Ingredient ingredient) async {
     if (state.asData == null) {
       return;
     }
     final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
+    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/change (increment)');
-      processResponse(await ref.watch(clientProvider).patch(
-          makeUri('api/groups/cart/change'),
-          body: jsonEncode({
+      processResponse(await ref.watch(clientProvider.notifier).patch(
+          'api/groups/cart/change',
+          body: {
             'product-id': ingredient.id,
-            'amount': previousValue[ingredient]! + 1
-          }),
-          headers: makeHeader(user.token, user.cookie)));
-      previousValue[ingredient] = previousValue[ingredient]! + 1;
+            'amount': selectedCart[ingredient]! + 1
+          },
+          token: user.token,
+          cookie: user.cookie));
+      selectedCart[ingredient] = selectedCart[ingredient]! + 1;
       return previousValue;
     });
   }
