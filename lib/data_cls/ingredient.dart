@@ -33,18 +33,6 @@ class Ingredient with _$Ingredient {
   factory Ingredient.fromJson(Map<String, dynamic> json) =>
       _$IngredientFromJson(json);
 
-  static Map<Ingredient, int> parseIngredients(
-          List<Map<String, dynamic>> json) =>
-      {
-        for (var el in json)
-          Ingredient.fromJson({
-            'id': el['product-id'],
-            'name': el['name'],
-            'market-name': el['name']
-            // TODO(back): изменить на market-name как только подоспеет бэк
-          }): el['amount']
-      };
-
   void showAlert(BuildContext context, void Function(Ingredient) onTap) async =>
       await showDialog(
           context: context,
@@ -55,11 +43,18 @@ class Ingredient with _$Ingredient {
                 actions: [
                   TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
                       },
                       child: const Text('Отмена')),
                   TextButton(
-                      onPressed: () => onTap(this),
+                      onPressed: () {
+                        onTap(this);
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      },
                       child: const Text('Продолжить'))
                 ],
               ));
@@ -75,6 +70,16 @@ extension ParseIngredients on List<Map<String, dynamic>> {
             // TODO(back): изменить на market-name как только подоспеет бэк
           }): el['amount']
       };
+}
+
+typedef Ingredients = Map<Ingredient, int>;
+
+extension CopyWith on Ingredients {
+  Ingredients copyWith(Ingredient ingredient, int amount) {
+    final result = Ingredients.from(this);
+    result[ingredient] = amount;
+    return result;
+  }
 }
 
 // ignore_for_file: invalid_annotation_target

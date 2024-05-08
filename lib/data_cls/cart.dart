@@ -17,10 +17,10 @@ class CartData with _$CartData {
   const factory CartData(
       {
       /// Флаг личной корзины: true, если корзина личная.
-      required bool isPersonal,
+      required bool personal,
 
       /// Продукты в холодильнике.
-      required Map<Ingredient, int> cart}) = _CartData;
+      required Ingredients cart}) = _CartData;
 }
 
 @Riverpod(keepAlive: true)
@@ -33,17 +33,17 @@ class Cart extends _$Cart {
           .watch(clientProvider.notifier)
           .get('api/cart/personal', token: user.token, cookie: user.cookie));
       final personalCart =
-          CartData(isPersonal: true, cart: json.parseIngredients());
+          CartData(personal: true, cart: json.parseIngredients());
       json = processResponse(await ref
           .watch(clientProvider.notifier)
           .get('api/cart/family', token: user.token, cookie: user.cookie));
       final familyCart = json.firstOrNull != null
-          ? CartData(isPersonal: false, cart: json.parseIngredients())
+          ? CartData(personal: false, cart: json.parseIngredients())
           : null;
       return Pair(personalCart, familyCart);
     } catch (error) {
       return Pair(
-          CartData(isPersonal: true, cart: {
+          CartData(personal: true, cart: {
             const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 3,
             const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 2,
             const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
@@ -51,7 +51,7 @@ class Cart extends _$Cart {
             const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 1,
             const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 1,
           }),
-          CartData(isPersonal: false, cart: {
+          CartData(personal: false, cart: {
             const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 6,
             const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 8,
             const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
@@ -63,8 +63,7 @@ class Cart extends _$Cart {
     }
   }
 
-  Future<void> add(
-      bool isCartPersonal, Ingredient ingredient, int amount) async {
+  Future<void> add(bool personal, Ingredient ingredient, int amount) async {
     assert(amount > 0);
     final user = ref.watch(userProvider.notifier).getUser();
     if (state.asData == null) {
@@ -79,13 +78,16 @@ class Cart extends _$Cart {
           body: {'product-id': ingredient.id, 'amount': amount},
           token: user.token,
           cookie: user.cookie));
-      previousValue.getPersonal(isCartPersonal)?.cart[ingredient] = amount;
-      return previousValue;
+      return previousValue.updateCart(
+          personal,
+          previousValue
+              .getPersonal(personal)
+              ?.cart
+              .copyWith(ingredient, amount));
     });
   }
 
-  Future<void> remove(bool isCartPersonal, Ingredient ingredient) async {
-    // TODO(func): добавить предупреждение как в decrement
+  Future<void> remove(bool personal, Ingredient ingredient) async {
     if (state.asData == null) {
       return;
     }
@@ -99,27 +101,29 @@ class Cart extends _$Cart {
           body: {'product-id': ingredient.id},
           token: user.token,
           cookie: user.cookie));
-      previousValue.getPersonal(isCartPersonal)?.cart.remove(ingredient);
-      return previousValue;
+      final newCart =
+          Ingredients.from(previousValue.getPersonal(personal)!.cart);
+      newCart.remove(ingredient);
+      return previousValue.updateCart(personal, newCart);
     });
   }
 
-  bool shouldShowAlert(bool isCartPersonal, Ingredient ingredient) {
+  bool shouldShowAlert(bool personal, Ingredient ingredient) {
     if (state.asData == null) {
       return false;
     }
     final previousValue = state.asData!.value;
-    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
+    final selectedCart = previousValue.getPersonal(personal)!.cart;
     return selectedCart[ingredient] == 1;
   }
 
-  Future<void> decrement(bool isCartPersonal, Ingredient ingredient) async {
+  Future<void> decrement(bool personal, Ingredient ingredient) async {
     if (state.asData == null) {
       return;
     }
     final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
-    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
+    final selectedCart = previousValue.getPersonal(personal)!.cart;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/change (decrement)');
@@ -131,18 +135,18 @@ class Cart extends _$Cart {
           },
           token: user.token,
           cookie: user.cookie));
-      selectedCart[ingredient] = selectedCart[ingredient]! - 1;
-      return previousValue;
+      return previousValue.updateCart(personal,
+          selectedCart.copyWith(ingredient, selectedCart[ingredient]! - 1));
     });
   }
 
-  Future<void> increment(bool isCartPersonal, Ingredient ingredient) async {
+  Future<void> increment(bool personal, Ingredient ingredient) async {
     if (state.asData == null) {
       return;
     }
     final user = ref.watch(userProvider.notifier).getUser();
     final previousValue = state.asData!.value;
-    final selectedCart = previousValue.getPersonal(isCartPersonal)!.cart;
+    final selectedCart = previousValue.getPersonal(personal)!.cart;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       debugPrint('DEBUG: api/groups/cart/change (increment)');
@@ -154,8 +158,19 @@ class Cart extends _$Cart {
           },
           token: user.token,
           cookie: user.cookie));
-      selectedCart[ingredient] = selectedCart[ingredient]! + 1;
-      return previousValue;
+      return previousValue.updateCart(personal,
+          selectedCart.copyWith(ingredient, selectedCart[ingredient]! + 1));
     });
+  }
+}
+
+extension UpdateCart on Pair<CartData, CartData?> {
+  Pair<CartData, CartData?> updateCart(bool personal, Ingredients? newCart) {
+    if (newCart == null) {
+      return this;
+    }
+    return personal
+        ? Pair(first.copyWith(cart: newCart), second)
+        : Pair(first, second?.copyWith(cart: newCart));
   }
 }

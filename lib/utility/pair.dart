@@ -11,7 +11,7 @@ class Pair<T1, T2> {
 }
 
 extension GetPersonal<T> on Pair<T, T?> {
-  T? getPersonal(bool isPersonal) => isPersonal ? first : second;
+  T? getPersonal(bool personal) => personal ? first : second;
 }
 
 extension MergeInt<T> on Pair<T, T?> {
