@@ -45,13 +45,20 @@ class Cart extends _$Cart {
       return Pair(
           CartData(isPersonal: true, cart: {
             const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 3,
-            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 2
+            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 2,
+            const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
+                4,
+            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 1,
+            const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 1,
           }),
           CartData(isPersonal: false, cart: {
+            const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 6,
+            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 8,
             const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
-                3,
-            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 2,
+                10,
+            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 6,
             const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 4,
+            const Ingredient(id: 5, name: 'Слива', marketName: 'Слива'): 20,
           }));
     }
   }

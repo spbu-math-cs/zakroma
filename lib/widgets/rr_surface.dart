@@ -5,18 +5,18 @@ import '../utility/constants.dart';
 
 class RRSurface extends ConsumerWidget {
   final Widget child;
+  final Duration? animationDuration;
   final Color? backgroundColor;
-  final double? borderRadius;
-  final bool continuous;
+  final BorderRadius? borderRadius;
   final EdgeInsets? padding;
   final double? elevation;
 
   const RRSurface(
       {super.key,
       required this.child,
+      this.animationDuration,
       this.backgroundColor,
       this.borderRadius,
-      this.continuous = false,
       this.elevation,
       this.padding});
 
@@ -24,17 +24,13 @@ class RRSurface extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
     return Padding(
-        padding: continuous
-            ? padding?.copyWith(bottom: 0) ??
-                constants.dBlockPadding.copyWith(bottom: 0)
-            : padding ?? constants.dBlockPadding,
+        padding: padding ?? constants.dBlockPadding,
         child: Material(
-          elevation: continuous ? 0 : elevation ?? constants.dElevation,
+          animationDuration: animationDuration ?? Constants.dAnimationDuration,
+          elevation: elevation ?? constants.dElevation,
           clipBehavior: Clip.antiAlias,
-          borderRadius: continuous
-              ? BorderRadius.vertical(
-                  top: Radius.circular(borderRadius ?? constants.dOuterRadius))
-              : BorderRadius.circular(borderRadius ?? constants.dOuterRadius),
+          borderRadius:
+              borderRadius ?? BorderRadius.circular(constants.dOuterRadius),
           color:
               backgroundColor ?? Theme.of(context).colorScheme.primaryContainer,
           child: child,
