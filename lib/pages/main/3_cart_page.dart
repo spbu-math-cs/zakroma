@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
 
 import '../../data_cls/cart.dart';
+import '../../data_cls/ingredient.dart';
 import '../../utility/constants.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
@@ -26,6 +27,10 @@ class _CartPageState extends ConsumerState<CartPage> {
   bool orderButtonVisible = true;
   bool personalCartSelected = true;
   bool cartManuallySelected = false;
+  Map<bool, List<Ingredient>> selectedIngredients = {true: [], false: []};
+  final ingredientTiles = <IngredientTile>[];
+  int initiallySelected = -1;
+  int lastSelectionModified = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +47,17 @@ class _CartPageState extends ConsumerState<CartPage> {
     final tabTitles = ['Личная', 'Семейная'];
 
     return CustomScaffold(
-        title: 'Корзина',
+        title: selectedIngredients.myIsEmpty ? 'Корзина' : null,
+        header: selectedIngredients.myIsEmpty
+            ? null
+            : Container(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+        topNavigationBar: selectedIngredients.myIsEmpty
+            ? null
+            : Container(
+                color: Theme.of(context).colorScheme.primary,
+              ),
         body: Column(
           children: [
             // Переключатель корзины: Личная / Семейная
@@ -105,50 +120,102 @@ class _CartPageState extends ConsumerState<CartPage> {
                   child: Stack(children: [
                     // Продукты в корзине
                     AsyncBuilder(
-                        asyncValue: ref.watch(cartProvider.select((asyncValue) =>
-                            asyncValue.whenData((value) {
-                              scrollController.addListener(() => setState(() {
-                                    if (!cartManuallySelected) {
-                                      personalCartSelected =
-                                          scrollController.offset <
-                                              ingredientTileHeight *
-                                                  value.first.cart.length /
-                                                  2;
-                                    }
-                                  }));
-                              return (
-                                value.first.cart.length,
-                                value.second?.cart.length
-                              );
-                            }))),
+                        asyncValue: ref.watch(cartProvider.select(
+                            (asyncValue) => asyncValue.whenData((value) {
+                                  scrollController
+                                      .addListener(() => setState(() {
+                                            if (!cartManuallySelected) {
+                                              personalCartSelected =
+                                                  scrollController.offset <
+                                                      ingredientTileHeight *
+                                                          value.first.cart
+                                                              .length /
+                                                          2;
+                                            }
+                                          }));
+                                  return (
+                                    value.first.cart.length,
+                                    value.second?.cart.length ?? 0
+                                  );
+                                }))),
                         builder: (lengths) => FlatList(
                             childPadding:
                                 EdgeInsets.only(bottom: constants.paddingUnit),
                             scrollController: scrollController,
                             children: List<Widget>.generate(
-                                lengths.$1 + (lengths.$2 ?? 0) + 1,
-                                (index) => index != lengths.$1
-                                    ? AsyncBuilder(
-                                        asyncValue: ref.watch(cartProvider.select((asyncValue) => asyncValue.whenData((value) => index < lengths.$1
-                                            ? value.first.cart.entries
-                                                .elementAt(index)
-                                            : value.second!.cart.entries.elementAt(
-                                                index - lengths.$1 - 1)))),
-                                        builder: (ingredient) => IngredientTile(
-                                            isPersonal: index < lengths.$1,
-                                            ingredient: ingredient.key,
-                                            amount: ingredient.value,
-                                            height: ingredientTileHeight,
-                                            faded: personalCartSelected != index < lengths.$1))
-                                    : TextDivider(
-                                        text: 'Семейная',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                        color: lighten(Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer),
-                                      )))),
+                                lengths.$1 + lengths.$2 + 1, (index) {
+                              if (index == lengths.$1) {
+                                return TextDivider(
+                                  text: 'Семейная',
+                                  textStyle:
+                                      Theme.of(context).textTheme.bodyMedium,
+                                  color: lighten(Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer),
+                                );
+                              } else {
+                                final personal = index < lengths.$1;
+                                return AsyncBuilder(
+                                    asyncValue: ref.watch(cartProvider.select(
+                                        (asyncValue) => asyncValue.whenData(
+                                            (value) => personal
+                                                ? value.first.cart.entries
+                                                    .elementAt(index)
+                                                : value.second!.cart.entries
+                                                    .elementAt(index -
+                                                        lengths.$1 -
+                                                        1)))),
+                                    builder: (ingredient) {
+                                      final tile = IngredientTile(
+                                          personal: personal,
+                                          ingredient: ingredient.key,
+                                          amount: ingredient.value,
+                                          height: ingredientTileHeight,
+                                          faded:
+                                              personalCartSelected != personal,
+                                          selected:
+                                              selectedIngredients[personal]!
+                                                  .contains(ingredient.key),
+                                          onLongPress: () {
+                                            setState(() {
+                                              if (!selectedIngredients[
+                                                      personal]!
+                                                  .contains(ingredient.key)) {
+                                                initiallySelected =
+                                                    lastSelectionModified =
+                                                        index -
+                                                            (personal ? 0 : 1);
+                                                selectedIngredients[personal]!
+                                                    .add(ingredient.key);
+                                              }
+                                            });
+                                            debugPrint(
+                                                'onLongPress: selectedIngredients = $selectedIngredients');
+                                          },
+                                          onLongPressMoveUpdate: (details) =>
+                                              _handleDrag(
+                                                  personal,
+                                                  ingredient.key,
+                                                  details,
+                                                  ingredientTileHeight,
+                                                  personal
+                                                      ? index
+                                                      : index - lengths.$1 - 1),
+                                          onTap: () => _handleSelect(
+                                              personal,
+                                              ingredient.key,
+                                              index - (personal ? 0 : 1)));
+                                      final tileIndex =
+                                          index - (personal ? 0 : 1);
+                                      if (ingredientTiles.length <= tileIndex) {
+                                        ingredientTiles.add(tile);
+                                      } else {
+                                        ingredientTiles[tileIndex] = tile;
+                                      }
+                                      return tile;
+                                    });
+                              }
+                            }))),
                     // Кнопка «Перейти к оформлению»
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -219,4 +286,57 @@ class _CartPageState extends ConsumerState<CartPage> {
           ],
         ));
   }
+
+  void _handleSelect(bool personal, Ingredient ingredient, int index) {
+    debugPrint('_handleSelect($personal, $ingredient)');
+    setState(() {
+      if (selectedIngredients.myIsEmpty) {
+        debugPrint('empty');
+        return;
+      }
+      lastSelectionModified = index;
+      if (selectedIngredients[personal]!.contains(ingredient)) {
+        debugPrint('removing');
+        selectedIngredients[personal]!.remove(ingredient);
+      } else {
+        debugPrint('adding');
+        selectedIngredients[personal]!.add(ingredient);
+      }
+    });
+    debugPrint('onTap: selectedIngredients = $selectedIngredients');
+  }
+
+  void _handleDrag(
+      bool personal,
+      Ingredient ingredient,
+      LongPressMoveUpdateDetails details,
+      double ingredientTileHeight,
+      int index) {
+    final ingredientIndex =
+        (index + details.localPosition.dy / ingredientTileHeight).floor();
+    if (ingredientIndex != lastSelectionModified) {
+      debugPrint(
+          '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
+      debugPrint(
+          '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
+      if (lastSelectionModified != initiallySelected &&
+          (initiallySelected - lastSelectionModified) *
+                  (lastSelectionModified - ingredientIndex) <
+              0) {
+        setState(() {
+          ingredientTiles[lastSelectionModified].onTap!();
+        });
+        lastSelectionModified = ingredientIndex;
+        return;
+      }
+      lastSelectionModified = ingredientIndex;
+      setState(() {
+        ingredientTiles[ingredientIndex].onTap!();
+      });
+    }
+  }
+}
+
+extension MyIsEmpty on Map<bool, List<Ingredient>> {
+  bool get myIsEmpty => this[true]!.isEmpty && this[false]!.isEmpty;
 }
