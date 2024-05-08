@@ -202,7 +202,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                                         ));
                               },
                               borderRadius: constants.dInnerRadius,
-                              padding: constants.dBlockPadding,
+                              padding: constants.dBlockPadding +
+                                  constants.dCardPadding,
                               child: Text(
                                 'Перейти к оформлению',
                                 style: Theme.of(context)
