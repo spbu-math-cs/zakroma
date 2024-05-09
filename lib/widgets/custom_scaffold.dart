@@ -8,6 +8,7 @@ class CustomScaffold extends ConsumerWidget {
   final String? title;
   final Widget? header;
   final Widget body;
+  final EdgeInsets? padding;
   final Widget? topNavigationBar;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
@@ -16,6 +17,7 @@ class CustomScaffold extends ConsumerWidget {
   const CustomScaffold({
     super.key,
     required this.body,
+    this.padding,
     this.title,
     this.header,
     this.topNavigationBar,
@@ -33,16 +35,13 @@ class CustomScaffold extends ConsumerWidget {
       body: SafeArea(
         child: LayoutBuilder(builder: (context, constraints) {
           final topPadding = constraints.maxHeight -
-              Constants.screenHeight * constants.paddingUnit -
-              (bottomNavigationBar == null
-                  ? Constants.bottomNavigationBarHeight * constants.paddingUnit
-                  : 0) -
+              Constants.screenHeight * constants.paddingUnit +
               (topNavigationBar == null
-                  ? 0
-                  : Constants.topNavigationBarHeight * constants.paddingUnit);
+                  ? Constants.topNavigationBarHeight * constants.paddingUnit
+                  : 0);
 
           return Padding(
-            padding: EdgeInsets.only(top: topPadding > 0 ? topPadding : 0),
+            padding: padding ?? EdgeInsets.only(top: topPadding),
             child: Column(
               children: [
                 Visibility(
@@ -56,7 +55,8 @@ class CustomScaffold extends ConsumerWidget {
                 Visibility(
                   visible: header != null || title != null,
                   child: Expanded(
-                      flex: 9, // стандартная высота заголовка
+                      flex: Constants
+                          .headerHeight, // стандартная высота заголовка
                       child: header == null
                           ? title == null
                               ? const SizedBox.shrink()
@@ -76,10 +76,8 @@ class CustomScaffold extends ConsumerWidget {
                 ),
                 Expanded(
                     flex: Constants.screenHeight -
-                        9 -
-                        (topNavigationBar == null
-                            ? 0
-                            : Constants.topNavigationBarHeight),
+                        Constants.headerHeight -
+                        Constants.topNavigationBarHeight,
                     child: body)
               ],
             ),

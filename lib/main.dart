@@ -118,6 +118,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           ),
         ],
       ),
+      padding: EdgeInsets.zero,
       body: PageView(
         controller: pageController,
         onPageChanged: (index) => setState(() {

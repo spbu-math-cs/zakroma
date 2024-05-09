@@ -1,16 +1,14 @@
 import 'dart:convert';
 
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'constants.dart';
+
 part 'network.g.dart';
 
-// TODO(server): по готовности сервера заменить на адрес сервера
-const serverAddress = 'http://10.0.2.2:8080';
-
-Uri makeUri(String request) => Uri.parse('$serverAddress/$request');
+Uri makeUri(String request) => Uri.parse('${Constants.serverAddress}/$request');
 
 Map<String, String> makeHeader([String? token, String? cookie]) {
   Map<String, String> result = {
@@ -66,11 +64,10 @@ class Client extends _$Client {
 
   Future<http.Response> get(String request,
       {required String token, required String cookie}) async {
-    debugPrint('---GET---\n($request, $token, $cookie)');
+    // debugPrint('---GET---\n($request, $token, $cookie)');
     return state
-        .get(Uri.parse('$serverAddress/$request'),
-            headers: makeHeader(token, cookie))
-        .timeout(const Duration(seconds: 5),
+        .get(makeUri(request), headers: makeHeader(token, cookie))
+        .timeout(Constants.networkTimeout,
             onTimeout: () => http.Response('', 408));
   }
 
@@ -79,9 +76,9 @@ class Client extends _$Client {
     // debugPrint(
     //     '---POST---\n(request = $request, body = $body, token = $token, cookie = $cookie])');
     return state
-        .post(Uri.parse('$serverAddress/$request'),
+        .post(makeUri(request),
             headers: makeHeader(token, cookie), body: json.encode(body))
-        .timeout(const Duration(seconds: 5),
+        .timeout(Constants.networkTimeout,
             onTimeout: () => http.Response('', 408));
   }
 
@@ -90,18 +87,17 @@ class Client extends _$Client {
     // debugPrint(
     //     '---PATCH---\n(request = $request, body = $body, token = $token, cookie = $cookie])');
     return state
-        .patch(Uri.parse('$serverAddress/$request'),
+        .patch(makeUri(request),
             headers: makeHeader(token, cookie), body: json.encode(body))
-        .timeout(const Duration(seconds: 5),
+        .timeout(Constants.networkTimeout,
             onTimeout: () => http.Response('', 408));
   }
 
   Future<http.Response> delete(String request,
       {required String token, required String cookie}) async {
     return state
-        .delete(Uri.parse('$serverAddress/$request'),
-            headers: makeHeader(token, cookie))
-        .timeout(const Duration(seconds: 5),
+        .delete(makeUri(request), headers: makeHeader(token, cookie))
+        .timeout(Constants.networkTimeout,
             onTimeout: () => http.Response('', 408));
   }
 }

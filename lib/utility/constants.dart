@@ -4,21 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 @immutable
 class Constants {
   /// Единичный отступ, на основании которого считаются все остальные отступы.
-  /// Зависит от размеров экрана. Равна ширина_экрана / 48.
+  ///
+  /// Зависит от размеров экрана. Равен ширина_экрана / 48.
   final double paddingUnit;
 
-  /// Фактически используемая высота экрана (в единицах paddingUnit).
+  /// Фактически используемая высота экрана (в единицах [paddingUnit]).
   ///
   /// Отсчитывается снизу, оставшееся сверху место остаётся пустым.
-  /// Высота используемой части экрана будет равна 85 * paddingUnit.
+  /// Высота используемой части экрана будет равна [screenHeight] * [paddingUnit].
   /// Не учитывает высоту панели навигации приложения!
-  static const screenHeight = 85;
+  static const screenHeight = 91;
 
-  /// Высота нижней панели навигации приложения (в единицах paddingUnit).
-  static const bottomNavigationBarHeight = 7;
+  /// Высота заголовка приложения (Закрома, ...).
+  static const headerHeight = 9;
 
-  /// Высота верхней панели навигации приложения (в единицах paddingUnit).
+  /// Высота верхней панели навигации приложения (в единицах [paddingUnit]).
   static const topNavigationBarHeight = 3;
+
+  /// Высота нижней панели навигации приложения (в единицах [paddingUnit]).
+  static const bottomNavigationBarHeight = 7;
 
   /// Продолжительность анимаций (миллисекунды).
   static const dAnimationDuration = Duration(milliseconds: 250);
@@ -62,11 +66,17 @@ class Constants {
   ];
 
   /// IP-адрес сервера (включает в себя порт).
-  static const serverAddress = '';
+  // TODO(server): по готовности заменить на адрес сервера
+  static const serverAddress = 'http://192.168.0.103:8080';
+
+  /// Таймаут для запросов на сервер.
+  static const networkTimeout = Duration(seconds: 1);
 
   const Constants({required this.paddingUnit});
 
-  /// Отступ заголовка страницы (Закрома, Рационы, Настройки, ...).
+  /// Отступ заголовка приложения (Закрома, ...).
+  ///
+  /// 4 * [paddingUnit], 0, 0, [paddingUnit]
   EdgeInsets get dAppHeadlinePadding =>
       EdgeInsets.fromLTRB(paddingUnit * 4, 0, 0, paddingUnit);
 
@@ -74,21 +84,31 @@ class Constants {
   ///
   /// Используется для элементов, размеры которых задаются
   /// в виде дроби размер_элемента / размер_всего_экрана.
+  ///
+  /// 2 * [paddingUnit], 0, 2 * [paddingUnit], 2 * [paddingUnit]
   EdgeInsets get dBlockPadding =>
       EdgeInsets.fromLTRB(paddingUnit * 2, 0, paddingUnit * 2, paddingUnit * 2);
 
   /// Отступ карточек — элементов, перечисляемых на экране.
+  ///
+  /// [paddingUnit], 0, 0, [paddingUnit]
   EdgeInsets get dCardPadding => EdgeInsets.symmetric(horizontal: paddingUnit);
 
   /// Отступ карточек, уменьшенный в два раза.
+  ///
+  /// [paddingUnit] / 2, 0, [paddingUnit] / 2
   EdgeInsets get dCardPaddingHalf =>
       EdgeInsets.symmetric(horizontal: paddingUnit / 2);
 
   /// Отступ заголовка элемента.
+  ///
+  /// 2 * [paddingUnit], 2 * [paddingUnit], 2 * [paddingUnit], [paddingUnit]
   EdgeInsets get dHeadingPadding => EdgeInsets.fromLTRB(
       paddingUnit * 2, paddingUnit * 2, paddingUnit * 2, paddingUnit);
 
   /// Отступ основного текста.
+  ///
+  /// [paddingUnit], [paddingUnit] / 2, [paddingUnit], [paddingUnit] / 2
   EdgeInsets get dTextPadding =>
       EdgeInsets.symmetric(vertical: paddingUnit / 2, horizontal: paddingUnit);
 
@@ -96,6 +116,8 @@ class Constants {
   ///
   /// Используется для текста, который выполняет роль пометки,
   /// объясняющей смысл/предназначение другого элемента интерфейса.
+  ///
+  /// [paddingUnit], 0, [paddingUnit], 0
   EdgeInsets get dLabelPadding => EdgeInsets.symmetric(horizontal: paddingUnit);
 
   /// Радиус скругления углов у внешних (объемлющих) элементов интерфейса.
