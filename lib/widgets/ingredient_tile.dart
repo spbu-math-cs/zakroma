@@ -57,10 +57,13 @@ class IngredientTile extends ConsumerWidget {
                 children: [
                   // Миниатюра продукта
                   Expanded(
-                      child: Image.network(
-                    ingredient.imageUrl,
-                    fit: BoxFit.fill,
-                  )),
+                      child: LayoutBuilder(
+                          builder: (context, constraints) => Image.network(
+                                ingredient.imageUrl,
+                                cacheHeight: constraints.maxHeight.toInt(),
+                                cacheWidth: constraints.maxWidth.toInt(),
+                                fit: BoxFit.fill,
+                              ))),
                   // Информация о продукте и кнопки для изменения
                   Expanded(
                       flex: 3,
