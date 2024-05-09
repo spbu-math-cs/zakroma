@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data_cls/cart.dart';
 import '../data_cls/ingredient.dart';
 import '../utility/constants.dart';
-import 'rr_buttons.dart';
 import 'styled_headline.dart';
 
 class IngredientTile extends ConsumerWidget {
@@ -32,7 +31,20 @@ class IngredientTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('ingredient $ingredient, selected = $selected');
     final constants = ref.watch(constantsProvider);
+    final image = Image.network(
+      ingredient.imageUrl,
+      cacheHeight: (11 * constants.paddingUnit).floor(),
+      cacheWidth: (11 * constants.paddingUnit).floor(),
+      fit: BoxFit.fill,
+    );
+    final buttonStyle = IconButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(constants.paddingUnit / 2),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        padding: EdgeInsets.zero);
 
     return AnimatedOpacity(
       duration: Constants.dAnimationDuration,
@@ -56,14 +68,7 @@ class IngredientTile extends ConsumerWidget {
               child: Row(
                 children: [
                   // Миниатюра продукта
-                  Expanded(
-                      child: LayoutBuilder(
-                          builder: (context, constraints) => Image.network(
-                                ingredient.imageUrl,
-                                cacheHeight: constraints.maxHeight.toInt(),
-                                cacheWidth: constraints.maxWidth.toInt(),
-                                fit: BoxFit.fill,
-                              ))),
+                  Expanded(child: image),
                   // Информация о продукте и кнопки для изменения
                   Expanded(
                       flex: 3,
@@ -88,34 +93,35 @@ class IngredientTile extends ConsumerWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     // Кнопка «уменьшить количество» (aka минус)
-                                    RRButton(
-                                        onTap: () {
-                                          if (ref
-                                              .read(cartProvider.notifier)
-                                              .shouldShowAlert(
-                                                  personal, ingredient)) {
-                                            ingredient.showAlert(
-                                                context,
-                                                (ingredient_) => ref
-                                                    .read(cartProvider.notifier)
-                                                    .decrement(
-                                                        personal, ingredient_));
-                                          } else {
-                                            ref
-                                                .read(cartProvider.notifier)
-                                                .decrement(
-                                                    personal, ingredient);
-                                          }
-                                        },
-                                        borderRadius: constants.paddingUnit / 2,
-                                        padding: EdgeInsets.zero,
-                                        child: SizedBox.square(
-                                          dimension: constants.paddingUnit * 3,
-                                          child: Icon(
+                                    SizedBox.square(
+                                      dimension: constants.paddingUnit * 3,
+                                      child: IconButton(
+                                          icon: Icon(
                                             Icons.remove,
                                             size: constants.paddingUnit * 2,
                                           ),
-                                        )),
+                                          onPressed: () {
+                                            if (ref
+                                                .read(cartProvider.notifier)
+                                                .shouldShowAlert(
+                                                    personal, ingredient)) {
+                                              ingredient.showAlert(
+                                                  context,
+                                                  (ingredient_) => ref
+                                                      .read(
+                                                          cartProvider.notifier)
+                                                      .decrement(personal,
+                                                          ingredient_));
+                                            } else {
+                                              ref
+                                                  .read(cartProvider.notifier)
+                                                  .decrement(
+                                                      personal, ingredient);
+                                            }
+                                          },
+                                          style: buttonStyle,
+                                          padding: EdgeInsets.zero),
+                                    ),
                                     // Счётчик, показывающий текущее количество
                                     SizedBox(
                                         width: 3 * constants.paddingUnit,
@@ -123,22 +129,25 @@ class IngredientTile extends ConsumerWidget {
                                           child: Text(amount.toString()),
                                         )),
                                     // Кнопка «увеличить количество» (aka плюс)
-                                    RRButton(
-                                        onTap: () => ref
+                                    SizedBox.square(
+                                      dimension: constants.paddingUnit * 3,
+                                      child: IconButton(
+                                        onPressed: () => ref
                                             .read(cartProvider.notifier)
                                             .increment(personal, ingredient),
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        borderRadius: constants.paddingUnit / 2,
                                         padding: EdgeInsets.zero,
-                                        child: SizedBox.square(
-                                          dimension: constants.paddingUnit * 3,
-                                          child: Icon(
-                                            Icons.add,
-                                            size: constants.paddingUnit * 2,
-                                          ),
-                                        )),
+                                        icon: Icon(
+                                          Icons.add,
+                                          size: constants.paddingUnit * 2,
+                                        ),
+                                        style: buttonStyle.copyWith(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary)),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -148,22 +157,20 @@ class IngredientTile extends ConsumerWidget {
                               alignment: Alignment.bottomRight,
                               child: SizedBox.square(
                                 dimension: constants.paddingUnit * 3,
-                                child: RRButton(
-                                    elevation: 0,
-                                    onTap: () => ingredient.showAlert(
+                                child: IconButton(
+                                    onPressed: () => ingredient.showAlert(
                                         context,
                                         (ingredient_) => ref
                                             .read(cartProvider.notifier)
                                             .remove(personal, ingredient_)),
-                                    backgroundColor: Colors.transparent,
-                                    borderRadius: constants.paddingUnit / 2,
                                     padding: EdgeInsets.zero,
-                                    child: SizedBox.square(
-                                      dimension: constants.paddingUnit * 3,
-                                      child: Icon(
-                                        Icons.delete_outline,
-                                        size: constants.paddingUnit * 2,
-                                      ),
+                                    style: buttonStyle.copyWith(
+                                        backgroundColor:
+                                            const MaterialStatePropertyAll(
+                                                Colors.transparent)),
+                                    icon: Icon(
+                                      Icons.delete_outline,
+                                      size: constants.paddingUnit * 2,
                                     )),
                               ),
                             )
