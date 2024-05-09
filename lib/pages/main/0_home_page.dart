@@ -13,7 +13,7 @@ import '../../widgets/custom_scaffold.dart';
 import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/styled_headline.dart';
-import '../cart_page.dart';
+import '3_cart_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -78,8 +78,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const CartPage()));
+                                // этой кнопки не будет в новом дизайне, поэтому и париться не буду
                               },
                               borderRadius: constants.dOuterRadius,
                               backgroundColor: Theme.of(context)
@@ -317,7 +316,7 @@ class MealsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
     return AsyncBuilder(
-      asyncValue: ref.watch(dietsProvider),
+      async: ref.watch(dietsProvider),
       builder: (diets) {
         final todayMeals = diets.first
                 .getDay(DateTime.now().weekday)

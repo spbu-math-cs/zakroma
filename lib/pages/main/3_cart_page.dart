@@ -4,11 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../../data_cls/cart.dart';
 import '../../data_cls/ingredient.dart';
 import '../../utility/constants.dart';
-import '../../widgets/custom_error_widget.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/flat_list.dart';
 import '../../widgets/ingredient_tile.dart';
@@ -128,21 +128,12 @@ class _CartPageState extends ConsumerState<CartPage> {
                   ),
                   child: Stack(children: [
                     // Продукты в корзине
-                    FutureBuilder(
+                    AsyncBuilder(
                         future: ref.watch(cartProvider.selectAsync((value) => (
                               value.first.cart.length,
                               value.second?.cart.length ?? 0
                             ))),
-                        builder: (_, lengthsSnap) {
-                          if (!lengthsSnap.hasData) {
-                            return lengthsSnap.hasError
-                                ? CustomErrorWidget(
-                                    lengthsSnap.error!, lengthsSnap.stackTrace!)
-                                : const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                          }
-                          final lengths = lengthsSnap.data!;
+                        builder: (lengths) {
                           // TODO(tech): обработать ситуации, когда хотя бы одна из корзин пустая
                           return RefreshIndicator(
                             child: FlatList(
@@ -163,7 +154,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                                     );
                                   } else {
                                     final personal = index < lengths.$1;
-                                    return FutureBuilder(
+                                    return AsyncBuilder(
                                         future: ref.watch(cartProvider
                                             .selectAsync((value) => personal
                                                 ? value.first.cart.entries
@@ -172,15 +163,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                                                     .elementAt(index -
                                                         lengths.$1 -
                                                         1))),
-                                        builder: (_, ingredientSnap) {
-                                          if (!ingredientSnap.hasData) {
-                                            return const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                          }
-                                          final ingredient =
-                                              ingredientSnap.data!;
+                                        builder: (ingredient) {
                                           final tile = IngredientTile(
                                               personal: personal,
                                               ingredient: ingredient.key,

@@ -1,31 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/constants.dart';
-import 'package:zakroma_frontend/widgets/custom_error_widget.dart';
 
-import '../widgets/rr_surface.dart';
+import '../widgets/custom_error_widget.dart';
 
-class AsyncBuilder<T> extends ConsumerWidget {
-  final AsyncValue<T> asyncValue;
+class AsyncBuilder<T> extends StatelessWidget {
+  final AsyncValue<T>? async;
+  final Future<T>? future;
   final Widget Function(T) builder;
   final Color? circularProgressIndicatorColor;
 
   const AsyncBuilder(
       {super.key,
-      required this.asyncValue,
       required this.builder,
-      this.circularProgressIndicatorColor});
+      this.async,
+      this.future,
+      this.circularProgressIndicatorColor})
+      : assert(async != null || future != null);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.watch(constantsProvider);
-    return asyncValue.when(
-        data: (value) => builder(value),
-        loading: () => Center(
+  Widget build(BuildContext context) {
+    if (async != null) {
+      return async!.when(
+          data: (value) => builder(value),
+          loading: () => Center(
+                  child: CircularProgressIndicator(
+                color: circularProgressIndicatorColor,
+              )),
+          error: (error, StackTrace stackTrace) =>
+              CustomErrorWidget(error, stackTrace));
+    }
+    return FutureBuilder(
+        future: future,
+        builder: (_, snapshot) {
+          if (snapshot.hasError) {
+            return CustomErrorWidget(snapshot.error!, snapshot.stackTrace!);
+          }
+          if (!snapshot.hasData) {
+            return Center(
                 child: CircularProgressIndicator(
               color: circularProgressIndicatorColor,
-            )),
-        error: (error, StackTrace stackTrace) =>
-            CustomErrorWidget(error, stackTrace));
+            ));
+          }
+          return builder(snapshot.data as T);
+        });
   }
 }

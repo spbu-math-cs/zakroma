@@ -32,7 +32,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
     final path = ref.watch(pathProvider);
 
     return AsyncBuilder(
-        asyncValue: ref.watch(dietsProvider),
+        async: ref.watch(dietsProvider),
         builder: (diets) {
           // TODO(tech): переписать, когда будет готов класс Meal
           // с запросами к серверу

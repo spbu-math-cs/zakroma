@@ -62,7 +62,7 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
               Expanded(
                 flex: 67,
                 child: AsyncBuilder(
-                  asyncValue: isAuthorized,
+                  async: isAuthorized,
                   builder: (user) => Column(
                     children: [
                       Expanded(
