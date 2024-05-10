@@ -27,28 +27,12 @@ class _CartPageState extends ConsumerState<CartPage> {
   bool orderButtonVisible = true;
   bool personalCartSelected = true;
   bool cartManuallySelected = false;
-  final ingredientTiles = <IngredientTile>[];
-  Map<bool, List<Ingredient>> selectedIngredients = {true: [], false: []};
+  Map<bool, List<IngredientTile>> ingredientTiles = {true: [], false: []};
+  Map<bool, List<int>> selectedIngredients = {true: [], false: []};
   int initiallySelected = -1;
   int lastSelectionModified = -1;
-  double ingredientTileHeight = -1;
 
-  @override
-  void initState() {
-    super.initState();
-    ingredientTileHeight = 11 * ref.read(constantsProvider).paddingUnit;
-    // scrollController.addListener(() => setState(() {
-    //       orderButtonVisible = scrollController.position.userScrollDirection ==
-    //               ScrollDirection.reverse
-    //           ? false
-    //           : true;
-    //     }));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final constants = ref.watch(constantsProvider);
-    final tabTitles = ['Личная', 'Семейная'];
+  void _initScrollController(double ingredientTileHeight) {
     ref
         .watch(cartProvider.select((asyncValue) => asyncValue.whenData(
             (data) => (data.first.cart.length, data.second?.cart.length ?? 0))))
@@ -70,6 +54,20 @@ class _CartPageState extends ConsumerState<CartPage> {
                 });
               }
             }));
+    // scrollController.addListener(() => setState(() {
+    //       orderButtonVisible = scrollController.position.userScrollDirection ==
+    //               ScrollDirection.reverse
+    //           ? false
+    //           : true;
+    //     }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final constants = ref.watch(constantsProvider);
+    final tabTitles = ['Личная', 'Семейная'];
+    final ingredientTileHeight = 12 * ref.read(constantsProvider).paddingUnit;
+    _initScrollController(ingredientTileHeight);
 
     final title = selectedIngredients.myIsEmpty ? 'Корзина' : null;
     final header = selectedIngredients.myIsEmpty
@@ -93,8 +91,10 @@ class _CartPageState extends ConsumerState<CartPage> {
                           if (cartManuallySelected || !cart.hasValue) {
                             return;
                           }
-                          cartManuallySelected = true;
-                          personalCartSelected = index == 0;
+                          setState(() {
+                            cartManuallySelected = true;
+                            personalCartSelected = index == 0;
+                          });
                           scrollController
                               .animateTo(
                                   personalCartSelected
@@ -137,95 +137,90 @@ class _CartPageState extends ConsumerState<CartPage> {
               ),
               child: Stack(children: [
                 // Продукты в корзине
-                AsyncBuilder(
-                    future: ref.watch(cartProvider.selectAsync((value) => (
-                          value.first.cart.length,
-                          value.second?.cart.length ?? 0
-                        ))),
-                    builder: (lengths) {
-                      // TODO(tech): обработать ситуации, когда хотя бы одна из корзин пустая
-                      return RefreshIndicator(
-                        child: FlatList(
-                            childPadding:
-                                EdgeInsets.only(bottom: constants.paddingUnit),
-                            scrollController: scrollController,
-                            children: List<Widget>.generate(
-                                lengths.$1 + lengths.$2 + 1, (index) {
-                              if (index == lengths.$1) {
-                                return TextDivider(
-                                  text: 'Семейная',
-                                  textStyle:
-                                      Theme.of(context).textTheme.bodyMedium,
-                                  color: lighten(Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer),
-                                );
-                              } else {
-                                final personal = index < lengths.$1;
-                                return AsyncBuilder(
-                                    future: ref.watch(cartProvider.selectAsync(
-                                        (value) => personal
-                                            ? value.first.cart.entries
-                                                .elementAt(index)
-                                            : value.second!.cart.entries
-                                                .elementAt(
-                                                    index - lengths.$1 - 1))),
-                                    builder: (ingredient) {
-                                      final tile = IngredientTile(
-                                          personal: personal,
-                                          ingredient: ingredient.key,
-                                          amount: ingredient.value,
-                                          height: ingredientTileHeight,
-                                          faded:
-                                              personalCartSelected != personal,
-                                          selected:
-                                              selectedIngredients[personal]!
-                                                  .contains(ingredient.key),
-                                          onLongPress: () {
-                                            if (!selectedIngredients[personal]!
-                                                .contains(ingredient.key)) {
-                                              initiallySelected =
-                                                  lastSelectionModified =
-                                                      index -
-                                                          (personal ? 0 : 1);
-                                              selectedIngredients[personal]!
-                                                  .add(ingredient.key);
-                                            }
-                                            debugPrint(
-                                                'onLongPress: selectedIngredients = $selectedIngredients');
-                                          },
-                                          onLongPressMoveUpdate: (details) =>
-                                              _handleDrag(
-                                                  personal,
-                                                  ingredient.key,
-                                                  details,
-                                                  ingredientTileHeight,
-                                                  personal
-                                                      ? index
-                                                      : index - lengths.$1 - 1),
-                                          onTap: () => _handleSelect(
-                                              personal,
-                                              ingredient.key,
-                                              index - (personal ? 0 : 1)));
-                                      debugPrint(
-                                          'tile for ${tile.ingredient}, selected = ${tile.selected}');
-                                      final tileIndex =
-                                          index - (personal ? 0 : 1);
-                                      if (ingredientTiles.length <= tileIndex) {
-                                        ingredientTiles.add(tile);
-                                      } else {
-                                        ingredientTiles[tileIndex] = tile;
-                                      }
-                                      return tile;
-                                    });
-                              }
-                            })),
-                        onRefresh: () async {
-                          await Future.delayed(Constants.networkTimeout,
-                              () => ref.refresh(cartProvider));
-                        },
-                      );
-                    }),
+                RefreshIndicator(
+                  onRefresh: () async {
+                    await Future.delayed(Constants.networkTimeout,
+                        () => ref.refresh(cartProvider));
+                  },
+                  child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Column(
+                          children: List<Widget>.generate(tabTitles.length + 1,
+                              (index) {
+                        if (index == tabTitles.length / 2) {
+                          return TextDivider(
+                            text: 'Семейная',
+                            textStyle: Theme.of(context).textTheme.bodyMedium,
+                            color: lighten(Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer),
+                          );
+                        } else {
+                          final personal = index == 0;
+                          return AnimatedOpacity(
+                            opacity: personalCartSelected == personal ? 1 : 0.5,
+                            duration: Constants.dAnimationDuration,
+                            child: AsyncBuilder(
+                                future: ref.watch(cartProvider.selectAsync(
+                                    (value) => personal
+                                        ? value.first.cart.length
+                                        : value.second?.cart.length ?? 0)),
+                                builder: (length) {
+                                  // TODO(tech): обработать ситуации, когда хотя бы одна из корзин пустая
+                                  debugPrint(
+                                      'length * ingredientTileHeight = ${length * ingredientTileHeight}');
+                                  return SizedBox(
+                                    height: length * ingredientTileHeight +
+                                        2 * constants.paddingUnit,
+                                    child: FlatList(
+                                      childPadding: EdgeInsets.only(
+                                          bottom: constants.paddingUnit),
+                                      scrollPhysics:
+                                          const NeverScrollableScrollPhysics(),
+                                      children: List<Widget>.generate(
+                                          length,
+                                          (index) => IngredientTile(
+                                                inCart: true,
+                                                personal: personal,
+                                                ingredientIndex: index,
+                                                onLongPress: () {
+                                                  if (!selectedIngredients[
+                                                          personal]!
+                                                      .contains(index)) {
+                                                    initiallySelected =
+                                                        lastSelectionModified =
+                                                            index -
+                                                                (personal
+                                                                    ? 0
+                                                                    : 1);
+                                                    selectedIngredients[
+                                                            personal]!
+                                                        .add(index);
+                                                  }
+                                                  debugPrint(
+                                                      'onLongPress: selectedIngredients = $selectedIngredients');
+                                                },
+                                                // onLongPressMoveUpdate: (details) =>
+                                                //     _handleDrag(
+                                                //         personal,
+                                                //         ingredient.key,
+                                                //         details,
+                                                //         ingredientTileHeight,
+                                                //         personal
+                                                //             ? index
+                                                //             : index - lengths.$1 - 1),
+                                                // onTap: () => _handleSelect(
+                                                //     personal,
+                                                //     ingredient.key,
+                                                //     index - (personal ? 0 : 1))
+                                              )),
+                                    ),
+                                  );
+                                }),
+                          );
+                        }
+                      }))),
+                ),
                 // Кнопка «Перейти к оформлению»
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -303,50 +298,49 @@ class _CartPageState extends ConsumerState<CartPage> {
         body: body);
   }
 
-  void _handleSelect(bool personal, Ingredient ingredient, int index) {
-    debugPrint('_handleSelect($personal, $ingredient)');
+  void _handleSelect(bool personal, int index) {
+    debugPrint('_handleSelect($personal, $index)');
     if (selectedIngredients.myIsEmpty) {
       debugPrint('empty');
       return;
     }
     lastSelectionModified = index;
-    if (selectedIngredients[personal]!.contains(ingredient)) {
+    if (selectedIngredients[personal]!.contains(index)) {
       debugPrint('removing');
-      selectedIngredients[personal]!.remove(ingredient);
+      selectedIngredients[personal]!.remove(index);
     } else {
       debugPrint('adding');
-      selectedIngredients[personal]!.add(ingredient);
+      selectedIngredients[personal]!.add(index);
     }
     debugPrint('onTap: selectedIngredients = $selectedIngredients');
   }
 
-  void _handleDrag(
-      bool personal,
-      Ingredient ingredient,
-      LongPressMoveUpdateDetails details,
-      double ingredientTileHeight,
-      int index) {
-    final ingredientIndex =
-        (index + details.localPosition.dy / ingredientTileHeight).floor();
-    if (ingredientIndex != lastSelectionModified) {
-      debugPrint(
-          '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
-      debugPrint(
-          '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
-      if (lastSelectionModified != initiallySelected &&
-          (initiallySelected - lastSelectionModified) *
-                  (lastSelectionModified - ingredientIndex) <
-              0) {
-        ingredientTiles[lastSelectionModified].onTap!();
-        lastSelectionModified = ingredientIndex;
-        return;
-      }
-      lastSelectionModified = ingredientIndex;
-      ingredientTiles[ingredientIndex].onTap!();
-    }
-  }
+  // void _handleDrag(
+  //     bool personal,
+  //     LongPressMoveUpdateDetails details,
+  //     double ingredientTileHeight,
+  //     int index) {
+  //   final ingredientIndex =
+  //       (index + details.localPosition.dy / ingredientTileHeight).floor();
+  //   if (ingredientIndex != lastSelectionModified) {
+  //     debugPrint(
+  //         '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
+  //     debugPrint(
+  //         '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
+  //     if (lastSelectionModified != initiallySelected &&
+  //         (initiallySelected - lastSelectionModified) *
+  //                 (lastSelectionModified - ingredientIndex) <
+  //             0) {
+  //       ingredientTiles[lastSelectionModified].onTap!();
+  //       lastSelectionModified = ingredientIndex;
+  //       return;
+  //     }
+  //     lastSelectionModified = ingredientIndex;
+  //     ingredientTiles[ingredientIndex].onTap!();
+  //   }
+  // }
 }
 
-extension MyIsEmpty on Map<bool, List<Ingredient>> {
+extension MyIsEmpty on Map<bool, List<int>> {
   bool get myIsEmpty => this[true]!.isEmpty && this[false]!.isEmpty;
 }
