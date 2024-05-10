@@ -8,17 +8,20 @@ class AsyncBuilder<T> extends StatelessWidget {
   final Future<T>? future;
   final Widget Function(T) builder;
   final Color? circularProgressIndicatorColor;
+  final String debugText;
 
   const AsyncBuilder(
       {super.key,
       required this.builder,
       this.async,
       this.future,
-      this.circularProgressIndicatorColor})
+      this.circularProgressIndicatorColor,
+      this.debugText = ''})
       : assert(async != null || future != null);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('build AsyncBuilder');
     if (async != null) {
       return async!.when(
           data: (value) => builder(value),
@@ -33,14 +36,17 @@ class AsyncBuilder<T> extends StatelessWidget {
         future: future,
         builder: (_, snapshot) {
           if (snapshot.hasError) {
+            debugPrint('FutureBuilder builder $debugText: return error');
             return CustomErrorWidget(snapshot.error!, snapshot.stackTrace!);
           }
           if (!snapshot.hasData) {
+            debugPrint('FutureBuilder builder $debugText: return loading');
             return Center(
                 child: CircularProgressIndicator(
               color: circularProgressIndicatorColor,
             ));
           }
+          debugPrint('FutureBuilder builder $debugText: return builder');
           return builder(snapshot.data as T);
         });
   }

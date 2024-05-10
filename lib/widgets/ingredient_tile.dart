@@ -9,7 +9,7 @@ import '../utility/constants.dart';
 import 'styled_headline.dart';
 
 class IngredientTile extends ConsumerStatefulWidget {
-  final bool inCart;
+  final bool cart;
   final bool personal;
   final int ingredientIndex;
   final int height;
@@ -20,7 +20,7 @@ class IngredientTile extends ConsumerStatefulWidget {
   const IngredientTile(
       {required this.personal,
       required this.ingredientIndex,
-      required this.inCart,
+      this.cart = true,
       this.height = 11,
       this.onLongPress,
       this.onLongPressMoveUpdate,
@@ -39,7 +39,13 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
   Widget build(BuildContext context) {
     super.build(context);
     final constants = ref.watch(constantsProvider);
-    if (widget.inCart) {
+    final ingredientData = ref.watch(cartProvider.selectAsync((cartData) =>
+        Pair.fromMapEntry(cartData
+            .getPersonal(widget.personal)!
+            .cart
+            .entries
+            .elementAt(widget.ingredientIndex))));
+    if (widget.cart) {
       return Material(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(constants.dInnerRadius),
@@ -60,13 +66,10 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
             onLongPress: widget.onLongPress,
             onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
             child: AsyncBuilder(
-                future: ref.watch(cartProvider.selectAsync((cartData) =>
-                    cartData
-                        .getPersonal(widget.personal)!
-                        .cart
-                        .entries
-                        .elementAt(widget.ingredientIndex))),
-                builder: (entry) => _makeTile(entry.key, entry.value)),
+                debugText:
+                    '${widget.ingredientIndex} from ${widget.personal ? 'personal' : 'family'} cart',
+                future: ingredientData,
+                builder: (entry) => _makeTile(entry.first, entry.second)),
           ),
         ),
       );
@@ -77,7 +80,6 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
   }
 
   Widget _makeTile(Ingredient ingredient, int amount) {
-    debugPrint('ingredient $ingredient, selected = $selected');
     final constants = ref.watch(constantsProvider);
     final height = widget.height * constants.paddingUnit;
     final image = Image.network(

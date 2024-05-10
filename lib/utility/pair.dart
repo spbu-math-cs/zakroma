@@ -1,13 +1,24 @@
-class Pair<T1, T2> {
-  T1 first;
-  T2 second;
+class Pair<K, V> {
+  K first;
+  V second;
 
   Pair(this.first, this.second);
+
+  factory Pair.fromMapEntry(MapEntry<K, V> entry) =>
+      Pair(entry.key, entry.value);
 
   operator [](int index) {
     assert(index >= 0 && index < 2, 'Index out of bounds');
     return index == 0 ? first : second;
   }
+
+  @override
+  bool operator ==(Object other) {
+    return hashCode == other.hashCode;
+  }
+
+  @override
+  int get hashCode => first.hashCode + second.hashCode;
 }
 
 extension GetPersonal<T> on Pair<T, T?> {
