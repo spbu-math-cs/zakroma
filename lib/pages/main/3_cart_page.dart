@@ -1,6 +1,5 @@
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
@@ -38,12 +37,12 @@ class _CartPageState extends ConsumerState<CartPage> {
   void initState() {
     super.initState();
     ingredientTileHeight = 11 * ref.read(constantsProvider).paddingUnit;
-    scrollController.addListener(() => setState(() {
-          orderButtonVisible = scrollController.position.userScrollDirection ==
-                  ScrollDirection.reverse
-              ? false
-              : true;
-        }));
+    // scrollController.addListener(() => setState(() {
+    //       orderButtonVisible = scrollController.position.userScrollDirection ==
+    //               ScrollDirection.reverse
+    //           ? false
+    //           : true;
+    //     }));
   }
 
   @override
@@ -51,13 +50,26 @@ class _CartPageState extends ConsumerState<CartPage> {
     final constants = ref.watch(constantsProvider);
     final tabTitles = ['Личная', 'Семейная'];
     ref
-        .watch(cartProvider)
-        .whenData((value) => scrollController.addListener(() => setState(() {
-              if (!cartManuallySelected) {
-                personalCartSelected = scrollController.offset <
-                    ingredientTileHeight * value.first.cart.length / 2;
+        .watch(cartProvider.select((asyncValue) => asyncValue.whenData(
+            (data) => (data.first.cart.length, data.second?.cart.length ?? 0))))
+        .whenData((value) => scrollController.addListener(() {
+              if (cartManuallySelected) {
+                return;
               }
-            })));
+              if (personalCartSelected &&
+                  scrollController.offset >
+                      ingredientTileHeight * value.$1 / 2) {
+                setState(() {
+                  personalCartSelected = false;
+                });
+              } else if (!personalCartSelected &&
+                  scrollController.offset <
+                      ingredientTileHeight * value.$1 / 2) {
+                setState(() {
+                  personalCartSelected = true;
+                });
+              }
+            }));
 
     final title = selectedIngredients.myIsEmpty ? 'Корзина' : null;
     final header = selectedIngredients.myIsEmpty
@@ -81,21 +93,22 @@ class _CartPageState extends ConsumerState<CartPage> {
                           if (cartManuallySelected || !cart.hasValue) {
                             return;
                           }
-                          setState(() {
-                            cartManuallySelected = true;
-                            personalCartSelected = index == 0;
-                            final cart = ref.read(cartProvider);
-                            scrollController
-                                .animateTo(
-                                    personalCartSelected
-                                        ? 0
-                                        : cart.value!.first.cart.length *
-                                            ingredientTileHeight,
-                                    duration: Constants.dAnimationDuration,
-                                    curve: Curves.easeIn)
-                                .whenComplete(
-                                    () => cartManuallySelected = false);
-                          });
+                          cartManuallySelected = true;
+                          personalCartSelected = index == 0;
+                          scrollController
+                              .animateTo(
+                                  personalCartSelected
+                                      ? 0
+                                      : ref
+                                              .read(cartProvider)
+                                              .value!
+                                              .first
+                                              .cart
+                                              .length *
+                                          ingredientTileHeight,
+                                  duration: Constants.dAnimationDuration,
+                                  curve: Curves.easeIn)
+                              .whenComplete(() => cartManuallySelected = false);
                         },
                         child: Material(
                           color: index == (personalCartSelected ? 0 : 1)
@@ -175,10 +188,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                                                   lastSelectionModified =
                                                       index -
                                                           (personal ? 0 : 1);
-                                              setState(() {
-                                                selectedIngredients[personal]!
-                                                    .add(ingredient.key);
-                                              });
+                                              selectedIngredients[personal]!
+                                                  .add(ingredient.key);
                                             }
                                             debugPrint(
                                                 'onLongPress: selectedIngredients = $selectedIngredients');
@@ -298,16 +309,14 @@ class _CartPageState extends ConsumerState<CartPage> {
       debugPrint('empty');
       return;
     }
-    setState(() {
-      lastSelectionModified = index;
-      if (selectedIngredients[personal]!.contains(ingredient)) {
-        debugPrint('removing');
-        selectedIngredients[personal]!.remove(ingredient);
-      } else {
-        debugPrint('adding');
-        selectedIngredients[personal]!.add(ingredient);
-      }
-    });
+    lastSelectionModified = index;
+    if (selectedIngredients[personal]!.contains(ingredient)) {
+      debugPrint('removing');
+      selectedIngredients[personal]!.remove(ingredient);
+    } else {
+      debugPrint('adding');
+      selectedIngredients[personal]!.add(ingredient);
+    }
     debugPrint('onTap: selectedIngredients = $selectedIngredients');
   }
 
@@ -328,16 +337,12 @@ class _CartPageState extends ConsumerState<CartPage> {
           (initiallySelected - lastSelectionModified) *
                   (lastSelectionModified - ingredientIndex) <
               0) {
-        setState(() {
-          ingredientTiles[lastSelectionModified].onTap!();
-        });
+        ingredientTiles[lastSelectionModified].onTap!();
         lastSelectionModified = ingredientIndex;
         return;
       }
       lastSelectionModified = ingredientIndex;
-      setState(() {
-        ingredientTiles[ingredientIndex].onTap!();
-      });
+      ingredientTiles[ingredientIndex].onTap!();
     }
   }
 }

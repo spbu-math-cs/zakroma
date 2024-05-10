@@ -6,7 +6,7 @@ import '../data_cls/ingredient.dart';
 import '../utility/constants.dart';
 import 'styled_headline.dart';
 
-class IngredientTile extends ConsumerWidget {
+class IngredientTile extends ConsumerStatefulWidget {
   final double height;
   final bool personal;
   final Ingredient ingredient;
@@ -30,11 +30,20 @@ class IngredientTile extends ConsumerWidget {
       super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    debugPrint('ingredient $ingredient, selected = $selected');
+  ConsumerState<IngredientTile> createState() => _IngredientTileState();
+}
+
+class _IngredientTileState extends ConsumerState<IngredientTile>
+    with AutomaticKeepAliveClientMixin {
+  var selected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    debugPrint('ingredient ${widget.ingredient}, selected = ${selected}');
     final constants = ref.watch(constantsProvider);
     final image = Image.network(
-      ingredient.imageUrl,
+      widget.ingredient.imageUrl,
       cacheHeight: (11 * constants.paddingUnit).floor(),
       cacheWidth: (11 * constants.paddingUnit).floor(),
       fit: BoxFit.fill,
@@ -48,7 +57,7 @@ class IngredientTile extends ConsumerWidget {
 
     return AnimatedOpacity(
       duration: Constants.dAnimationDuration,
-      opacity: faded ? 0.5 : 1,
+      opacity: widget.faded ? 0.5 : 1,
       child: Material(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(constants.dInnerRadius),
@@ -58,13 +67,18 @@ class IngredientTile extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         color: selected ? Theme.of(context).colorScheme.outline : null,
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+            setState(() {});
+            if (widget.onTap != null) {
+              widget.onTap!();
+            }
+          },
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onLongPress: onLongPress,
-            onLongPressMoveUpdate: onLongPressMoveUpdate,
+            onLongPress: widget.onLongPress,
+            onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
             child: SizedBox(
-              height: height,
+              height: widget.height,
               child: Row(
                 children: [
                   // Миниатюра продукта
@@ -80,7 +94,7 @@ class IngredientTile extends ConsumerWidget {
                             Align(
                               alignment: Alignment.topLeft,
                               child: StyledHeadline(
-                                  text: ingredient.name.capitalize(),
+                                  text: widget.ingredient.name.capitalize(),
                                   textStyle:
                                       Theme.of(context).textTheme.titleLarge),
                             ),
@@ -104,19 +118,21 @@ class IngredientTile extends ConsumerWidget {
                                             if (ref
                                                 .read(cartProvider.notifier)
                                                 .shouldShowAlert(
-                                                    personal, ingredient)) {
-                                              ingredient.showAlert(
+                                                    widget.personal,
+                                                    widget.ingredient)) {
+                                              widget.ingredient.showAlert(
                                                   context,
                                                   (ingredient_) => ref
                                                       .read(
                                                           cartProvider.notifier)
-                                                      .decrement(personal,
+                                                      .decrement(
+                                                          widget.personal,
                                                           ingredient_));
                                             } else {
                                               ref
                                                   .read(cartProvider.notifier)
-                                                  .decrement(
-                                                      personal, ingredient);
+                                                  .decrement(widget.personal,
+                                                      widget.ingredient);
                                             }
                                           },
                                           style: buttonStyle,
@@ -126,7 +142,7 @@ class IngredientTile extends ConsumerWidget {
                                     SizedBox(
                                         width: 3 * constants.paddingUnit,
                                         child: Center(
-                                          child: Text(amount.toString()),
+                                          child: Text(widget.amount.toString()),
                                         )),
                                     // Кнопка «увеличить количество» (aka плюс)
                                     SizedBox.square(
@@ -134,7 +150,8 @@ class IngredientTile extends ConsumerWidget {
                                       child: IconButton(
                                         onPressed: () => ref
                                             .read(cartProvider.notifier)
-                                            .increment(personal, ingredient),
+                                            .increment(widget.personal,
+                                                widget.ingredient),
                                         padding: EdgeInsets.zero,
                                         icon: Icon(
                                           Icons.add,
@@ -158,11 +175,13 @@ class IngredientTile extends ConsumerWidget {
                               child: SizedBox.square(
                                 dimension: constants.paddingUnit * 3,
                                 child: IconButton(
-                                    onPressed: () => ingredient.showAlert(
-                                        context,
-                                        (ingredient_) => ref
-                                            .read(cartProvider.notifier)
-                                            .remove(personal, ingredient_)),
+                                    onPressed: () => widget.ingredient
+                                        .showAlert(
+                                            context,
+                                            (ingredient_) => ref
+                                                .read(cartProvider.notifier)
+                                                .remove(widget.personal,
+                                                    ingredient_)),
                                     padding: EdgeInsets.zero,
                                     style: buttonStyle.copyWith(
                                         backgroundColor:
@@ -185,4 +204,7 @@ class IngredientTile extends ConsumerWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
