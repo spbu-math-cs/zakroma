@@ -84,13 +84,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           children: [
                             Row(
                               children: [
-                                AsyncBuilder(
-                                  asyncValue: ref.read(userProvider),
-                                  builder: (user) => StyledHeadline(
-                                      text: '${user.firstName} ',
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall),
+                                // Заменить в процессе разработки новой страницы Профиля на более разумное решение
+                                Expanded(
+                                  child: AsyncBuilder(
+                                    asyncValue: ref.read(userProvider),
+                                    builder: (user) => StyledHeadline(
+                                        text: '${user.firstName} ',
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall),
+                                  ),
                                 ),
                                 Expanded(
                                   child: AsyncBuilder(
