@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/color_manipulator.dart';
+import 'package:zakroma_frontend/utility/selection.dart';
 
 import '../../data_cls/cart.dart';
 import '../../utility/constants.dart';
+import '../../utility/pair.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/flat_list.dart';
@@ -77,35 +79,39 @@ class _CartPageState extends ConsumerState<CartPage> {
     //     }));
   }
 
-  void _initIngredientTiles(Future<(int, int)> cartLengths) {
+  void _initIngredientTiles(
+      Future<(int, int)> cartLengths, double ingredientTileHeight) {
     cartLengths.then((cartLengths) {
       ingredientTiles.forEach((personal, _) {
         ingredientTiles[personal] = List<IngredientTile>.generate(
             personal ? cartLengths.$1 : cartLengths.$2,
             (index) => IngredientTile(
-                  personal: personal, ingredientIndex: index,
+                  key: ObjectKey(Pair(personal, index)),
+                  personal: personal,
+                  ingredientIndex: index,
+                  selectModeEnabled: () => !selectedIngredients.myIsEmpty,
                   onLongPress: () {
+                    lastSelectionModified = index;
                     if (!selectedIngredients[personal]!.contains(index)) {
-                      initiallySelected =
-                          lastSelectionModified = index - (personal ? 0 : 1);
+                      initiallySelected = index;
                       selectedIngredients[personal]!.add(index);
+                    } else {
+                      selectedIngredients[personal]!.remove(index);
+                      if (selectedIngredients.myIsEmpty) {
+                        initiallySelected = -1;
+                      }
                     }
+                    debugPrint(
+                        'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
                     debugPrint(
                         'onLongPress: selectedIngredients = $selectedIngredients');
                   },
-                  // onLongPressMoveUpdate: (details) =>
-                  //     _handleDrag(
-                  //         personal,
-                  //         ingredient.key,
-                  //         details,
-                  //         ingredientTileHeight,
-                  //         personal
-                  //             ? index
-                  //             : index - lengths.$1 - 1),
-                  // onTap: () => _handleSelect(
-                  //     personal,
-                  //     ingredient.key,
-                  //     index - (personal ? 0 : 1))
+                  onTap: () => _handleSelect(personal, index),
+                  // onLongPressMoveUpdate: (details) => _handleDrag(
+                  //     personal: personal,
+                  //     index: index,
+                  //     details: details,
+                  //     ingredientTileHeight: ingredientTileHeight),
                 ));
       });
     });
@@ -122,7 +128,7 @@ class _CartPageState extends ConsumerState<CartPage> {
     final cartLengths = ref.watch(cartProvider.selectAsync(
         (data) => (data.first.cart.length, data.second?.cart.length ?? 0)));
 
-    _initIngredientTiles(cartLengths);
+    _initIngredientTiles(cartLengths, ingredientTileHeight);
     _initScrollController(cartLengths, ingredientTileHeight);
 
     final title = selectedIngredients.myIsEmpty ? 'Корзина' : null;
@@ -326,41 +332,45 @@ class _CartPageState extends ConsumerState<CartPage> {
       debugPrint('empty');
       return;
     }
-    lastSelectionModified = index;
     if (selectedIngredients[personal]!.contains(index)) {
       debugPrint('removing');
       selectedIngredients[personal]!.remove(index);
+      if (selectedIngredients.myIsEmpty) {
+        initiallySelected = -1;
+      }
     } else {
       debugPrint('adding');
       selectedIngredients[personal]!.add(index);
     }
+    lastSelectionModified = index;
+    debugPrint(
+        'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
     debugPrint('onTap: selectedIngredients = $selectedIngredients');
   }
 
-// void _handleDrag(
-//     bool personal,
-//     LongPressMoveUpdateDetails details,
-//     double ingredientTileHeight,
-//     int index) {
-//   final ingredientIndex =
-//       (index + details.localPosition.dy / ingredientTileHeight).floor();
-//   if (ingredientIndex != lastSelectionModified) {
-//     debugPrint(
-//         '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
-//     debugPrint(
-//         '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
-//     if (lastSelectionModified != initiallySelected &&
-//         (initiallySelected - lastSelectionModified) *
-//                 (lastSelectionModified - ingredientIndex) <
-//             0) {
-//       ingredientTiles[lastSelectionModified].onTap!();
-//       lastSelectionModified = ingredientIndex;
-//       return;
-//     }
-//     lastSelectionModified = ingredientIndex;
-//     ingredientTiles[ingredientIndex].onTap!();
-//   }
-// }
+  void _handleDrag(
+      {required bool personal,
+      required int index,
+      required LongPressMoveUpdateDetails details,
+      required double ingredientTileHeight}) {
+    final ingredientIndex =
+        (index + details.localPosition.dy / ingredientTileHeight).floor();
+    if (ingredientIndex != lastSelectionModified) {
+      debugPrint(
+          '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
+      debugPrint(
+          '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
+      if (lastSelectionModified != initiallySelected &&
+          (initiallySelected - lastSelectionModified) *
+                  (lastSelectionModified - ingredientIndex) <
+              0) {
+        ingredientTiles[personal]![lastSelectionModified].onTap!();
+        lastSelectionModified = ingredientIndex;
+        return;
+      }
+      lastSelectionModified = ingredientIndex;
+    }
+  }
 }
 
 extension MyIsEmpty on Map<bool, List<int>> {

@@ -16,10 +16,12 @@ class IngredientTile extends ConsumerStatefulWidget {
   final void Function()? onLongPress;
   final void Function(LongPressMoveUpdateDetails)? onLongPressMoveUpdate;
   final void Function()? onTap;
+  final bool Function() selectModeEnabled;
 
   const IngredientTile(
       {required this.personal,
       required this.ingredientIndex,
+      required this.selectModeEnabled,
       this.cart = true,
       this.height = 11,
       this.onLongPress,
@@ -56,15 +58,31 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
         color: selected ? Theme.of(context).colorScheme.outline : null,
         child: InkWell(
           onTap: () {
-            setState(() {});
+            if (!widget.selectModeEnabled()) {
+              return;
+            }
             if (widget.onTap != null) {
               widget.onTap!();
             }
+            setState(() {
+              selected = !selected;
+            });
           },
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onLongPress: widget.onLongPress,
-            onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
+            onLongPress: () {
+              if (widget.onLongPress != null) {
+                widget.onLongPress!();
+              }
+              setState(() {
+                selected = !selected;
+              });
+            },
+            onLongPressMoveUpdate: (details) {
+              if (widget.onLongPressMoveUpdate != null) {
+                widget.onLongPressMoveUpdate!(details);
+              }
+            },
             child: AsyncBuilder(
                 debugText:
                     '${widget.ingredientIndex} from ${widget.personal ? 'personal' : 'family'} cart',
@@ -204,12 +222,6 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
         ],
       ),
     );
-  }
-
-  void toggleSelected() {
-    setState(() {
-      selected = !selected;
-    });
   }
 
   @override
