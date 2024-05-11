@@ -112,6 +112,27 @@ class User extends _$User {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
+    final responseName = await ref.watch(clientProvider).get(
+          makeUri('api/user/name'),
+          headers: makeHeader(
+            body['token'],
+            cookies
+                .firstWhere((element) => element.key == 'zakroma_session')
+                .value,
+          ),
+        );
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 401:
+        throw Exception('Неверный логин или пароль');
+      case 400:
+        throw Exception('Неверный запрос');
+      default:
+        throw Exception('Неизвестная ошибка');
+    }
+    final List nameList =
+        (jsonDecode(responseName.body) as Map<String, dynamic>).values.toList();
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
@@ -119,9 +140,9 @@ class User extends _$User {
           .value,
     );
     _updateStateWith(
-      // TODO(server): сделать запросы firstName, secondName и userPicUrl к серверу
-      firstName: 'firstName',
-      secondName: 'secondName',
+      // TODO(server): сделать запросы userPicUrl к серверу
+      firstName: nameList[0],
+      secondName: nameList[1],
       userPicUrl:
           'https://w7.pngwing.com/pngs/356/733/png-transparent-emoticon-smiley-yellow-ball-happy-emoji-emotion-funny-emoticons-cartoon.png',
       email: email,
@@ -142,8 +163,8 @@ class User extends _$User {
     final response =
         await ref.watch(clientProvider).post(makeUri('auth/register'),
             body: jsonEncode({
-              'firstName': firstName,
-              'secondName': secondName,
+              'name': firstName,
+              'surname': secondName,
               'email': email,
               'password': password,
               // TODO(design): при регистрации спрашивать дату рождения
