@@ -35,7 +35,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     ];
 
     return CustomScaffold(
-      title: 'Профиль',
+      header: const CustomHeader(title: 'Профиль'),
       body: RRSurface(
         child: Column(
           children: [

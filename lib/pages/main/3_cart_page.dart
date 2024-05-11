@@ -68,6 +68,7 @@ class _CartPageState extends ConsumerState<CartPage> {
           }
         }));
 
+    // TODO(idea): подумать, что делать с этой кнопкой при скролле; в текущем виде setState в этом listener'е убивает фпс в нулину
     // scrollController.addListener(() => setState(() {
     //       orderButtonVisible = scrollController.position.userScrollDirection ==
     //               ScrollDirection.reverse
@@ -85,18 +86,9 @@ class _CartPageState extends ConsumerState<CartPage> {
     final ingredientTileHeight = 12 * ref.read(constantsProvider).paddingUnit;
     final cartLengths = ref.watch(cartProvider.selectAsync(
         (data) => (data.first.cart.length, data.second?.cart.length ?? 0)));
-    final selectionMode = ref.watch(selectionProvider
-        .select((value) => !value.values.any((element) => element)));
 
     _initScrollController(cartLengths, ingredientTileHeight);
 
-    // TODO(tech): сделать в CustomScaffold поле appBar вместо сочетания title+header
-    final title = selectionMode ? 'Корзина' : null;
-    final header = selectionMode
-        ? null
-        : Container(
-            color: Theme.of(context).colorScheme.primary,
-          );
     final body = Column(
       children: [
         // Переключатель корзины: Личная / Семейная
@@ -313,15 +305,17 @@ class _CartPageState extends ConsumerState<CartPage> {
     );
 
     return CustomScaffold(
-      title: title,
-      // TODO(design+tech): сделать верхнюю панель с опциями при множественном выборе
-      header: header,
-      topNavigationBar: header,
-      body: body,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        debugPrint('${ref.read(selectionProvider)}');
-      }),
-    );
+        header: CustomHeader(
+            title: 'Корзина',
+            // TODO(design): нарисовать верхнюю панель с опциями при множественном выборе
+            selectionAppBar: SizedBox.expand(
+              child: Container(
+                margin: EdgeInsets.only(bottom: 2 * constants.paddingUnit),
+                color: Theme.of(context).colorScheme.surface,
+                child: const Center(child: Text('Типа режим выбора')),
+              ),
+            )),
+        body: body);
   }
 
   void _handleSelect(bool personal, int index) {
@@ -360,8 +354,4 @@ class _CartPageState extends ConsumerState<CartPage> {
       lastSelectionModified = ingredientIndex;
     }
   }
-}
-
-extension MyIsEmpty on Map<int, bool> {
-  bool get myIsEmpty => !values.any((element) => element);
 }

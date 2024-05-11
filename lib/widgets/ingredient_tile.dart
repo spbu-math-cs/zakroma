@@ -54,13 +54,6 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
       //             .entries
       //             .elementAt(widget.ingredientIndex))));
     }
-    // final selected = ref.watch(selectionProvider.select((value) {
-    //   debugPrint(
-    //       'ref.watch ${widget.ingredientIndex}: ${value[widget.screenName]!}');
-    //   debugPrint(
-    //       'ref.watch ${widget.ingredientIndex}: ${value[widget.screenName]![widget.ingredientIndex]}');
-    //   return value[widget.screenName]![widget.ingredientIndex]!;
-    // }));
     final selected = ref.watch(selectionProvider
         .select((value) => value[(widget.personal, widget.ingredientIndex)]!));
 

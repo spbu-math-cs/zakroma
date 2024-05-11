@@ -27,16 +27,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
-
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
-      title: 'Закрома',
+      header: const CustomHeader(title: 'Закрома'),
       body: Column(
         children: [
           // Переключатель рационов: личный / семейный

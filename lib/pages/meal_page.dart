@@ -38,7 +38,7 @@ class _MealPageState extends ConsumerState<MealPage> with RouteAware {
           // с запросами к серверу
           final meal = null;
           return CustomScaffold(
-            title: 'TODO',
+            header: const CustomHeader(title: 'TODO'),
             // title: meal.name,
             body: SafeArea(
               child: RRSurface(

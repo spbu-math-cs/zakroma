@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-@immutable
-class Constants {
-  /// Единичный отступ, на основании которого считаются все остальные отступы.
-  ///
-  /// Зависит от размеров экрана. Равен ширина_экрана / 48.
-  final double paddingUnit;
+part 'constants.freezed.dart';
+
+@Freezed(toJson: false, fromJson: false)
+class Constants with _$Constants {
+  const factory Constants(
+      {
+      /// Единичный отступ, на основании которого считаются все остальные отступы.
+      ///
+      /// Зависит от размеров экрана. Равен ширина_экрана / 48.
+      required double paddingUnit,
+
+      /// Отступ сверху, подгоняющий экран под размеры [screenHeight] * [paddingUnit]
+      required double topPadding}) = _Constants;
+
+  const Constants._();
 
   /// Фактически используемая высота экрана (в единицах [paddingUnit]).
   ///
@@ -72,8 +83,6 @@ class Constants {
   /// Таймаут для запросов на сервер.
   static const networkTimeout = Duration(seconds: 1);
 
-  const Constants({required this.paddingUnit});
-
   /// Отступ заголовка приложения (Закрома, ...).
   ///
   /// 4 * [paddingUnit], 0, 0, [paddingUnit]
@@ -134,14 +143,6 @@ class Constants {
 
   /// Высота разделителей (используется в списках, под заголовками).
   double get dDividerHeight => paddingUnit / 2;
-
-  Constants copyWith(double? paddingUnit) =>
-      Constants(paddingUnit: paddingUnit ?? this.paddingUnit);
-}
-
-class ConstantsNotifier extends Notifier<Constants> {
-  @override
-  Constants build() => const Constants(paddingUnit: 8);
 }
 
 final constantsProvider =

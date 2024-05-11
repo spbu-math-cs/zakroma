@@ -40,11 +40,15 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       builder: (context, child) {
         // считаем константы для текущего устройства
-        final screenWidth = MediaQuery.of(context).size.width;
+        final paddingUnit = MediaQuery.of(context).size.width / 48;
+        final topPadding = MediaQuery.of(context).size.height -
+            MediaQuery.of(context).padding.top -
+            Constants.bottomNavigationBarHeight * paddingUnit -
+            Constants.screenHeight * paddingUnit;
         return ProviderScope(
           overrides: [
-            constantsProvider
-                .overrideWithValue(Constants(paddingUnit: screenWidth / 48)),
+            constantsProvider.overrideWithValue(
+                Constants(paddingUnit: paddingUnit, topPadding: topPadding)),
           ],
           child: child!,
         );
@@ -118,7 +122,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           ),
         ],
       ),
-      padding: EdgeInsets.zero,
       body: PageView(
         controller: pageController,
         onPageChanged: (index) => setState(() {
