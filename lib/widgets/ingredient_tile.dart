@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
+import 'package:zakroma_frontend/utility/selection.dart';
 import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../data_cls/cart.dart';
@@ -9,20 +10,18 @@ import '../utility/constants.dart';
 import 'styled_headline.dart';
 
 class IngredientTile extends ConsumerStatefulWidget {
-  final bool cart;
+  final String screenName;
   final bool personal;
   final int ingredientIndex;
   final int height;
   final void Function()? onLongPress;
   final void Function(LongPressMoveUpdateDetails)? onLongPressMoveUpdate;
   final void Function()? onTap;
-  final bool Function() selectModeEnabled;
 
   const IngredientTile(
       {required this.personal,
       required this.ingredientIndex,
-      required this.selectModeEnabled,
-      this.cart = true,
+      required this.screenName,
       this.height = 11,
       this.onLongPress,
       this.onLongPressMoveUpdate,
@@ -35,66 +34,61 @@ class IngredientTile extends ConsumerStatefulWidget {
 
 class _IngredientTileState extends ConsumerState<IngredientTile>
     with AutomaticKeepAliveClientMixin {
-  var selected = false;
+  String test = '';
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final constants = ref.watch(constantsProvider);
-    final ingredientData = ref.watch(cartProvider.selectAsync((cartData) =>
+    var ingredientData = ref.watch(cartProvider.selectAsync((cartData) =>
         Pair.fromMapEntry(cartData
             .getPersonal(widget.personal)!
             .cart
             .entries
             .elementAt(widget.ingredientIndex))));
-    if (widget.cart) {
-      return Material(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(constants.dInnerRadius),
-            side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-                width: constants.borderWidth)),
-        clipBehavior: Clip.antiAlias,
-        color: selected ? Theme.of(context).colorScheme.outline : null,
-        child: InkWell(
-          onTap: () {
-            if (!widget.selectModeEnabled()) {
-              return;
-            }
-            if (widget.onTap != null) {
-              widget.onTap!();
-            }
-            setState(() {
-              selected = !selected;
-            });
-          },
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onLongPress: () {
-              if (widget.onLongPress != null) {
-                widget.onLongPress!();
-              }
-              setState(() {
-                selected = !selected;
-              });
-            },
-            onLongPressMoveUpdate: (details) {
-              if (widget.onLongPressMoveUpdate != null) {
-                widget.onLongPressMoveUpdate!(details);
-              }
-            },
-            child: AsyncBuilder(
-                debugText:
-                    '${widget.ingredientIndex} from ${widget.personal ? 'personal' : 'family'} cart',
-                future: ingredientData,
-                builder: (entry) => _makeTile(entry.first, entry.second)),
-          ),
-        ),
-      );
-    } else {
-      // TODO(tech): аналогично коду выше, cartProvider заменить на storeProvider
-      return const Placeholder();
+    if (widget.screenName == 'StorePage') {
+      // ingredientData = ref.watch(storeProvider.selectAsync((cartData) =>
+      //         Pair.fromMapEntry(cartData
+      //             .getPersonal(widget.personal)!
+      //             .cart
+      //             .entries
+      //             .elementAt(widget.ingredientIndex))));
     }
+    // final selected = ref.watch(selectionProvider.select((value) {
+    //   debugPrint(
+    //       'ref.watch ${widget.ingredientIndex}: ${value[widget.screenName]!}');
+    //   debugPrint(
+    //       'ref.watch ${widget.ingredientIndex}: ${value[widget.screenName]![widget.ingredientIndex]}');
+    //   return value[widget.screenName]![widget.ingredientIndex]!;
+    // }));
+    final selected = ref.watch(selectionProvider
+        .select((value) => value[(widget.personal, widget.ingredientIndex)]!));
+
+    debugPrint(
+        'ingredientTile, selectedTiles = ${ref.read(selectionProvider)[widget.screenName]}');
+
+    return Material(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(constants.dInnerRadius),
+          side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: constants.borderWidth)),
+      clipBehavior: Clip.antiAlias,
+      color: selected ? Theme.of(context).colorScheme.outline : null,
+      child: InkWell(
+        onTap: widget.onTap,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onLongPress: widget.onLongPress,
+          onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
+          child: AsyncBuilder(
+              debugText:
+                  '${widget.ingredientIndex} from ${widget.personal ? 'personal' : 'family'} cart',
+              future: ingredientData,
+              builder: (entry) => _makeTile(entry.first, entry.second)),
+        ),
+      ),
+    );
   }
 
   Widget _makeTile(Ingredient ingredient, int amount) {

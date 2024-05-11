@@ -2,12 +2,11 @@ import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/utility/color_manipulator.dart';
 import 'package:zakroma_frontend/utility/selection.dart';
 
 import '../../data_cls/cart.dart';
+import '../../utility/color_manipulator.dart';
 import '../../utility/constants.dart';
-import '../../utility/pair.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/flat_list.dart';
@@ -24,6 +23,7 @@ class CartPage extends ConsumerStatefulWidget {
 }
 
 class _CartPageState extends ConsumerState<CartPage> {
+  static const screenName = 'CartPage';
   final ScrollController scrollController = ScrollController();
 
   /// Если true, кнопка «Перейти к оформлению» видна
@@ -46,9 +46,6 @@ class _CartPageState extends ConsumerState<CartPage> {
   ///
   /// Используется для множественного выбора
   int lastSelectionModified = -1;
-
-  Map<bool, List<IngredientTile>> ingredientTiles = {true: [], false: []};
-  Map<bool, List<int>> selectedIngredients = {true: [], false: []};
 
   void _initScrollController(
       Future<(int, int)> cartLengths, double ingredientTileHeight) {
@@ -79,44 +76,6 @@ class _CartPageState extends ConsumerState<CartPage> {
     //     }));
   }
 
-  void _initIngredientTiles(
-      Future<(int, int)> cartLengths, double ingredientTileHeight) {
-    cartLengths.then((cartLengths) {
-      ingredientTiles.forEach((personal, _) {
-        ingredientTiles[personal] = List<IngredientTile>.generate(
-            personal ? cartLengths.$1 : cartLengths.$2,
-            (index) => IngredientTile(
-                  key: ObjectKey(Pair(personal, index)),
-                  personal: personal,
-                  ingredientIndex: index,
-                  selectModeEnabled: () => !selectedIngredients.myIsEmpty,
-                  onLongPress: () {
-                    lastSelectionModified = index;
-                    if (!selectedIngredients[personal]!.contains(index)) {
-                      initiallySelected = index;
-                      selectedIngredients[personal]!.add(index);
-                    } else {
-                      selectedIngredients[personal]!.remove(index);
-                      if (selectedIngredients.myIsEmpty) {
-                        initiallySelected = -1;
-                      }
-                    }
-                    debugPrint(
-                        'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
-                    debugPrint(
-                        'onLongPress: selectedIngredients = $selectedIngredients');
-                  },
-                  onTap: () => _handleSelect(personal, index),
-                  // onLongPressMoveUpdate: (details) => _handleDrag(
-                  //     personal: personal,
-                  //     index: index,
-                  //     details: details,
-                  //     ingredientTileHeight: ingredientTileHeight),
-                ));
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     debugPrint('---------------------------------------------\nbuild CartPage');
@@ -124,15 +83,16 @@ class _CartPageState extends ConsumerState<CartPage> {
     final constants = ref.watch(constantsProvider);
     final tabTitles = ['Личная', 'Семейная'];
     final ingredientTileHeight = 12 * ref.read(constantsProvider).paddingUnit;
-
     final cartLengths = ref.watch(cartProvider.selectAsync(
         (data) => (data.first.cart.length, data.second?.cart.length ?? 0)));
+    final selectionMode = ref.watch(selectionProvider
+        .select((value) => !value.values.any((element) => element)));
 
-    _initIngredientTiles(cartLengths, ingredientTileHeight);
     _initScrollController(cartLengths, ingredientTileHeight);
 
-    final title = selectedIngredients.myIsEmpty ? 'Корзина' : null;
-    final header = selectedIngredients.myIsEmpty
+    // TODO(tech): сделать в CustomScaffold поле appBar вместо сочетания title+header
+    final title = selectionMode ? 'Корзина' : null;
+    final header = selectionMode
         ? null
         : Container(
             color: Theme.of(context).colorScheme.primary,
@@ -233,6 +193,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                                   debugPrint('got $lengths');
                                   final length =
                                       personal ? lengths.$1 : lengths.$2;
+                                  ref
+                                      .read(selectionProvider.notifier)
+                                      .putIfAbsent(personal, length);
                                   return SizedBox(
                                     height: length * ingredientTileHeight +
                                         2 * constants.paddingUnit,
@@ -241,7 +204,45 @@ class _CartPageState extends ConsumerState<CartPage> {
                                           bottom: constants.paddingUnit),
                                       scrollPhysics:
                                           const NeverScrollableScrollPhysics(),
-                                      children: ingredientTiles[personal]!,
+                                      children: List<IngredientTile>.generate(
+                                          length, (index) {
+                                        return IngredientTile(
+                                          screenName: screenName,
+                                          personal: personal,
+                                          ingredientIndex: index,
+                                          onLongPress: () {
+                                            lastSelectionModified = index;
+                                            ref
+                                                .read(
+                                                    selectionProvider.notifier)
+                                                .toggle((personal, index));
+
+                                            if (ref.read(selectionProvider
+                                                .select((value) => value[(
+                                                      personal,
+                                                      index
+                                                    )]!))) {
+                                              initiallySelected = index;
+                                            } else if (ref
+                                                .read(
+                                                    selectionProvider.notifier)
+                                                .isEmpty()) {
+                                              initiallySelected = -1;
+                                            }
+                                            debugPrint(
+                                                'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
+                                            debugPrint(
+                                                'onLongPress: selectedIngredients = ${ref.read(selectionProvider)}');
+                                          },
+                                          onTap: () =>
+                                              _handleSelect(personal, index),
+                                          // onLongPressMoveUpdate: (details) => _handleDrag(
+                                          //     personal: personal,
+                                          //     index: index,
+                                          //     details: details,
+                                          //     ingredientTileHeight: ingredientTileHeight),
+                                        );
+                                      }),
                                     ),
                                   );
                                 }),
@@ -319,33 +320,24 @@ class _CartPageState extends ConsumerState<CartPage> {
     );
 
     return CustomScaffold(
-        title: title,
-        // TODO(design+tech): сделать верхнюю панель с опциями при множественном выборе
-        header: header,
-        topNavigationBar: header,
-        body: body);
+      title: title,
+      // TODO(design+tech): сделать верхнюю панель с опциями при множественном выборе
+      header: header,
+      topNavigationBar: header,
+      body: body,
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        debugPrint('${ref.read(selectionProvider)}');
+      }),
+    );
   }
 
   void _handleSelect(bool personal, int index) {
     debugPrint('_handleSelect($personal, $index)');
-    if (selectedIngredients.myIsEmpty) {
+    if (ref.read(selectionProvider.notifier).isEmpty()) {
       debugPrint('empty');
       return;
     }
-    if (selectedIngredients[personal]!.contains(index)) {
-      debugPrint('removing');
-      selectedIngredients[personal]!.remove(index);
-      if (selectedIngredients.myIsEmpty) {
-        initiallySelected = -1;
-      }
-    } else {
-      debugPrint('adding');
-      selectedIngredients[personal]!.add(index);
-    }
-    lastSelectionModified = index;
-    debugPrint(
-        'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
-    debugPrint('onTap: selectedIngredients = $selectedIngredients');
+    ref.read(selectionProvider.notifier).toggle((personal, index));
   }
 
   void _handleDrag(
@@ -364,7 +356,7 @@ class _CartPageState extends ConsumerState<CartPage> {
           (initiallySelected - lastSelectionModified) *
                   (lastSelectionModified - ingredientIndex) <
               0) {
-        ingredientTiles[personal]![lastSelectionModified].onTap!();
+        // ingredientTiles[personal]![lastSelectionModified].onTap!();
         lastSelectionModified = ingredientIndex;
         return;
       }
@@ -373,6 +365,6 @@ class _CartPageState extends ConsumerState<CartPage> {
   }
 }
 
-extension MyIsEmpty on Map<bool, List<int>> {
-  bool get myIsEmpty => this[true]!.isEmpty && this[false]!.isEmpty;
+extension MyIsEmpty on Map<int, bool> {
+  bool get myIsEmpty => !values.any((element) => element);
 }
