@@ -21,7 +21,6 @@ class Selection extends _$Selection {
     final temp = Map<(bool, int), bool>.from(state);
     temp[itemId] = !temp[itemId]!;
     state = temp;
-    debugPrint('state: $state');
   }
 
   void putIfAbsent(bool personal, int length) {

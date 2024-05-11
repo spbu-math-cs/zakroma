@@ -211,36 +211,29 @@ class _CartPageState extends ConsumerState<CartPage> {
                                           personal: personal,
                                           ingredientIndex: index,
                                           onLongPress: () {
+                                            initiallySelected = index;
                                             lastSelectionModified = index;
                                             ref
                                                 .read(
                                                     selectionProvider.notifier)
                                                 .toggle((personal, index));
 
-                                            if (ref.read(selectionProvider
-                                                .select((value) => value[(
-                                                      personal,
-                                                      index
-                                                    )]!))) {
-                                              initiallySelected = index;
-                                            } else if (ref
+                                            if (ref
                                                 .read(
                                                     selectionProvider.notifier)
                                                 .isEmpty()) {
                                               initiallySelected = -1;
                                             }
-                                            debugPrint(
-                                                'initiallySelected = $initiallySelected, lastSelectionModified = $lastSelectionModified');
-                                            debugPrint(
-                                                'onLongPress: selectedIngredients = ${ref.read(selectionProvider)}');
                                           },
                                           onTap: () =>
                                               _handleSelect(personal, index),
-                                          // onLongPressMoveUpdate: (details) => _handleDrag(
-                                          //     personal: personal,
-                                          //     index: index,
-                                          //     details: details,
-                                          //     ingredientTileHeight: ingredientTileHeight),
+                                          onLongPressMoveUpdate: (details) =>
+                                              _handleDrag(
+                                                  personal: personal,
+                                                  index: index,
+                                                  details: details,
+                                                  ingredientTileHeight:
+                                                      ingredientTileHeight),
                                         );
                                       }),
                                     ),
@@ -356,10 +349,14 @@ class _CartPageState extends ConsumerState<CartPage> {
           (initiallySelected - lastSelectionModified) *
                   (lastSelectionModified - ingredientIndex) <
               0) {
-        // ingredientTiles[personal]![lastSelectionModified].onTap!();
+        // двигаемся в обратном направлении
+        ref
+            .read(selectionProvider.notifier)
+            .toggle((personal, lastSelectionModified));
         lastSelectionModified = ingredientIndex;
         return;
       }
+      ref.read(selectionProvider.notifier).toggle((personal, ingredientIndex));
       lastSelectionModified = ingredientIndex;
     }
   }
