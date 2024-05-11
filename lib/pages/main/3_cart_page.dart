@@ -193,13 +193,14 @@ class _CartPageState extends ConsumerState<CartPage> {
               ),
               child: Stack(children: [
                 // Продукты в корзине
-                RefreshIndicator(
+                RefreshIndicator.adaptive(
                   onRefresh: () async {
                     await Future.delayed(Constants.networkTimeout,
                         () => ref.refresh(cartProvider));
                   },
                   child: SingleChildScrollView(
                       controller: scrollController,
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                           children: List<Widget>.generate(tabTitles.length + 1,
                               (index) {
