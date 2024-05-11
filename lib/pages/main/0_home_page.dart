@@ -18,19 +18,12 @@ class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
-    // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
-
-    const dietsDisplayCount = 3;
+  Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
     final diets = ref.watch(dietsProvider);
 
     return CustomScaffold(
-      title: 'Закрома',
+      header: const CustomHeader(title: 'Закрома'),
       body: Column(
         children: [
           // Пользователи в группе

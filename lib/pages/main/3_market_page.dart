@@ -8,6 +8,7 @@ class MarketPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const CustomScaffold(title: 'Корзина', body: Placeholder());
+    return const CustomScaffold(
+        header: CustomHeader(title: 'Корзина'), body: Placeholder());
   }
 }

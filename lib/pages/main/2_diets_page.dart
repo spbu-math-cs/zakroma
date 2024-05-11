@@ -13,7 +13,7 @@ class DietListPage extends ConsumerWidget {
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
-      title: 'Питание',
+      header: const CustomHeader(title: 'Питание'),
       body: RRSurface(
         child: Padding(
           padding: EdgeInsets.all(constants.paddingUnit * 2),

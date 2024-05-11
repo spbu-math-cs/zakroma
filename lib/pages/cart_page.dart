@@ -35,7 +35,7 @@ class _CartPageState extends ConsumerState<CartPage> {
         }));
 
     return CustomScaffold(
-      title: 'Корзина',
+      header: CustomHeader(title: 'Корзина'),
       body: RRSurface(
           child: Stack(children: [
         FutureBuilder(

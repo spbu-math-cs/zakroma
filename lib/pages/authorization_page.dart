@@ -34,11 +34,6 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
 
   @override
   Widget build(BuildContext text) {
-    // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor: Theme.of(context).colorScheme.primary,
-        statusBarColor: Colors.transparent));
-
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
@@ -222,6 +217,7 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
           ),
         ),
       ),
+      systemNavigationBarColor: Theme.of(context).colorScheme.primary,
     );
   }
 
@@ -275,7 +271,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
-      topNavigationBar: Align(
+      header: CustomHeader(
+          topNavigationBar: Align(
         alignment: Alignment.centerLeft,
         child: IconButton(
           onPressed: () {
@@ -290,7 +287,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           icon: const Icon(Icons.arrow_back_ios_new),
           padding: EdgeInsets.zero,
         ),
-      ),
+      )),
       body: Padding(
         padding: constants.dBlockPadding,
         child: [
