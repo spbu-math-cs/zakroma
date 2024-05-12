@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
@@ -57,6 +58,11 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
           return SizedBox(
             height: length * ingredientTileHeight + 2 * constants.paddingUnit,
             child: FlatList(
+              padding: widget.personal
+                  ? null
+                  // убираем лишний отступ между ---разделителем--- и следующим листом
+                  : EdgeInsets.all(2 * constants.paddingUnit)
+                      .copyWith(top: constants.paddingUnit),
               childPadding: EdgeInsets.only(bottom: constants.paddingUnit),
               scrollPhysics: const NeverScrollableScrollPhysics(),
               children: List<IngredientTile>.generate(length, (index) {
@@ -173,9 +179,6 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
     }
     final selected = ref.watch(selectionProvider
         .select((value) => value[(widget.personal, widget.ingredientIndex)]!));
-
-    debugPrint(
-        'ingredientTile, selectedTiles = ${ref.read(selectionProvider)}');
 
     return Material(
       shape: RoundedRectangleBorder(

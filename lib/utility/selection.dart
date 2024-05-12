@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'pair.dart';
@@ -29,3 +30,7 @@ class Selection extends _$Selection {
     }
   }
 }
+
+/// (смотрим_личное, выбрано_переключателем)
+final viewPersonalProvider =
+    StateProvider<(bool, bool)>((ref) => (true, false));

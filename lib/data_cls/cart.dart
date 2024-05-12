@@ -52,6 +52,8 @@ class Cart extends _$Cart {
                 4,
             const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 1,
             const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 1,
+            // const Ingredient(id: 5, name: 'Слива', marketName: 'Слива'): 20,
+            // const Ingredient(id: 6, name: 'Что-то', marketName: 'с чем-то'): 3,
           }),
           CartData(personal: false, cart: {
             const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 6,

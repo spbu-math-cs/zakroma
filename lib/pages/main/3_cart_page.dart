@@ -7,9 +7,7 @@ import 'package:zakroma_frontend/utility/selection.dart';
 import '../../data_cls/cart.dart';
 import '../../utility/color_manipulator.dart';
 import '../../utility/constants.dart';
-import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
-import '../../widgets/flat_list.dart';
 import '../../widgets/ingredient_tile.dart';
 import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
@@ -23,162 +21,41 @@ class CartPage extends ConsumerStatefulWidget {
 }
 
 class _CartPageState extends ConsumerState<CartPage> {
-  static const screenName = 'CartPage';
-  final ScrollController scrollController = ScrollController();
-
   /// Если true, кнопка «Перейти к оформлению» видна
   bool orderButtonVisible = true;
-
-  /// Если true, активна личная корзина
-  bool personalCartSelected = true;
 
   /// Если true, корзина была выбрана тапом на верхнюю вкладку
   ///
   /// Значение используется для автопрокрутки до корзины
+  // TODO(tech+ux): придумать что-то с этой кнопкой
   bool cartManuallySelected = false;
-
-  void _initScrollController(
-      Future<(int, int)> cartLengths, double ingredientTileHeight) {
-    cartLengths.then((cartLengths) => scrollController.addListener(() {
-          if (cartManuallySelected) {
-            return;
-          }
-          if (personalCartSelected &&
-              scrollController.offset >
-                  ingredientTileHeight * cartLengths.$1 / 2) {
-            setState(() {
-              personalCartSelected = false;
-            });
-          } else if (!personalCartSelected &&
-              scrollController.offset <
-                  ingredientTileHeight * cartLengths.$1 / 2) {
-            setState(() {
-              personalCartSelected = true;
-            });
-          }
-        }));
-
-    // TODO(idea): подумать, что делать с этой кнопкой при скролле; в текущем виде setState в этом listener'е убивает фпс в нулину
-    // scrollController.addListener(() => setState(() {
-    //       orderButtonVisible = scrollController.position.userScrollDirection ==
-    //               ScrollDirection.reverse
-    //           ? false
-    //           : true;
-    //     }));
-  }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('---------------------------------------------\nbuild CartPage');
-    // TODO(tech): пофиксить откуда-то взявшийся двойной ребилд всех IngredientTile при ребилде CartPage
     final constants = ref.watch(constantsProvider);
-    final tabTitles = ['Личная', 'Семейная'];
-    final ingredientTileHeight =
-        (IngredientTile.defaultHeight + 1) * constants.paddingUnit;
-    final cartLengths = ref.watch(cartProvider.selectAsync(
-        (data) => (data.first.cart.length, data.second?.cart.length ?? 0)));
-
-    _initScrollController(cartLengths, ingredientTileHeight);
 
     final body = Column(
       children: [
         // Переключатель корзины: Личная / Семейная
-        Expanded(
-            child: Padding(
-          padding: constants.dBlockPadding.copyWith(bottom: 0),
-          child: Row(
-              children: List<Widget>.generate(
-                  tabTitles.length,
-                  (index) => Expanded(
-                          child: GestureDetector(
-                        // TODO(idea): долгое нажатие на заголовок выбирает все продукты из данной корзины
-                        onTap: () {
-                          final cart = ref.read(cartProvider);
-                          if (cartManuallySelected || !cart.hasValue) {
-                            return;
-                          }
-                          setState(() {
-                            cartManuallySelected = true;
-                            personalCartSelected = index == 0;
-                          });
-                          scrollController
-                              .animateTo(
-                                  personalCartSelected
-                                      ? 0
-                                      : ref
-                                              .read(cartProvider)
-                                              .value!
-                                              .first
-                                              .cart
-                                              .length *
-                                          ingredientTileHeight,
-                                  duration: Constants.dAnimationDuration,
-                                  curve: Curves.easeIn)
-                              .whenComplete(() => cartManuallySelected = false);
-                        },
-                        child: Material(
-                          color: index == (personalCartSelected ? 0 : 1)
-                              ? Theme.of(context).colorScheme.primaryContainer
-                              : Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(constants.dOuterRadius)),
-                          child: Center(
-                              child: Text(
-                            tabTitles[index],
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          )),
-                        ),
-                      )))),
-        )),
+        Expanded(child: CartSwitch(onTap: (bool personal) {
+          if (cartManuallySelected || !ref.read(cartProvider).hasValue) {
+            return;
+          }
+          ref
+              .read(viewPersonalProvider.notifier)
+              .update((state) => (personal, true));
+        })),
         // Продукты в корзине + кнопка оформления заказа
         Expanded(
           flex: 16,
-          child: RRSurface(
-              animationDuration: Duration.zero,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(constants.dOuterRadius))
-                      .copyWith(
-                topLeft: personalCartSelected ? Radius.zero : null,
-                topRight: !personalCartSelected ? Radius.zero : null,
-              ),
-              child: Stack(children: [
-                // Продукты в корзине
-                RefreshIndicator.adaptive(
-                  onRefresh: () async {
-                    await Future.delayed(Constants.networkTimeout,
-                        () => ref.refresh(cartProvider));
-                  },
-                  child: SingleChildScrollView(
-                      controller: scrollController,
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                          children: List<Widget>.generate(tabTitles.length + 1,
-                              (index) {
-                        if (index == tabTitles.length / 2) {
-                          return TextDivider(
-                            text: 'Семейная',
-                            textStyle: Theme.of(context).textTheme.bodyMedium,
-                            color: lighten(Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer),
-                          );
-                        } else {
-                          final personal = index == 0;
-                          debugPrint(
-                              'build ${personal ? 'personal' : 'family'} cart');
-                          // TODO(tech): починить просадку фпс разбиением списка на два виджета
-                          return AnimatedOpacity(
-                            opacity: personalCartSelected == personal ? 1 : 0.5,
-                            duration: Constants.dAnimationDuration,
-                            child: IngredientsCartView(
-                                cart: true, personal: personal),
-                          );
-                        }
-                      }))),
-                ),
-                // Кнопка «Перейти к оформлению»
-                Align(
-                  alignment: Alignment.bottomCenter,
+          child: Stack(
+            children: [
+              const CartIngredients(),
+              // Кнопка «Перейти к оформлению»
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: constants.dBlockPadding,
                   child: SizedBox(
                     height: constants.paddingUnit * 8,
                     child: AnimatedSlide(
@@ -239,8 +116,10 @@ class _CartPageState extends ConsumerState<CartPage> {
                           )),
                     ),
                   ),
-                )
-              ])),
+                ),
+              )
+            ],
+          ),
         ),
       ],
     );
@@ -257,5 +136,147 @@ class _CartPageState extends ConsumerState<CartPage> {
               ),
             )),
         body: body);
+  }
+}
+
+class CartSwitch extends ConsumerWidget {
+  final void Function(bool) onTap;
+
+  const CartSwitch({required this.onTap, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants = ref.watch(constantsProvider);
+    final personal =
+        ref.watch(viewPersonalProvider.select((value) => value.$1));
+    final tabTitles = ['Личная', 'Семейная'];
+    return Padding(
+      padding: constants.dBlockPadding.copyWith(bottom: 0),
+      child: Row(
+          children: List<Widget>.generate(
+        tabTitles.length,
+        (index) => Expanded(
+            child: GestureDetector(
+          // TODO(idea): долгое нажатие на заголовок выбирает все продукты из данной корзины
+          onTap: () => onTap(index == 0),
+          child: Material(
+            color: personal == (index == 0)
+                ? Theme.of(context).colorScheme.primaryContainer
+                : Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(constants.dOuterRadius)),
+            child: Center(
+                child: Text(
+              tabTitles[index],
+              style: Theme.of(context).textTheme.bodyLarge,
+            )),
+          ),
+        )),
+      )),
+    );
+  }
+}
+
+class CartIngredients extends ConsumerStatefulWidget {
+  const CartIngredients({super.key});
+
+  @override
+  ConsumerState<CartIngredients> createState() => _CartIngredientsState();
+}
+
+class _CartIngredientsState extends ConsumerState<CartIngredients> {
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final constants = ref.watch(constantsProvider);
+    final personal =
+        ref.watch(viewPersonalProvider.select((value) => value.$1));
+
+    _initScrollController(
+        personal,
+        ref.watch(cartProvider.selectAsync(
+            (data) => (data.first.cart.length, data.second?.cart.length ?? 0))),
+        (IngredientTile.defaultHeight + 1) * constants.paddingUnit);
+
+    return RRSurface(
+        animationDuration: Duration.zero,
+        borderRadius:
+            BorderRadius.all(Radius.circular(constants.dOuterRadius)).copyWith(
+          topLeft: personal ? Radius.zero : null,
+          topRight: !personal ? Radius.zero : null,
+        ),
+        child: Stack(children: [
+          // Продукты в корзине
+          RefreshIndicator.adaptive(
+            onRefresh: () async {
+              await Future.delayed(
+                  Constants.networkTimeout, () => ref.refresh(cartProvider));
+            },
+            child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    AnimatedOpacity(
+                        opacity: personal ? 1 : 0.5,
+                        duration: Constants.dAnimationDuration,
+                        child: const IngredientsCartView(
+                            cart: true, personal: true)),
+                    TextDivider(
+                      text: 'Семейная',
+                      textStyle: Theme.of(context).textTheme.bodyMedium,
+                      color: lighten(
+                          Theme.of(context).colorScheme.onPrimaryContainer),
+                    ),
+                    AnimatedOpacity(
+                      opacity: !personal ? 1 : 0.5,
+                      duration: Constants.dAnimationDuration,
+                      child: const IngredientsCartView(
+                          cart: true, personal: false),
+                    ),
+                  ],
+                )),
+          ),
+        ]));
+  }
+
+  void _initScrollController(bool personal, Future<(int, int)> cartLengths,
+      double ingredientTileHeight) {
+    cartLengths.then((cartLengths) => scrollController.addListener(() {
+          if (ref.read(viewPersonalProvider).$2) {
+            return;
+          }
+          if (personal &&
+              scrollController.offset >
+                  ingredientTileHeight * cartLengths.$1 / 2) {
+            ref
+                .read(viewPersonalProvider.notifier)
+                .update((state) => (false, state.$2));
+          } else if (!personal &&
+              scrollController.offset <
+                  ingredientTileHeight * cartLengths.$1 / 2) {
+            ref
+                .read(viewPersonalProvider.notifier)
+                .update((state) => (true, state.$2));
+          }
+        }));
+
+    ref.listen(viewPersonalProvider, (previous, next) {
+      if (previous == null || !next.$2) {
+        return;
+      }
+      scrollController
+          .animateTo(
+              ref.read(viewPersonalProvider).$1
+                  ? 0
+                  : ref.read(cartProvider).value!.first.cart.length *
+                      ingredientTileHeight,
+              duration: Constants.dAnimationDuration,
+              curve: Curves.easeIn)
+          .whenComplete(() => ref
+              .read(viewPersonalProvider.notifier)
+              .update((state) => (state.$1, false)));
+    });
   }
 }
