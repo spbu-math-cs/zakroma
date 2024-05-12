@@ -7,22 +7,139 @@ import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../data_cls/cart.dart';
 import '../utility/constants.dart';
+import 'flat_list.dart';
 import 'styled_headline.dart';
 
+class IngredientsCartView extends ConsumerStatefulWidget {
+  final bool personal;
+  final bool cart;
+  final int ingredientTileHeight;
+  const IngredientsCartView(
+      {required this.cart,
+      required this.personal,
+      this.ingredientTileHeight = 11,
+      super.key});
+
+  @override
+  ConsumerState<IngredientsCartView> createState() =>
+      _IngredientCartViewState();
+}
+
+class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
+  /// Индекс первого выбранного продукта
+  ///
+  /// Используется для множественного выбора
+  int initiallySelected = -1;
+
+  /// Индекс последнего продукта, который был добавлен в/убран из выделения
+  ///
+  /// Используется для множественного выбора
+  int lastSelectionModified = -1;
+  @override
+  Widget build(BuildContext context) {
+    // final lengths = cart ? ref.watch(cartProvider.selectAsync(
+    //         (data) => (data.first.cart.length, data.second?.cart.length ?? 0)))
+    //     : ref.watch(storeProvider.selectAsync(
+    //         (data) => (data.first.cart.length, data.second?.cart.length ?? 0)));
+    final constants = ref.watch(constantsProvider);
+    final ingredientTileHeight =
+        (widget.ingredientTileHeight + 1) * constants.paddingUnit;
+    return AsyncBuilder(
+        future: ref.watch(cartProvider.selectAsync(
+            (data) => (data.first.cart.length, data.second?.cart.length ?? 0))),
+        builder: (lengths) {
+          // TODO(tech): обработать ситуации, когда хотя бы одна из корзин пустая
+          debugPrint('got $lengths');
+          final length = widget.personal ? lengths.$1 : lengths.$2;
+          ref
+              .read(selectionProvider.notifier)
+              .putIfAbsent(widget.personal, length);
+          return SizedBox(
+            height: length * ingredientTileHeight + 2 * constants.paddingUnit,
+            child: FlatList(
+              childPadding: EdgeInsets.only(bottom: constants.paddingUnit),
+              scrollPhysics: const NeverScrollableScrollPhysics(),
+              children: List<IngredientTile>.generate(length, (index) {
+                return IngredientTile(
+                  personal: widget.personal,
+                  ingredientIndex: index,
+                  onLongPress: () {
+                    initiallySelected = index;
+                    lastSelectionModified = index;
+                    ref
+                        .read(selectionProvider.notifier)
+                        .toggle((widget.personal, index));
+
+                    if (ref.read(selectionProvider.notifier).isEmpty()) {
+                      initiallySelected = -1;
+                    }
+                  },
+                  onTap: () => _handleSelect(widget.personal, index),
+                  onLongPressMoveUpdate: (details) => _handleDrag(
+                      personal: widget.personal,
+                      index: index,
+                      details: details,
+                      ingredientTileHeight: ingredientTileHeight),
+                );
+              }),
+            ),
+          );
+        });
+  }
+
+  void _handleSelect(bool personal, int index) {
+    debugPrint('_handleSelect($personal, $index)');
+    if (ref.read(selectionProvider.notifier).isEmpty()) {
+      debugPrint('empty');
+      return;
+    }
+    ref.read(selectionProvider.notifier).toggle((personal, index));
+  }
+
+  void _handleDrag(
+      {required bool personal,
+      required int index,
+      required LongPressMoveUpdateDetails details,
+      required double ingredientTileHeight}) {
+    final ingredientIndex =
+        (index + details.localPosition.dy / ingredientTileHeight).floor();
+    if (ingredientIndex != lastSelectionModified) {
+      debugPrint(
+          '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
+      debugPrint(
+          '(${initiallySelected - lastSelectionModified}) * (${lastSelectionModified - ingredientIndex}) < 0');
+      if (lastSelectionModified != initiallySelected &&
+          (initiallySelected - lastSelectionModified) *
+                  (lastSelectionModified - ingredientIndex) <
+              0) {
+        // двигаемся в обратном направлении
+        ref
+            .read(selectionProvider.notifier)
+            .toggle((personal, lastSelectionModified));
+        lastSelectionModified = ingredientIndex;
+        return;
+      }
+      ref.read(selectionProvider.notifier).toggle((personal, ingredientIndex));
+      lastSelectionModified = ingredientIndex;
+    }
+  }
+}
+
 class IngredientTile extends ConsumerStatefulWidget {
-  final String screenName;
+  final bool cart;
   final bool personal;
   final int ingredientIndex;
   final int height;
   final void Function()? onLongPress;
   final void Function(LongPressMoveUpdateDetails)? onLongPressMoveUpdate;
   final void Function()? onTap;
+  static const defaultHeight = 11;
 
   const IngredientTile(
       {required this.personal,
       required this.ingredientIndex,
-      required this.screenName,
-      this.height = 11,
+      this.cart = true,
+      this.height = defaultHeight,
       this.onLongPress,
       this.onLongPressMoveUpdate,
       this.onTap,
@@ -46,7 +163,7 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
             .cart
             .entries
             .elementAt(widget.ingredientIndex))));
-    if (widget.screenName == 'StorePage') {
+    if (!widget.cart) {
       // ingredientData = ref.watch(storeProvider.selectAsync((cartData) =>
       //         Pair.fromMapEntry(cartData
       //             .getPersonal(widget.personal)!
@@ -58,7 +175,7 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
         .select((value) => value[(widget.personal, widget.ingredientIndex)]!));
 
     debugPrint(
-        'ingredientTile, selectedTiles = ${ref.read(selectionProvider)[widget.screenName]}');
+        'ingredientTile, selectedTiles = ${ref.read(selectionProvider)}');
 
     return Material(
       shape: RoundedRectangleBorder(
