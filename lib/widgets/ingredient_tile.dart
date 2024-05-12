@@ -80,7 +80,16 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
                       initiallySelected = -1;
                     }
                   },
-                  onTap: () => _handleSelect(widget.personal, index),
+                  onTap: () {
+                    if (ref.read(selectionProvider.notifier).isEmpty()) {
+                      debugPrint('empty');
+                      return;
+                    }
+                    HapticFeedback.selectionClick();
+                    ref
+                        .read(selectionProvider.notifier)
+                        .toggle((widget.personal, index));
+                  },
                   onLongPressMoveUpdate: (details) => _handleDrag(
                       personal: widget.personal,
                       index: index,
@@ -93,15 +102,6 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
         });
   }
 
-  void _handleSelect(bool personal, int index) {
-    debugPrint('_handleSelect($personal, $index)');
-    if (ref.read(selectionProvider.notifier).isEmpty()) {
-      debugPrint('empty');
-      return;
-    }
-    ref.read(selectionProvider.notifier).toggle((personal, index));
-  }
-
   void _handleDrag(
       {required bool personal,
       required int index,
@@ -110,6 +110,7 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
     final ingredientIndex =
         (index + details.localPosition.dy / ingredientTileHeight).floor();
     if (ingredientIndex != lastSelectionModified) {
+      HapticFeedback.selectionClick();
       debugPrint(
           '$initiallySelected -> $lastSelectionModified -> $ingredientIndex');
       debugPrint(
@@ -192,7 +193,12 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
         onTap: widget.onTap,
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onLongPress: widget.onLongPress,
+          onLongPress: () {
+            HapticFeedback.selectionClick();
+            if (widget.onLongPress != null) {
+              widget.onLongPress!();
+            }
+          },
           onLongPressMoveUpdate: widget.onLongPressMoveUpdate,
           child: AsyncBuilder(
               debugText:
