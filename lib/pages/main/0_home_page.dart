@@ -7,65 +7,38 @@ import '../../data_cls/diet.dart';
 import '../../data_cls/meal.dart';
 import '../../utility/constants.dart';
 import '../../utility/get_current_date.dart';
+import '../../utility/pair.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/styled_headline.dart';
-import '../cart_page.dart';
+import '3_cart_page.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
-    // делаем системную панель навигации «прозрачной»
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
-        statusBarColor: Colors.transparent));
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
 
-    const dietsDisplayCount = 3;
+class _HomePageState extends ConsumerState<HomePage> {
+  var selectedDiet = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
-    final diets = ref.watch(dietsProvider);
 
     return CustomScaffold(
-      title: 'Закрома',
+      header: const CustomHeader(title: 'Закрома'),
       body: Column(
         children: [
-          // Пользователи в группе
+          // Переключатель рационов: личный / семейный
           Expanded(
               flex: 12,
               child: Padding(
-                padding: constants.dBlockPadding - constants.dCardPaddingHalf,
-                // TODO(server): подгрузить членов группы (id, иконка)
-                // TODO(func): реализовать клик по члену группы, по кнопке плюс
-                // TODO(tech): реализовать горизонтальную прокрутку членов группы
-                child: const Placeholder(),
-                // child: FutureBuilder(
-                //   future: ref.watch(userProvider.notifier).groups,
-                //   builder: (context, snapshot) {
-                //     if (snapshot.connectionState != ConnectionState.done) {
-                //       return const Center(child: CircularProgressIndicator());
-                //     }
-                //     final groups = snapshot.data as List<Group>;
-                //     return SingleChildScrollView(
-                //       scrollDirection: Axis.horizontal,
-                //       child: Row(
-                //           children: List<Text>.generate(
-                //         groups.length,
-                //         (index) => Text(
-                //           groups[index].name,
-                //           style: Theme.of(context)
-                //               .textTheme
-                //               .headlineSmall!
-                //               .copyWith(height: 1),
-                //         ),
-                //       )),
-                //     );
-                //   },
-                // ),
-              )),
+                  padding: constants.dBlockPadding,
+                  child: const Placeholder())),
           // Статус холодильника/доставки + корзина
           Expanded(
               flex: 14,
@@ -99,8 +72,7 @@ class HomePage extends ConsumerWidget {
                           width: 12 * constants.paddingUnit,
                           child: RRButton(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const CartPage()));
+                                // этой кнопки не будет в новом дизайне, поэтому и париться не буду
                               },
                               borderRadius: constants.dOuterRadius,
                               backgroundColor: Theme.of(context)
@@ -148,81 +120,7 @@ class HomePage extends ConsumerWidget {
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
                         // TODO(refactor): вынести всю логику child'а
-                        child: AsyncBuilder(
-                          asyncValue: ref.watch(dietsProvider),
-                          builder: (diets) {
-                            final currentDiet = diets.first;
-                            debugPrint(
-                                'asyncbuilder speaking, currentDiet: $currentDiet');
-                            final List<Meal> todayMeals = currentDiet
-                                .getDay(DateTime.now().weekday - 1)
-                                .meals;
-                            return todayMeals.isEmpty
-                                ? Center(
-                                    child: TextButton.icon(
-                                        onPressed: () {
-                                          // TODO(feat): всплывающее окно добавления блюда
-                                        },
-                                        style: TextButton.styleFrom(
-                                            // padding: EdgeInsets.zero
-                                            ),
-                                        icon: const Icon(Icons.add),
-                                        label: const Text('Добавить блюдо')),
-                                  )
-                                : SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                        children: List<Widget>.generate(
-                                            todayMeals.length,
-                                            (index) => Padding(
-                                                  padding:
-                                                      constants.dCardPadding,
-                                                  child: SizedBox.square(
-                                                      // 12 — константа, взятая, опять же, из фигмы
-                                                      dimension: 12 *
-                                                          constants.paddingUnit,
-                                                      child: RRButton(
-                                                          onTap: () {
-                                                            showSlidingBottomSheet(
-                                                                context,
-                                                                builder:
-                                                                    (context) {
-                                                              return createSlidingSheet(
-                                                                context,
-                                                                headingText:
-                                                                    todayMeals[
-                                                                            index]
-                                                                        .name,
-                                                                body: todayMeals[
-                                                                        index]
-                                                                    .getDishesList(
-                                                                        context,
-                                                                        constants,
-                                                                        dishMiniatures:
-                                                                            true),
-                                                                constants:
-                                                                    constants,
-                                                              );
-                                                            });
-                                                          },
-                                                          borderRadius:
-                                                              constants
-                                                                  .dInnerRadius,
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          child: StyledHeadline(
-                                                              // overflow: TextOverflow.clip,
-                                                              text: todayMeals[
-                                                                      index]
-                                                                  .name,
-                                                              textStyle: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .headlineSmall))),
-                                                ))),
-                                  );
-                          },
-                        ),
+                        child: const MealsView(),
                       )),
                 ],
               ))),
@@ -265,6 +163,7 @@ class HomePage extends ConsumerWidget {
                         child: Row(
                           // TODO(server): подгрузить рецепты (id, название, иконка)
                           // TODO(tech): реализовать recipesProvider?
+                          // TODO(tech): использовать генератор списков вместо перечисления
                           children: [
                             Expanded(
                                 child: RRButton(
@@ -277,7 +176,7 @@ class HomePage extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(
                                           constants.dInnerRadius),
                                       border: Border.all(
-                                          width: 2,
+                                          width: constants.paddingUnit / 4,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .surface),
@@ -320,7 +219,7 @@ class HomePage extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(
                                           constants.dInnerRadius),
                                       border: Border.all(
-                                          width: 2,
+                                          width: constants.paddingUnit / 4,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .surface),
@@ -362,7 +261,7 @@ class HomePage extends ConsumerWidget {
                                       borderRadius: BorderRadius.circular(
                                           constants.dInnerRadius),
                                       border: Border.all(
-                                          width: 2,
+                                          width: constants.paddingUnit / 4,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .surface),
@@ -400,6 +299,101 @@ class HomePage extends ConsumerWidget {
               ))),
         ],
       ),
+    );
+  }
+}
+
+class MealsView extends ConsumerWidget {
+  const MealsView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants = ref.watch(constantsProvider);
+    return AsyncBuilder(
+      async: ref.watch(dietsProvider),
+      builder: (diets) {
+        final todayMeals = diets.first
+                .getDay(DateTime.now().weekday)
+                .meals
+                .map((e) => Pair(true, e))
+                .toList() +
+            (diets.second
+                        ?.getDay(DateTime.now().weekday)
+                        .meals
+                        .map((e) => Pair(false, e)) ??
+                    [])
+                .toList();
+        todayMeals.sort((Pair<bool, Meal> a, Pair<bool, Meal> b) =>
+            a.second.index.compareTo(b.second.index));
+        return todayMeals.isEmpty
+            ? Center(
+                child: TextButton.icon(
+                    onPressed: () {
+                      // TODO(feat): всплывающее окно добавления блюда
+                    },
+                    style: TextButton.styleFrom(
+                        // padding: EdgeInsets.zero
+                        ),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Добавить блюдо')),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    children: List<Widget>.generate(
+                        todayMeals.length,
+                        (index) => Padding(
+                              padding: constants.dCardPadding,
+                              child: SizedBox.square(
+                                  // 12 — константа, взятая, опять же, из фигмы
+                                  dimension: 12 * constants.paddingUnit,
+                                  child: RRButton(
+                                      onTap: () {
+                                        showSlidingBottomSheet(context,
+                                            builder: (context) {
+                                          return createSlidingSheet(
+                                            context,
+                                            headingText:
+                                                todayMeals[index].second.name,
+                                            body: todayMeals[index]
+                                                .second
+                                                .getDishesList(
+                                                    context, constants,
+                                                    dishMiniatures: true),
+                                            constants: constants,
+                                          );
+                                        });
+                                      },
+                                      borderRadius: constants.dInnerRadius,
+                                      padding: EdgeInsets.zero,
+                                      backgroundColor: todayMeals[index].first
+                                          ? null
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                      foregroundDecoration: todayMeals[index]
+                                              .first
+                                          ? null
+                                          : BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      constants.dInnerRadius),
+                                              border: Border.all(
+                                                  width:
+                                                      constants.paddingUnit / 2,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface),
+                                            ),
+                                      child: StyledHeadline(
+                                          // overflow: TextOverflow.clip,
+                                          text: todayMeals[index].second.name,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall))),
+                            ))),
+              );
+      },
     );
   }
 }

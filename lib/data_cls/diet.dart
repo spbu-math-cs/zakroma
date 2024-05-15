@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,7 +39,8 @@ class Diet with _$Diet {
 
   factory Diet.fromJson(Map<String, dynamic> json) => _$DietFromJson(json);
 
-  DayDiet getDay(int index) => days[index];
+  @Assert('index >= 1 && index <= 7')
+  DayDiet getDay(int index) => days[index - 1];
 }
 
 extension GetDiet on Pair<Diet, Diet?> {
@@ -69,13 +69,13 @@ class Diets extends _$Diets {
   FutureOr<Pair<Diet, Diet?>> build() async {
     final user = ref.watch(userProvider.notifier).getUser();
     try {
-      var json = processResponse(await ref.watch(clientProvider).get(
-          makeUri('api/diets/personal'),
-          headers: makeHeader(user.token, user.cookie)));
+      var json = processResponse(await ref
+          .watch(clientProvider.notifier)
+          .get('api/diets/personal', token: user.token, cookie: user.cookie));
       final personalDiet = Diet.fromJson(json.first);
-      json = processResponse(await ref.watch(clientProvider).get(
-          makeUri('api/diets/family'),
-          headers: makeHeader(user.token, user.cookie)));
+      json = processResponse(await ref
+          .watch(clientProvider.notifier)
+          .get('api/diets/family', token: user.token, cookie: user.cookie));
       final familyDiet =
           json.firstOrNull != null ? Diet.fromJson(json.first) : null;
       return Pair(personalDiet, familyDiet);
@@ -141,9 +141,12 @@ class Diets extends _$Diets {
     state = await AsyncValue.guard(() async {
       final user = ref.read(userProvider.notifier).getUser();
       processResponse(
-        await ref.watch(clientProvider).patch(makeUri('api/diets/name'),
-            headers: makeHeader(user.token, user.cookie),
-            body: jsonEncode({'is-personal': isPersonal, 'name': newName})),
+        await ref.watch(clientProvider.notifier).patch(
+              'api/diets/name',
+              body: {'is-personal': isPersonal, 'name': newName},
+              token: user.token,
+              cookie: user.cookie,
+            ),
       );
       return state.value!.update(Diet(
           hash: diet.hash,

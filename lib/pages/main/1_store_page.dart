@@ -8,6 +8,7 @@ class StorePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const CustomScaffold(title: 'Продукты', body: Placeholder());
+    return const CustomScaffold(
+        header: CustomHeader(title: 'Продукты'), body: Placeholder());
   }
 }

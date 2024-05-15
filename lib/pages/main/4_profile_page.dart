@@ -35,7 +35,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     ];
 
     return CustomScaffold(
-      title: 'Профиль',
+      header: const CustomHeader(title: 'Профиль'),
       body: RRSurface(
         child: Column(
           children: [
@@ -55,23 +55,19 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 BorderRadius.circular(constants.dInnerRadius),
                             clipBehavior: Clip.antiAlias,
                             elevation: constants.dElevation,
-                            child: FutureBuilder(
+                            child: AsyncBuilder(
                                 future: ref.watch(userProvider
                                     .selectAsync((user) => user.userPicUrl)),
-                                builder: (_, userPicUrl) => userPicUrl.hasData
-                                    ? SizedBox.square(
-                                        dimension: constants.paddingUnit * 12,
-                                        child: Image.network(
-                                          userPicUrl.requireData,
-                                          cacheHeight:
-                                              (constants.paddingUnit * 12)
-                                                  .ceil(),
-                                          cacheWidth:
-                                              (constants.paddingUnit * 12)
-                                                  .ceil(),
-                                        ),
-                                      )
-                                    : const CircularProgressIndicator()),
+                                builder: (userPicUrl) => SizedBox.square(
+                                      dimension: constants.paddingUnit * 12,
+                                      child: Image.network(
+                                        userPicUrl,
+                                        cacheHeight:
+                                            (constants.paddingUnit * 12).ceil(),
+                                        cacheWidth:
+                                            (constants.paddingUnit * 12).ceil(),
+                                      ),
+                                    )),
                           ),
                         ),
                       )),
@@ -83,7 +79,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AsyncBuilder(
-                                asyncValue: ref.read(userProvider),
+                                async: ref.read(userProvider),
                                 builder: (user) => StyledHeadline(
                                     text:
                                         '${user.firstName} ${(user.secondName)[0]}.',
