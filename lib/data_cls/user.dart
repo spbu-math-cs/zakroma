@@ -112,23 +112,13 @@ class User extends _$User {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
-    final responseName = await ref.watch(clientProvider).get(
-          makeUri('api/user/name'),
-          headers: makeHeader(
-            body['token'],
-            cookies
-                .firstWhere((element) => element.key == 'zakroma_session')
-                .value,
-          ),
-        );
-    processResponse(await ref.watch(clientProvider).get(
+    final nameBody = processResponse(await ref.watch(clientProvider).get(
         makeUri('api/user/name'),
         headers: makeHeader(
             body['token'],
             cookies
                 .firstWhere((element) => element.key == 'zakroma_session')
-                .value)));
-    final nameBody = (jsonDecode(responseName.body) as Map<String, dynamic>);
+                .value))).first;
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
