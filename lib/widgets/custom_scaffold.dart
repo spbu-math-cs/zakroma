@@ -150,6 +150,8 @@ class CustomHeader extends ConsumerWidget {
         .select((value) => value.values.any((element) => element)));
     debugPrint('selectionModeEnabled = $selectionModeEnabled');
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+        systemNavigationBarColor:
+            Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: selectionModeEnabled
             ? Theme.of(context).colorScheme.surface
             : Colors.transparent));

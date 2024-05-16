@@ -206,39 +206,36 @@ class _CartIngredientsState extends ConsumerState<CartIngredients> {
           topLeft: personal ? Radius.zero : null,
           topRight: !personal ? Radius.zero : null,
         ),
-        child: Stack(children: [
-          // Продукты в корзине
-          RefreshIndicator.adaptive(
-            onRefresh: () async {
-              await Future.delayed(
-                  Constants.networkTimeout, () => ref.refresh(cartProvider));
-            },
-            child: SingleChildScrollView(
-                controller: scrollController,
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    AnimatedOpacity(
-                        opacity: personal ? 1 : 0.5,
-                        duration: Constants.dAnimationDuration,
-                        child: const IngredientsCartView(
-                            cart: true, personal: true)),
-                    TextDivider(
-                      text: 'Семейная',
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
-                      color: lighten(
-                          Theme.of(context).colorScheme.onPrimaryContainer),
-                    ),
-                    AnimatedOpacity(
-                      opacity: !personal ? 1 : 0.5,
+        child: RefreshIndicator.adaptive(
+          onRefresh: () async {
+            await Future.delayed(
+                Constants.networkTimeout, () => ref.refresh(cartProvider));
+          },
+          child: SingleChildScrollView(
+              controller: scrollController,
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  AnimatedOpacity(
+                      opacity: personal ? 1 : 0.5,
                       duration: Constants.dAnimationDuration,
                       child: const IngredientsCartView(
-                          cart: true, personal: false),
-                    ),
-                  ],
-                )),
-          ),
-        ]));
+                          cart: true, personal: true)),
+                  TextDivider(
+                    text: 'Семейная',
+                    textStyle: Theme.of(context).textTheme.bodyMedium,
+                    color: lighten(
+                        Theme.of(context).colorScheme.onPrimaryContainer),
+                  ),
+                  AnimatedOpacity(
+                    opacity: !personal ? 1 : 0.5,
+                    duration: Constants.dAnimationDuration,
+                    child:
+                        const IngredientsCartView(cart: true, personal: false),
+                  ),
+                ],
+              )),
+        ));
   }
 
   void _initScrollController(bool personal, Future<(int, int)> cartLengths,
