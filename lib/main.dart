@@ -8,7 +8,7 @@ import 'pages/authorization_page.dart';
 import 'pages/main/0_home_page.dart';
 import 'pages/main/1_store_page.dart';
 import 'pages/main/2_diets_page.dart';
-import 'pages/main/3_market_page.dart';
+import 'pages/main/3_cart_page.dart';
 import 'pages/main/4_profile_page.dart';
 import 'utility/constants.dart';
 import 'utility/shared_preferences.dart';
@@ -40,11 +40,15 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       builder: (context, child) {
         // считаем константы для текущего устройства
-        final screenWidth = MediaQuery.of(context).size.width;
+        final paddingUnit = MediaQuery.of(context).size.width / 48;
+        final topPadding = MediaQuery.of(context).size.height -
+            MediaQuery.of(context).padding.top -
+            Constants.bottomNavigationBarHeight * paddingUnit -
+            Constants.screenHeight * paddingUnit;
         return ProviderScope(
           overrides: [
-            constantsProvider
-                .overrideWithValue(Constants(paddingUnit: screenWidth / 48)),
+            constantsProvider.overrideWithValue(
+                Constants(paddingUnit: paddingUnit, topPadding: topPadding)),
           ],
           child: child!,
         );
@@ -127,7 +131,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
           HomePage(),
           StorePage(),
           DietListPage(),
-          MarketPage(),
+          CartPage(),
           ProfilePage(),
         ],
       ),

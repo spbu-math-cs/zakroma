@@ -33,7 +33,7 @@ class FlatList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final constants = ref.read(constantsProvider);
+    final constants = ref.watch(constantsProvider);
 
     return CustomScrollView(
       physics: scrollPhysics,

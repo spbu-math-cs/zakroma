@@ -1,81 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../widgets/rr_buttons.dart';
-import '../widgets/rr_surface.dart';
+import '../widgets/custom_error_widget.dart';
 
 class AsyncBuilder<T> extends StatelessWidget {
-  final AsyncValue<T> asyncValue;
+  final AsyncValue<T>? async;
+  final Future<T>? future;
   final Widget Function(T) builder;
   final Color? circularProgressIndicatorColor;
+  final String debugText;
 
   const AsyncBuilder(
       {super.key,
-      required this.asyncValue,
       required this.builder,
-      this.circularProgressIndicatorColor});
+      this.async,
+      this.future,
+      this.circularProgressIndicatorColor,
+      this.debugText = ''})
+      : assert(async != null || future != null);
 
   @override
   Widget build(BuildContext context) {
-    return asyncValue.when(
-        data: (value) => builder(value),
-        loading: () => Center(
+    debugPrint('build AsyncBuilder');
+    if (async != null) {
+      return async!.when(
+          data: (value) => builder(value),
+          loading: () => Center(
+                  child: CircularProgressIndicator(
+                color: circularProgressIndicatorColor,
+              )),
+          error: (error, StackTrace stackTrace) =>
+              CustomErrorWidget(error, stackTrace));
+    }
+    return FutureBuilder(
+        future: future,
+        builder: (_, snapshot) {
+          if (snapshot.hasError) {
+            debugPrint('FutureBuilder builder $debugText: return error');
+            return CustomErrorWidget(snapshot.error!, snapshot.stackTrace!);
+          }
+          if (!snapshot.hasData) {
+            debugPrint('FutureBuilder builder $debugText: return loading');
+            return Center(
                 child: CircularProgressIndicator(
               color: circularProgressIndicatorColor,
-            )),
-        // TODO(style): сделать красивое окошко с ошибкой
-        error: (error, StackTrace stackTrace) {
-          debugPrintStack(stackTrace: stackTrace);
-          return LayoutBuilder(
-              builder: (context, constraints) => RRSurface(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Что-то пошло не так',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary),
-                          ),
-                        )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Произошла ошибка: $error',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary),
-                          ),
-                        )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.centerRight,
-                          child: RRButton(
-                            onTap: () {
-                              if (Navigator.of(context).canPop()) {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: const Text('Назад'),
-                          ),
-                        ))
-                      ],
-                    ),
-                  ));
+            ));
+          }
+          debugPrint('FutureBuilder builder $debugText: return builder');
+          return builder(snapshot.data as T);
         });
   }
 }
