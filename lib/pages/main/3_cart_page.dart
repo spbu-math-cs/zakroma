@@ -34,96 +34,6 @@ class _CartPageState extends ConsumerState<CartPage> {
   Widget build(BuildContext context) {
     final constants = ref.watch(constantsProvider);
 
-    final body = Column(
-      children: [
-        // Переключатель корзины: Личная / Семейная
-        Expanded(child: CartSwitch(onTap: (bool personal) {
-          if (cartManuallySelected || !ref.read(cartProvider).hasValue) {
-            return;
-          }
-          ref
-              .read(viewPersonalProvider.notifier)
-              .update((state) => (personal, true));
-        })),
-        // Продукты в корзине + кнопка оформления заказа
-        Expanded(
-          flex: 16,
-          child: Stack(
-            children: [
-              const CartIngredients(),
-              // Кнопка «Перейти к оформлению»
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: constants.dBlockPadding,
-                  child: SizedBox(
-                    height: constants.paddingUnit * 8,
-                    child: AnimatedSlide(
-                      offset:
-                          orderButtonVisible ? Offset.zero : const Offset(0, 3),
-                      duration: Constants.dAnimationDuration,
-                      child: RRButton(
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                      title: const Text('Внимание!'),
-                                      content: const Text(
-                                          'Вы будете перенаправлены в приложение Яндекс для оформления заказа продуктов.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Назад'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            final cart = ref
-                                                .read(cartProvider)
-                                                .asData!
-                                                .value
-                                                .first
-                                                .cart;
-                                            await Clipboard.setData(ClipboardData(
-                                                text:
-                                                    'Закажи в лавке ${cart.entries.expand((element) => [
-                                                          '${element.key.marketName} ${cart[element.key]} штук'
-                                                        ]).join(', ')}.'));
-                                            await LaunchApp.openApp(
-                                                androidPackageName:
-                                                    'com.yandex.searchapp',
-                                                iosUrlScheme:
-                                                    'shortcuts://run-shortcut?name=яндекс',
-                                                appStoreLink:
-                                                    'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
-                                                openStore: true);
-                                          },
-                                          child: const Text('Продолжить'),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                          borderRadius: constants.dInnerRadius,
-                          padding:
-                              constants.dBlockPadding + constants.dCardPadding,
-                          child: Text(
-                            'Перейти к оформлению',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
-    );
-
     return CustomScaffold(
         header: CustomHeader(
             title: 'Корзина',
@@ -135,8 +45,89 @@ class _CartPageState extends ConsumerState<CartPage> {
                 child: const Center(child: Text('Типа режим выбора')),
               ),
             )),
-        body: body);
+        body: Column(
+          children: [
+            // Переключатель корзины: Личная / Семейная
+            Expanded(child: CartSwitch(onTap: (bool personal) {
+              if (cartManuallySelected || !ref.read(cartProvider).hasValue) {
+                return;
+              }
+              ref
+                  .read(viewPersonalProvider.notifier)
+                  .update((state) => (personal, true));
+            })),
+            // Продукты в корзине + кнопка оформления заказа
+            Expanded(
+              flex: 16,
+              child: Stack(
+                children: [
+                  const CartIngredients(),
+                  // Кнопка «Перейти к оформлению»
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: constants.dBlockPadding,
+                      child: SizedBox(
+                        height: constants.paddingUnit * 8,
+                        child: AnimatedSlide(
+                          offset: orderButtonVisible
+                              ? Offset.zero
+                              : const Offset(0, 3),
+                          duration: Constants.dAnimationDuration,
+                          child: RRButton(
+                              onTap: checkout,
+                              borderRadius: constants.dInnerRadius,
+                              padding: constants.dBlockPadding +
+                                  constants.dCardPadding,
+                              child: Text(
+                                'Перейти к оформлению',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              )),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ));
   }
+
+  void checkout() => showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+            title: const Text('Внимание!'),
+            content: const Text(
+                'Вы будете перенаправлены в приложение Яндекс для оформления заказа продуктов.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Назад'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final cart = ref.read(cartProvider).asData!.value.first.cart;
+                  await Clipboard.setData(ClipboardData(
+                      text: 'Закажи в лавке ${cart.entries.expand((element) => [
+                            '${element.key.marketName} ${cart[element.key]} штук'
+                          ]).join(', ')}.'));
+                  await LaunchApp.openApp(
+                      androidPackageName: 'com.yandex.searchapp',
+                      iosUrlScheme: 'shortcuts://run-shortcut?name=яндекс',
+                      appStoreLink:
+                          'https://www.icloud.com/shortcuts/560f8b7b038641519796c3311b01cd85',
+                      openStore: true);
+                },
+                child: const Text('Продолжить'),
+              ),
+            ],
+          ));
 }
 
 class CartSwitch extends ConsumerWidget {
