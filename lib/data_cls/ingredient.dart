@@ -82,4 +82,9 @@ extension CopyWith on Ingredients {
   }
 }
 
+extension ToRecord on MapEntry<Ingredient, int> {
+  ({int amount, Ingredient ingredient}) toRecord() =>
+      (ingredient: key, amount: value);
+}
+
 // ignore_for_file: invalid_annotation_target
