@@ -78,14 +78,31 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AsyncBuilder(
-                                async: ref.read(userProvider),
-                                builder: (user) => StyledHeadline(
-                                    text:
-                                        '${user.firstName} ${(user.secondName)[0]}.',
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall)),
+                            Row(
+                              children: [
+                                // Заменить в процессе разработки новой страницы Профиля на более разумное решение
+                                Expanded(
+                                  child: AsyncBuilder(
+                                    asyncValue: ref.read(userProvider),
+                                    builder: (user) => StyledHeadline(
+                                        text: '${user.firstName} ',
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: AsyncBuilder(
+                                    asyncValue: ref.read(userProvider),
+                                    builder: (user) => StyledHeadline(
+                                        text: user.secondName,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall),
+                                  ),
+                                ),
+                              ],
+                            ),
                             StyledHeadline(
                                 text: '185 см',
                                 textStyle:

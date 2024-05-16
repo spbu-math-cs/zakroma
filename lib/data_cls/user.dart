@@ -112,6 +112,13 @@ class User extends _$User {
         .split(';')
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
+    final nameBody = processResponse(await ref.watch(clientProvider).get(
+        makeUri('api/user/name'),
+        headers: makeHeader(
+            body['token'],
+            cookies
+                .firstWhere((element) => element.key == 'zakroma_session')
+                .value))).first;
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
@@ -119,9 +126,9 @@ class User extends _$User {
           .value,
     );
     _updateStateWith(
-      // TODO(server): сделать запросы firstName, secondName и userPicUrl к серверу
-      firstName: 'firstName',
-      secondName: 'secondName',
+      // TODO(server): сделать запросы userPicUrl к серверу
+      firstName: nameBody['name'],
+      secondName: nameBody['surname'],
       userPicUrl:
           'https://w7.pngwing.com/pngs/356/733/png-transparent-emoticon-smiley-yellow-ball-happy-emoji-emotion-funny-emoticons-cartoon.png',
       email: email,
