@@ -313,7 +313,7 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
                                             ),
                                             style: buttonStyle.copyWith(
                                                 backgroundColor:
-                                                    MaterialStatePropertyAll(
+                                                    WidgetStatePropertyAll(
                                                         Theme.of(context)
                                                             .colorScheme
                                                             .primary)),
@@ -338,7 +338,7 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
                                         padding: EdgeInsets.zero,
                                         style: buttonStyle.copyWith(
                                             backgroundColor:
-                                                const MaterialStatePropertyAll(
+                                                const WidgetStatePropertyAll(
                                                     Colors.transparent)),
                                         icon: Icon(
                                           Icons.delete_outline,
