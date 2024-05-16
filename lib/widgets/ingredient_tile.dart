@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zakroma_frontend/data_cls/ingredient.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
 import 'package:zakroma_frontend/utility/selection.dart';
 import 'package:zakroma_frontend/widgets/async_builder.dart';
@@ -281,7 +280,6 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
                                         SizedBox(
                                             width: 3 * constants.paddingUnit,
                                             child: Center(
-                                              // child: Placeholder(),
                                               child: AsyncBuilder(
                                                   debugText:
                                                       '${widget.ingredientIndex} amount',
