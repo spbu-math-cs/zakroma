@@ -99,12 +99,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   child: AsyncBuilder(
                                     asyncValue: ref.read(userProvider),
                                     builder: (user) => StyledHeadline(
-                                      text: user.secondName,
-                                      textStyle: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                        text: user.secondName,
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall),
                                   ),
                                 ),
                               ],

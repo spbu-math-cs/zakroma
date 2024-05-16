@@ -121,18 +121,14 @@ class User extends _$User {
                 .value,
           ),
         );
-    switch (response.statusCode) {
-      case 200:
-        break;
-      case 401:
-        throw Exception('Неверный логин или пароль');
-      case 400:
-        throw Exception('Неверный запрос');
-      default:
-        throw Exception('Неизвестная ошибка');
-    }
-    final List nameList =
-        (jsonDecode(responseName.body) as Map<String, dynamic>).values.toList();
+    processResponse(await ref.watch(clientProvider).get(
+        makeUri('api/user/name'),
+        headers: makeHeader(
+            body['token'],
+            cookies
+                .firstWhere((element) => element.key == 'zakroma_session')
+                .value)));
+    final nameBody = (jsonDecode(responseName.body) as Map<String, dynamic>);
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
@@ -141,8 +137,8 @@ class User extends _$User {
     );
     _updateStateWith(
       // TODO(server): сделать запросы userPicUrl к серверу
-      firstName: nameList[0],
-      secondName: nameList[1],
+      firstName: nameBody['name'],
+      secondName: nameBody['surname'],
       userPicUrl:
           'https://w7.pngwing.com/pngs/356/733/png-transparent-emoticon-smiley-yellow-ball-happy-emoji-emotion-funny-emoticons-cartoon.png',
       email: email,
