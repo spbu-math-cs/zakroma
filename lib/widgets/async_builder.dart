@@ -21,7 +21,6 @@ class AsyncBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('build AsyncBuilder');
     if (async != null) {
       return async!.when(
           data: (value) => builder(value),
