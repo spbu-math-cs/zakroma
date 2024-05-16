@@ -83,7 +83,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 // Заменить в процессе разработки новой страницы Профиля на более разумное решение
                                 Expanded(
                                   child: AsyncBuilder(
-                                    asyncValue: ref.read(userProvider),
+                                    async: ref.read(userProvider),
                                     builder: (user) => StyledHeadline(
                                         text: '${user.firstName} ',
                                         textStyle: Theme.of(context)
@@ -93,7 +93,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 ),
                                 Expanded(
                                   child: AsyncBuilder(
-                                    asyncValue: ref.read(userProvider),
+                                    async: ref.read(userProvider),
                                     builder: (user) => StyledHeadline(
                                         text: user.secondName,
                                         textStyle: Theme.of(context)
