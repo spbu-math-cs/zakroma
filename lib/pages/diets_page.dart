@@ -50,8 +50,7 @@ List<GagDish> gagDishList = [
   GagDish(name: 'СУПЕР ЕДА'),
   GagDish(name: 'яблоко'),
   GagDish(name: 'Джем'),
-  GagDish(name: 'что-то супердлинное что-то'),
-  GagDish(name: 'к'),
+  GagDish(name: 'что-то супердлинное'),
   GagDish(name: 'овсянка'),
 ];
 
@@ -67,88 +66,98 @@ class DietListPage extends ConsumerWidget {
         body: RRSurface(
             child: Padding(
                 padding: EdgeInsets.all(constants.paddingUnit * 2),
-                child: ListView.builder(
-                    itemCount: gagList.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                          padding: EdgeInsets.all(constants.paddingUnit / 2),
-                          margin: EdgeInsets.only(
-                              top: constants.paddingUnit / 2, bottom: constants.paddingUnit / 2),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).colorScheme.surface,
-                                width: constants.borderWidth),
-                            borderRadius: BorderRadius.circular(constants.dInnerRadius),
-                          ),
-                          child: ListTile(
-                              contentPadding:
-                                  EdgeInsets.only(left: constants.paddingUnit, right: 0),
-                              title: StyledHeadline(
-                                  text: gagList[index].date,
-                                  textStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        height: 1,
-                                        leadingDistribution: TextLeadingDistribution.proportional,
-                                      )),
-                              onTap: () {},
-                              trailing: gagList[index].familyRatio.isEmpty &&
-                                      gagList[index].soloRatio.isEmpty
-                                  ? SizedBox(
-                                      height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
-                                            Icons.add_circle_outline,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: () {
-                                            showInputDialog(context, index);
-                                          }))
-                                  : SizedBox(
-                                      height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => DailyDishesScreen(index)),
-                                            );
-                                          })),
-                              subtitle: Wrap(
-                                  spacing: constants.paddingUnit / 2,
-                                  runSpacing: -constants.paddingUnit,
-                                  children: List.generate(
-                                      gagList[index].soloRatio.length +
-                                          gagList[index].familyRatio.length, (itemIndex) {
-                                    return ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.only(
-                                              top: constants.paddingUnit / 2,
-                                              bottom: constants.paddingUnit / 2,
-                                              left: constants.paddingUnit,
-                                              right: constants.paddingUnit),
-                                          minimumSize: Size.zero,
-                                          backgroundColor:
-                                              itemIndex < gagList[index].soloRatio.length
+                child: MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: gagList.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                              padding: EdgeInsets.all(constants.paddingUnit / 2),
+                              margin: EdgeInsets.only(
+                                  top: constants.paddingUnit / 2,
+                                  bottom: constants.paddingUnit / 2),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Theme.of(context).colorScheme.surface,
+                                    width: constants.borderWidth),
+                                borderRadius: BorderRadius.circular(constants.dInnerRadius),
+                              ),
+                              child: ListTile(
+                                  contentPadding:
+                                      EdgeInsets.only(left: constants.paddingUnit, right: 0),
+                                  title: Padding(
+                                      padding: EdgeInsets.only(bottom: constants.paddingUnit),
+                                      child: StyledHeadline(
+                                          text: gagList[index].date,
+                                          textStyle:
+                                              Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1,
+                                                    // leadingDistribution: TextLeadingDistribution.proportional, убрать это?
+                                                  ))),
+                                  onTap: () {},
+                                  trailing: gagList[index].familyRatio.isEmpty &&
+                                          gagList[index].soloRatio.isEmpty
+                                      ? SizedBox(
+                                          height: double.infinity,
+                                          child: IconButton(
+                                              icon: Icon(
+                                                Icons.add_circle_outline,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimaryContainer,
+                                              ),
+                                              onPressed: () {
+                                                showInputDialog(context, index);
+                                              }))
+                                      : SizedBox(
+                                          height: double.infinity,
+                                          child: IconButton(
+                                              icon: Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimaryContainer,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DailyDishesScreen(index)),
+                                                );
+                                              })),
+                                  subtitle: Wrap(
+                                      spacing: constants.paddingUnit / 2,
+                                      runSpacing: constants.paddingUnit / 2,
+                                      children: List.generate(
+                                          gagList[index].soloRatio.length +
+                                              gagList[index].familyRatio.length, (itemIndex) {
+                                        return TextButton(
+                                          onPressed: () {},
+                                          style: TextButton.styleFrom(
+                                              padding: constants.dTextPadding,
+                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                              minimumSize: Size.zero,
+                                              backgroundColor: (itemIndex <
+                                                      gagList[index].soloRatio.length
                                                   ? Theme.of(context).colorScheme.surface
-                                                  : buttonFamilyRatio,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(constants.dInnerRadius))),
-                                      child: Text(
-                                          itemIndex < gagList[index].soloRatio.length
-                                              ? gagList[index].soloRatio[itemIndex]
-                                              : gagList[index].familyRatio[
-                                                  itemIndex - gagList[index].soloRatio.length],
-                                          style: TextStyle(
-                                              color: Theme.of(context).colorScheme.secondary)),
-                                    );
-                                  }))));
-                    }))));
+                                                  : Theme.of(context).hoverColor),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(
+                                                      constants.dInnerRadius))),
+                                          child: Text(
+                                              itemIndex < gagList[index].soloRatio.length
+                                                  ? gagList[index].soloRatio[itemIndex]
+                                                  : gagList[index].familyRatio[
+                                                      itemIndex - gagList[index].soloRatio.length],
+                                              style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.secondary)),
+                                        );
+                                      }))));
+                        })))));
   }
 }
 
@@ -262,7 +271,7 @@ showInputDialog(BuildContext context, int indexDay) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Введите название рациона'),
+        title: const Text('Введите название приема пищи'),
         content: TextField(
           onChanged: (value) {
             inputText = value;
@@ -301,11 +310,7 @@ class DailyDishesScreen extends ConsumerWidget {
         title: gagList[index].date,
         body: RRSurface(
             child: Padding(
-                padding: EdgeInsets.only(
-                    top: constants.paddingUnit * 2,
-                    bottom: constants.paddingUnit * 2,
-                    left: constants.paddingUnit * 2,
-                    right: 0),
+        padding: EdgeInsets.all(constants.paddingUnit * 2),
                 child: ListView.builder(
                     itemCount: gagList[index].soloRatio.length + gagList[index].familyRatio.length,
                     itemBuilder: (context, rIndex) {
@@ -362,14 +367,14 @@ class DailyDishesScreen extends ConsumerWidget {
                               subtitle: SizedBox(
                                   child: ListView.builder(
                                       shrinkWrap: true,
-                                      itemExtent: constants.paddingUnit / 2.5 * gagDishList.length,
+                                      itemExtent: constants.paddingUnit / 3 * (gagDishList.length + 7),
                                       itemCount: gagDishList.length,
-                                      padding: EdgeInsets.only(bottom: constants.paddingUnit * 2),
+                                      padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
                                       itemBuilder: (BuildContext context, int dishIndex) {
                                         return ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             leading: Container(
-                                                padding: EdgeInsets.zero,
+                                                padding: EdgeInsets.only(bottom: constants.paddingUnit),
                                                 width: constants.paddingUnit / 1.5,
                                                 height: constants.paddingUnit / 1.5,
                                                 decoration: const BoxDecoration(

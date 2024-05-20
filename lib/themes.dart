@@ -54,9 +54,7 @@ enum AppTheme {
         onSurfaceVariant: Colors.black45,
         surfaceTint: Colors.white,
         outline: lighten(orangeBackground, 64),
-        // FFE6CA
         shadow: Colors.black26,
-        surfaceVariant: const Color(0x00CFF9FF),
       ),
       scaffoldBackgroundColor: orangeBackground,
       dividerColor: lighten(orangeBackground, 30),
@@ -64,6 +62,8 @@ enum AppTheme {
       highlightColor: Colors.black12,
       splashFactory: InkSplash.splashFactory,
       textTheme: textTheme,
+      hoverColor: const Color(0x80B1F2FF),
+      // Color(0x00CFF9FF),
     ),
     // ThemeData(
     //     useMaterial3: true,
@@ -110,4 +110,4 @@ const textTheme = TextTheme(
 );
 
 const orangeBackground = Color(0xFFFFBA6C);
-const buttonFamilyRatio = Color(0x00CFF9FF);
+
