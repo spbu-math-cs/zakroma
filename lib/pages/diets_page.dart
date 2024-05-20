@@ -141,10 +141,10 @@ class DietListPage extends ConsumerWidget {
                                               padding: constants.dTextPadding,
                                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                               minimumSize: Size.zero,
-                                              backgroundColor: (itemIndex <
-                                                      gagList[index].soloRatio.length
-                                                  ? Theme.of(context).colorScheme.surface
-                                                  : Theme.of(context).hoverColor),
+                                              backgroundColor:
+                                                  (itemIndex < gagList[index].soloRatio.length
+                                                      ? Theme.of(context).colorScheme.surface
+                                                      : Theme.of(context).hoverColor),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(
                                                       constants.dInnerRadius))),
@@ -310,7 +310,7 @@ class DailyDishesScreen extends ConsumerWidget {
         title: gagList[index].date,
         body: RRSurface(
             child: Padding(
-        padding: EdgeInsets.all(constants.paddingUnit * 2),
+                padding: EdgeInsets.all(constants.paddingUnit * 2),
                 child: ListView.builder(
                     itemCount: gagList[index].soloRatio.length + gagList[index].familyRatio.length,
                     itemBuilder: (context, rIndex) {
@@ -362,19 +362,28 @@ class DailyDishesScreen extends ConsumerWidget {
                                             color: Colors.black,
                                           ),
                                           onPressed: () {
-                                            // TODO: что здесь ожидается?
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => DishesForRatioScreen(
+                                                        gagList[index].soloRatio.length > rIndex
+                                                            ? gagList[index].soloRatio[rIndex]
+                                                            : gagList[index].familyRatio[rIndex -
+                                                                gagList[index].soloRatio.length])));
                                           })),
                               subtitle: SizedBox(
                                   child: ListView.builder(
                                       shrinkWrap: true,
-                                      itemExtent: constants.paddingUnit / 3 * (gagDishList.length + 7),
+                                      itemExtent:
+                                          constants.paddingUnit / 3 * (gagDishList.length + 7),
                                       itemCount: gagDishList.length,
                                       padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
                                       itemBuilder: (BuildContext context, int dishIndex) {
                                         return ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             leading: Container(
-                                                padding: EdgeInsets.only(bottom: constants.paddingUnit),
+                                                padding:
+                                                    EdgeInsets.only(bottom: constants.paddingUnit),
                                                 width: constants.paddingUnit / 1.5,
                                                 height: constants.paddingUnit / 1.5,
                                                 decoration: const BoxDecoration(
@@ -386,6 +395,48 @@ class DailyDishesScreen extends ConsumerWidget {
                                               style: TextStyle(fontSize: constants.paddingUnit * 2),
                                             ));
                                       }))));
+                    }))));
+  }
+}
+
+// --- DRAFT --- //
+Map<String, List<String>> gagListDishes = {
+  'Завтрак': ['Utka', 'ovoshi', 'eda'],
+  'Обед': ['AA', 'food', 'nothing', 'b'],
+  'Супердлинный ужин': ['AаааA', 'foооооооod', 'nоооооothing', 'b'],
+  'Ужин' : ['A', 'Borcsh', 'aqua']
+};
+
+class DishesForRatioScreen extends ConsumerWidget {
+  final String ratio;
+
+  const DishesForRatioScreen(this.ratio, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants = ref.read(constantsProvider);
+    return CustomScaffold(
+        title: ratio,
+        body: RRSurface(
+            child: Padding(
+                padding: EdgeInsets.all(constants.paddingUnit * 2),
+                child: ListView.builder(
+                    itemCount: gagListDishes[ratio]!.length,
+                    itemBuilder: (context, rIndex) {
+                      return Container(
+                          padding: EdgeInsets.all(constants.paddingUnit / 2),
+                          margin: EdgeInsets.only(
+                              top: constants.paddingUnit / 2, bottom: constants.paddingUnit / 2),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).colorScheme.surface,
+                                width: constants.borderWidth),
+                            borderRadius: BorderRadius.circular(constants.dInnerRadius),
+                          ),
+                          child: Text(
+                            gagListDishes[ratio]![rIndex],
+                            style: TextStyle(fontSize: constants.paddingUnit * 2),
+                          ));
                     }))));
   }
 }
