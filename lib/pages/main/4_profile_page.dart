@@ -26,135 +26,141 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final categoryTextStyle = Theme.of(context).textTheme.headlineMedium;
     // TODO(server): подгружать категории настроек
     final categoryList = [
-      'Настройки питания',
-      'Внешний вид',
-      'Напоминания',
-      'Способы оплаты',
-      'Помощь',
-      'Другое',
+      'Настройки',
+      'Группа',
     ];
 
     return CustomScaffold(
-      header: const CustomHeader(title: 'Профиль'),
-      body: RRSurface(
-        child: Column(
+        header: const CustomHeader(title: 'Профиль'),
+        body: Column(
           children: [
             // Профиль пользователя
             Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.all(constants.paddingUnit),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Padding(
-                        padding: EdgeInsets.zero,
-                        child: Center(
-                          child: Material(
-                            borderRadius:
-                                BorderRadius.circular(constants.dInnerRadius),
-                            clipBehavior: Clip.antiAlias,
-                            elevation: constants.dElevation,
-                            child: AsyncBuilder(
-                                future: ref.watch(userProvider
-                                    .selectAsync((user) => user.userPicUrl)),
-                                builder: (userPicUrl) => SizedBox.square(
-                                      dimension: constants.paddingUnit * 12,
-                                      child: Image.network(
-                                        userPicUrl,
-                                        cacheHeight:
-                                            (constants.paddingUnit * 12).ceil(),
-                                        cacheWidth:
-                                            (constants.paddingUnit * 12).ceil(),
+                flex: 16,
+                child: RRSurface(
+                  child: Padding(
+                    padding: EdgeInsets.all(constants.paddingUnit),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            flex: 12,
+                            child: Padding(
+                              padding: EdgeInsets.zero,
+                              child: Center(
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(
+                                      constants.dInnerRadius),
+                                  clipBehavior: Clip.antiAlias,
+                                  elevation: constants.dElevation,
+                                  child: FutureBuilder(
+                                      future: ref.watch(
+                                          userProvider.selectAsync(
+                                              (user) => user.userPicUrl)),
+                                      builder: (_, userPicUrl) => userPicUrl
+                                              .hasData
+                                          ? SizedBox.square(
+                                              dimension:
+                                                  constants.paddingUnit * 12,
+                                              child: Image.network(
+                                                userPicUrl.requireData,
+                                                cacheHeight:
+                                                    (constants.paddingUnit * 12)
+                                                        .ceil(),
+                                                cacheWidth:
+                                                    (constants.paddingUnit * 12)
+                                                        .ceil(),
+                                              ),
+                                            )
+                                          : const CircularProgressIndicator()),
+                                ),
+                              ),
+                            )),
+                        Expanded(
+                            flex: 26,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Заменить в процессе разработки новой страницы Профиля на более разумное решение
+                                      Expanded(
+                                        child: AsyncBuilder(
+                                          async: ref.read(userProvider),
+                                          builder: (user) => StyledHeadline(
+                                            text: '${user.firstName} ',
+                                            textStyle: Theme.of(context)
+                                                .textTheme
+                                                .headlineSmall,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ),
-                                    )),
-                          ),
-                        ),
-                      )),
-                      Expanded(
-                          child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                // Заменить в процессе разработки новой страницы Профиля на более разумное решение
-                                Expanded(
-                                  child: AsyncBuilder(
-                                    async: ref.read(userProvider),
-                                    builder: (user) => StyledHeadline(
-                                        text: '${user.firstName} ',
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall),
+                                      Expanded(
+                                          child: AsyncBuilder(
+                                        async: ref.read(userProvider),
+                                        builder: (user) => StyledHeadline(
+                                          text: user.secondName,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                                    ],
                                   ),
-                                ),
-                                Expanded(
-                                  child: AsyncBuilder(
-                                    async: ref.read(userProvider),
-                                    builder: (user) => StyledHeadline(
-                                        text: user.secondName,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            StyledHeadline(
-                                text: '185 см',
-                                textStyle:
-                                    Theme.of(context).textTheme.headlineSmall),
-                            StyledHeadline(
-                              text: '80 кг',
-                              textStyle:
-                                  Theme.of(context).textTheme.headlineSmall,
-                            ),
-                          ],
-                        ),
-                      )),
-                      Expanded(
-                          child: IconButton(
-                              onPressed: () async {
-                                ref.read(userProvider.notifier).logout();
-                                if (!context.mounted) return;
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => const Zakroma()));
-                              },
-                              icon: Icon(
-                                Icons.logout,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ))),
-                    ],
+                                  StyledHeadline(
+                                      text: '185 см',
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall),
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
                   ),
                 )),
             // Список настроек
             Expanded(
-                flex: 10,
-                child: FlatList(
-                    scrollPhysics: const ClampingScrollPhysics(),
-                    dividerColor: Theme.of(context).colorScheme.surface,
-                    children: List.generate(
-                      categoryList.length,
-                      (index) => Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => {
-                            // TODO(func): переходить в категорию
-                          },
-                          child: StyledHeadline(
-                            text: categoryList[index],
-                            textStyle: categoryTextStyle,
+                flex: 12,
+                child: RRSurface(
+                  child: FlatList(
+                      scrollPhysics: const ClampingScrollPhysics(),
+                      dividerColor: Theme.of(context).colorScheme.surface,
+                      children: List.generate(
+                        categoryList.length,
+                        (index) => Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => {
+                              // TODO(func): переходить в категорию
+                            },
+                            child: StyledHeadline(
+                              text: categoryList[index],
+                              textStyle: categoryTextStyle,
+                            ),
                           ),
                         ),
-                      ),
+                      )),
+                )),
+            Expanded(
+                flex: 18,
+                child: IconButton(
+                    onPressed: () async {
+                      ref.read(userProvider.notifier).logout();
+                      if (!context.mounted) return;
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const Zakroma()));
+                    },
+                    icon: Icon(
+                      Icons.logout,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ))),
+            const Expanded(flex: 25, child: RRSurface(child: Placeholder())),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
