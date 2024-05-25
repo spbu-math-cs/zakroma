@@ -250,6 +250,8 @@ class User extends _$User {
         .value;
   }
 
+  void updatePic(String picPath) {_updateStateWith(userPicUrl: picPath);}
+
   void _updateStateWith(
       {String? firstName,
       String? secondName,
