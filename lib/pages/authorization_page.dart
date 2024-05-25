@@ -263,6 +263,11 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final passwordFormKey = GlobalKey<FormState>();
   final interactedWithFields = [false, false, false, false, false];
   final extendFields = [false, false, false, false, false];
+  final titles = [
+    'Как мы можем\nк Вам обращаться?',
+    'Контактные\nданные',
+    'Ещё чуть-чуть\nи будет готово!'
+  ];
   int currentPageIndex = 0;
 
   @override
@@ -271,22 +276,30 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
     return CustomScaffold(
       header: CustomHeader(
-          topNavigationBar: Align(
-        alignment: Alignment.centerLeft,
-        child: IconButton(
-          onPressed: () {
-            if (currentPageIndex == 0) {
-              Navigator.of(context).pop();
-            } else {
-              setState(() {
-                currentPageIndex--;
-              });
-            }
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-          padding: EdgeInsets.zero,
+        topNavigationBar: Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            onPressed: () {
+              if (currentPageIndex == 0) {
+                Navigator.of(context).pop();
+              } else {
+                setState(() {
+                  currentPageIndex--;
+                });
+              }
+            },
+            icon: const Icon(Icons.arrow_back_ios_new),
+            padding: EdgeInsets.zero,
+          ),
         ),
-      )),
+        header: Center(
+          child: Text(titles[currentPageIndex],
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    height: 1,
+                  )),
+        ),
+      ),
       body: Padding(
         padding: constants.dBlockPadding,
         child: [
@@ -347,23 +360,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         key: nameFormKey,
         child: Column(
           children: [
-            // Заголовок
-            SizedBox(
-                height: constants.paddingUnit * 9,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: constants.paddingUnit * 1),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Text('Как мы можем\nк Вам обращаться?',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              fontWeight: FontWeight.bold,
-                              height: 1,
-                            )),
-                  ),
-                )),
             // Поясняющий текст
             Flexible(
                 child: Padding(
@@ -429,21 +425,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
       key: emailFormKey,
       child: Column(
         children: [
-          // Заголовок
-          SizedBox(
-              height: constants.paddingUnit * 9,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: constants.paddingUnit * 1),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text('Контактные\nданные',
-                      style:
-                          Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                height: 1,
-                              )),
-                ),
-              )),
           Flexible(
               child: Padding(
             padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
@@ -493,23 +474,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         key: passwordFormKey,
         child: Column(
           children: [
-            // Заголовок
-            SizedBox(
-                height: constants.paddingUnit * 9,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: constants.paddingUnit * 1),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Text('Ещё чуть-чуть\nи будет готово!',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              fontWeight: FontWeight.bold,
-                              height: 1,
-                            )),
-                  ),
-                )),
             // Поясняющий текст
             Flexible(
                 child: Padding(

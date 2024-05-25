@@ -82,4 +82,9 @@ class Dish with _$Dish {
   }
 }
 
+extension ParseDishes on List<Map<String, dynamic>> {
+  Map<Dish, bool> parseDishes() =>
+      {for (var el in this) Dish.fromJson({}): el['cooked']};
+}
+
 // ignore_for_file: invalid_annotation_target

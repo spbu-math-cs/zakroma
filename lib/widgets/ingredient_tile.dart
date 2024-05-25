@@ -55,7 +55,7 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
           final length = widget.personal ? lengths.$1 : lengths.$2;
           ref
               .read(selectionProvider.notifier)
-              .putIfAbsent(widget.personal, length);
+              .fillIfAbsent(widget.personal, length);
           return SizedBox(
             height: length * ingredientTileHeight + 2 * constants.paddingUnit,
             child: FlatList(

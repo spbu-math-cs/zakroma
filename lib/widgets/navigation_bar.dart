@@ -25,8 +25,6 @@ class FunctionalBottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
-    final height = constants.paddingUnit * Constants.bottomNavigationBarHeight +
-        MediaQuery.of(context).padding.bottom / 1.13;
 
     return Container(
       decoration: BoxDecoration(

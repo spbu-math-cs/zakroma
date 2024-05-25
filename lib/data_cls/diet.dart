@@ -88,29 +88,54 @@ class Diets extends _$Diets {
               isPersonal: true,
               days: List<DayDiet>.generate(
                   7,
-                  (index) => DayDiet(index: index, meals: const [
-                        Meal(
+                  (index) => DayDiet(index: index, meals: [
+                        Meal.fromDishes(
                             hash: 'meal-0',
                             name: 'Завтрак',
                             index: 0,
-                            dishes: [
+                            dishes: const [
                               Dish(
                                   hash: 'dish-0',
                                   name: 'Овсянка',
                                   recipe: '',
                                   tags: [],
                                   ingredients: {},
+                                  imageUrl: ''),
+                              Dish(
+                                  hash: 'dish-10',
+                                  name: 'Омлет',
+                                  recipe: '',
+                                  tags: [],
+                                  ingredients: {},
+                                  imageUrl: ''),
+                              Dish(
+                                  hash: 'dish-100',
+                                  name: 'И много',
+                                  recipe: '',
+                                  tags: [],
+                                  ingredients: {},
+                                  imageUrl: ''),
+                              Dish(
+                                  hash: 'dish-1000',
+                                  name: 'Котлет',
+                                  recipe: '',
+                                  tags: [],
+                                  ingredients: {},
+                                  imageUrl: ''),
+                            ]),
+                        Meal.fromDishes(
+                            hash: 'meal-2',
+                            name: 'Обед',
+                            index: 0,
+                            dishes: const [
+                              Dish(
+                                  hash: 'dish-2',
+                                  name: 'Борщ',
+                                  recipe: '',
+                                  tags: [],
+                                  ingredients: {},
                                   imageUrl: '')
                             ]),
-                        Meal(hash: 'meal-2', name: 'Обед', index: 0, dishes: [
-                          Dish(
-                              hash: 'dish-2',
-                              name: 'Борщ',
-                              recipe: '',
-                              tags: [],
-                              ingredients: {},
-                              imageUrl: '')
-                        ]),
                       ]))),
           Diet(
               hash: '1',
@@ -118,16 +143,20 @@ class Diets extends _$Diets {
               isPersonal: false,
               days: List<DayDiet>.generate(
                   7,
-                  (index) => DayDiet(index: index, meals: const [
-                        Meal(hash: 'meal-1', name: 'Обед', index: 0, dishes: [
-                          Dish(
-                              hash: 'dish-1',
-                              name: 'Борщ',
-                              recipe: '',
-                              imageUrl: '',
-                              tags: [],
-                              ingredients: {})
-                        ])
+                  (index) => DayDiet(index: index, meals: [
+                        Meal.fromDishes(
+                            hash: 'meal-1',
+                            name: 'Обед',
+                            index: 0,
+                            dishes: const [
+                              Dish(
+                                  hash: 'dish-1',
+                                  name: 'Борщ',
+                                  recipe: '',
+                                  imageUrl: '',
+                                  tags: [],
+                                  ingredients: {})
+                            ])
                       ]))));
     }
   }
@@ -156,15 +185,23 @@ class Diets extends _$Diets {
     });
   }
 
-  AsyncValue<DayDiet> getDay(int index, bool isPersonal) {
-    assert(index >= 0 && index < 7);
+  AsyncValue<DayDiet> getDay(int index, bool personal) {
+    assert(index > 0 && index <= 7);
     if (state.hasError) {
       return AsyncError(state.error!, state.stackTrace ?? StackTrace.current);
     } else if (state.hasValue) {
-      return AsyncData(state.value!.getDiet(isPersonal)!.days[index]);
+      return AsyncData(state.value!.getDiet(personal)!.days[index]);
     }
     return const AsyncLoading();
   }
+}
+
+extension GetMeals on Pair<Diet, Diet?> {
+  @Assert('dayIndex > 0 && dayIndex <= 7')
+  List<(bool, Meal)> getMeals(int dayIndex) => [
+        for (var meal in first.days[dayIndex].meals) (true, meal),
+        for (var meal in second?.days[dayIndex].meals ?? []) (false, meal)
+      ];
 }
 
 // ignore_for_file: invalid_annotation_target

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import 'package:zakroma_frontend/widgets/rr_card.dart';
 
 import '../../data_cls/diet.dart';
 import '../../data_cls/meal.dart';
 import '../../utility/constants.dart';
 import '../../utility/get_current_date.dart';
-import '../../utility/pair.dart';
+import '../../utility/selection.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/styled_headline.dart';
-import '3_cart_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -33,97 +32,45 @@ class _HomePageState extends ConsumerState<HomePage> {
       header: const CustomHeader(title: 'Закрома'),
       body: Column(
         children: [
-          // Переключатель рационов: личный / семейный
-          Expanded(
-              flex: 12,
-              child: Padding(
-                  padding: constants.dBlockPadding,
-                  child: const Placeholder())),
-          // Статус холодильника/доставки + корзина
-          Expanded(
-              flex: 14,
-              child: Padding(
-                padding: constants.dBlockPadding,
-                child: Row(
-                  children: [
-                    // Статус холодильника/доставки
-                    // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
-                    Expanded(
-                        // TODO(server): подгрузить информацию по холодильнику (???)
-                        // TODO(server): подгрузить информацию по доставке (bool есть_активная_доставка, ???)
-                        child: RRButton(
-                            onTap: () {},
-                            borderRadius: constants.dOuterRadius,
-                            childAlignment: Alignment.centerLeft,
-                            childPadding: EdgeInsets.only(
-                                left: constants.paddingUnit * 2),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            child: StyledHeadline(
-                                text: 'Дома\nполно продуктов',
-                                textStyle:
-                                    Theme.of(context).textTheme.titleLarge))),
-                    // Корзина
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constants.dBlockPadding.left),
-                      child: SizedBox(
-                          // 12 * constants.paddingUnit — это высота этого блока (см. фигму)
-                          width: 12 * constants.paddingUnit,
-                          child: RRButton(
-                              onTap: () {
-                                // этой кнопки не будет в новом дизайне, поэтому и париться не буду
-                              },
-                              borderRadius: constants.dOuterRadius,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              child: Icon(Icons.local_mall_outlined,
-                                  size: 7 * constants.paddingUnit))),
-                    ),
-                  ],
-                ),
-              )),
+          // Предложения + статус доставки
+          const Expanded(flex: 18, child: RRSurface(child: Placeholder())),
           // Приёмы пищи на сегодня
           Expanded(
-              flex: 23,
+              flex: 32,
               child: RRSurface(
-                  child: Column(
-                children: [
-                  // Заголовок: сегодняшняя дата и день недели
-                  Expanded(
-                      flex: 7,
-                      child: Padding(
-                        padding: constants.dHeadingPadding,
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          return Align(
-                            alignment: Alignment.topLeft,
-                            child: StyledHeadline(
-                                text: getCurrentDate(),
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15 * constraints.maxHeight / 16,
-                                      height: 1,
-                                      leadingDistribution:
-                                          TextLeadingDistribution.proportional,
-                                    )),
-                          );
-                        }),
-                      )),
-                  // Перечисление приёмов пищи на сегодня
-                  Expanded(
-                      flex: 14,
-                      child: Padding(
-                        padding:
-                            constants.dBlockPadding - constants.dCardPadding,
-                        // TODO(refactor): вынести всю логику child'а
-                        child: const MealsView(),
-                      )),
-                ],
-              ))),
+                  child: Column(children: [
+                // Заголовок: сегодняшняя дата и день недели
+                Expanded(
+                  flex: 7,
+                  child: Padding(
+                      padding: constants.dHeadingPadding,
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: StyledHeadline(
+                              text: getCurrentDate(),
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15 * constraints.maxHeight / 16,
+                                    height: 1,
+                                    leadingDistribution:
+                                        TextLeadingDistribution.proportional,
+                                  )),
+                        );
+                      })),
+                ),
+                // Перечисление приёмов пищи на сегодня
+                Expanded(
+                    flex: 23,
+                    child: Padding(
+                      padding: constants.dBlockPadding
+                          .copyWith(bottom: constants.paddingUnit),
+                      child: const MealsView(),
+                    )),
+              ]))),
           // Мои рецепты
           Expanded(
               flex: 27,
@@ -172,15 +119,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.outline,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
@@ -215,18 +155,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.outline,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
+                                        // TODO(server): запрос на сервер для получения блюд
+                                        // TODO(tape): убрать заглушки
                                         Expanded(
                                             flex: 49,
                                             child: SizedBox.expand(
@@ -257,15 +192,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.outline,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
@@ -310,89 +238,135 @@ class MealsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
     return AsyncBuilder(
-      async: ref.watch(dietsProvider),
-      builder: (diets) {
-        final todayMeals = diets.first
-                .getDay(DateTime.now().weekday)
-                .meals
-                .map((e) => Pair(true, e))
-                .toList() +
-            (diets.second
-                        ?.getDay(DateTime.now().weekday)
-                        .meals
-                        .map((e) => Pair(false, e)) ??
-                    [])
-                .toList();
-        todayMeals.sort((Pair<bool, Meal> a, Pair<bool, Meal> b) =>
-            a.second.index.compareTo(b.second.index));
-        return todayMeals.isEmpty
-            ? Center(
-                child: TextButton.icon(
-                    onPressed: () {
-                      // TODO(feat): всплывающее окно добавления блюда
-                    },
-                    style: TextButton.styleFrom(
-                        // padding: EdgeInsets.zero
-                        ),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Добавить блюдо')),
-              )
-            : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                    children: List<Widget>.generate(
-                        todayMeals.length,
-                        (index) => Padding(
-                              padding: constants.dCardPadding,
-                              child: SizedBox.square(
-                                  // 12 — константа, взятая, опять же, из фигмы
-                                  dimension: 12 * constants.paddingUnit,
-                                  child: RRButton(
-                                      onTap: () {
-                                        showSlidingBottomSheet(context,
-                                            builder: (context) {
-                                          return createSlidingSheet(
-                                            context,
-                                            headingText:
-                                                todayMeals[index].second.name,
-                                            body: todayMeals[index]
-                                                .second
-                                                .getDishesList(
-                                                    context, constants,
-                                                    dishMiniatures: true),
-                                            constants: constants,
-                                          );
-                                        });
-                                      },
-                                      borderRadius: constants.dInnerRadius,
-                                      padding: EdgeInsets.zero,
-                                      backgroundColor: todayMeals[index].first
-                                          ? null
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                      foregroundDecoration: todayMeals[index]
-                                              .first
-                                          ? null
-                                          : BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      constants.dInnerRadius),
-                                              border: Border.all(
-                                                  width:
-                                                      constants.paddingUnit / 2,
+      future: ref.watch(dietsProvider.selectAsync((diets) => diets
+              .getMeals(DateTime.now().weekday)
+              // смотрим только на те, которые не помечены пользователем как прошедшие
+              .where((el) => !el.$2.done)
+              .toList(growable: false)
+              .sublist(0, 3) // показываем только 3 следующих приёма пищи
+          )),
+      builder: (meals) {
+        for (var i = 0; i < meals.length; ++i) {
+          ref
+              .read(selectionProvider.notifier)
+              .putIfAbsent((meals[i].$1, i), i == 0);
+        }
+        meals.sort(((bool, Meal) a, (bool, Meal) b) =>
+            a.$2.index.compareTo(b.$2.index));
+        if (meals.isEmpty) {
+          // приёмы на сегодня отсутствуют
+          return Center(
+            child: TextButton.icon(
+                onPressed: () {
+                  // TODO(feat): всплывающее окно добавления блюда
+                },
+                style: TextButton.styleFrom(
+                    // padding: EdgeInsets.zero
+                    ),
+                icon: const Icon(Icons.add),
+                label: const Text('Добавить блюдо')),
+          );
+        }
+        debugPrint('!!! ${constants.paddingUnit}');
+        return Row(children: [
+          // Список из не более трёх следующих приёмов пищи
+          Expanded(
+              flex: 21,
+              child: Padding(
+                padding: EdgeInsets.only(right: constants.paddingUnit),
+                child: Column(
+                  children: List<Widget>.generate(meals.length, (index) {
+                    final (personal, meal) = meals[index];
+                    final selected = ref.watch(selectionProvider
+                        .select((value) => value[(personal, index)]!));
+                    return Expanded(
+                        child: RRButton(
+                            borderColor: Theme.of(context).colorScheme.outline,
+                            backgroundColor: selected
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                            padding:
+                                EdgeInsets.only(bottom: constants.paddingUnit),
+                            onTap: () {
+                              if (selected) {
+                                return;
+                              }
+                              ref
+                                  .read(selectionProvider.notifier)
+                                  .selectSingle((personal, index));
+                            },
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 2 * constants.paddingUnit),
+                                child: Row(
+                                  children: <Widget>[
+                                        StyledHeadline(
+                                            text: meal.name,
+                                            textStyle: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge),
+                                      ] +
+                                      (!personal
+                                          ? [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left:
+                                                        constants.paddingUnit),
+                                                child: Icon(
+                                                  Icons.group,
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .surface),
-                                            ),
-                                      child: StyledHeadline(
-                                          // overflow: TextOverflow.clip,
-                                          text: todayMeals[index].second.name,
-                                          textStyle: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall))),
-                            ))),
-              );
+                                                      .secondary,
+                                                ),
+                                              )
+                                            ]
+                                          : []),
+                                ),
+                              ),
+                            )));
+                  }),
+                ),
+              )),
+          // Расширенный вид блюд из выбранного приёма
+          Expanded(
+              flex: 19,
+              child: Builder(builder: (context) {
+                if (ref.watch(selectionProvider.select((map) => map.isEmpty))) {
+                  // блюда в приёме пищи отсутствуют
+                  return Center(
+                    child: TextButton.icon(
+                        onPressed: () {
+                          // TODO(feat): всплывающее окно добавления блюда
+                        },
+                        style: TextButton.styleFrom(
+                            // padding: EdgeInsets.zero
+                            ),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Добавить блюдо')),
+                  );
+                }
+                final selectedIndex = ref.watch(selectionProvider.select(
+                    (map) => map.entries.where((el) => el.value).first.key.$2));
+                return RRCard(
+                    borderColor: Theme.of(context).colorScheme.outline,
+                    padding: EdgeInsets.only(bottom: constants.paddingUnit),
+                    // childAlignment: Alignment.topLeft,
+                    childPadding: EdgeInsets.all(2 * constants.paddingUnit),
+                    child: Wrap(
+                      spacing: constants.paddingUnit,
+                      runSpacing: constants.paddingUnit,
+                      children: List<Widget>.generate(
+                          meals[selectedIndex].$2.dishesCount.clamp(0, 4),
+                          (index) => SizedBox.square(
+                              dimension: 8 * constants.paddingUnit,
+                              child: Placeholder())),
+                    ));
+              }))
+        ]);
       },
     );
   }

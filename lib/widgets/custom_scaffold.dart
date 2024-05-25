@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 
 import '../utility/constants.dart';
 import '../utility/selection.dart';
@@ -25,9 +26,12 @@ class CustomScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // делаем системную панель навигации «прозрачной»
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
+        systemNavigationBarColor: Colors.transparent,
+        // systemNavigationBarColor: bottomNavigationBar != null
+        //     ? Theme.of(context).colorScheme.primaryContainer
+        //     : Theme.of(context).colorScheme.primary,
         statusBarColor: Colors.transparent));
 
     return Scaffold(
@@ -103,11 +107,14 @@ class CustomHeader extends ConsumerWidget {
       this.header,
       this.selectionAppBar,
       this.padding})
-      : assert(title == null || header == null);
+      : assert((title == null || header == null) &&
+            (title != null || header != null));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
+    debugPrint(
+        '${constants.topPadding} + ${Constants.topNavigationBarHeight * constants.paddingUnit}');
     final defaultLayout = Padding(
       padding: padding ??
           EdgeInsets.only(
@@ -126,18 +133,29 @@ class CustomHeader extends ConsumerWidget {
                     : const SizedBox.shrink()),
           ),
           Visibility(
+            visible: header != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: ref.watch(constantsProvider).dAppHeadlinePadding,
+                  child: header != null ? header! : const SizedBox.shrink(),
+                )),
+          ),
+          Visibility(
             visible: title != null,
             child: Expanded(
                 flex: Constants.headerHeight,
                 child: Padding(
                   padding: ref.watch(constantsProvider).dAppHeadlinePadding,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: StyledHeadline(
-                      text: title!,
-                      textStyle: Theme.of(context).textTheme.displayLarge,
-                    ),
-                  ),
+                  child: title != null
+                      ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: StyledHeadline(
+                            text: title!,
+                            textStyle: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 )),
           )
         ],

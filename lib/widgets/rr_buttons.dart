@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/widgets/rr_card.dart';
 
 import '../utility/constants.dart';
 
@@ -11,7 +12,7 @@ class RRButton extends ConsumerWidget {
   final Alignment childAlignment;
   final EdgeInsets childPadding;
   final Decoration? decoration;
-  final Decoration? foregroundDecoration;
+  final Color borderColor;
   final EdgeInsets padding;
   final double? elevation;
   final void Function()? onTap;
@@ -25,8 +26,8 @@ class RRButton extends ConsumerWidget {
     this.backgroundColor,
     this.borderRadius,
     this.decoration,
-    this.foregroundDecoration,
     this.padding = EdgeInsets.zero,
+    this.borderColor = Colors.transparent,
     this.elevation,
     required this.onTap,
     this.onDoubleTap,
@@ -37,41 +38,34 @@ class RRButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
-    return Padding(
+    return RRCard(
         padding: padding,
-        child: Container(
-            foregroundDecoration: foregroundDecoration,
-            child: Material(
-                color: backgroundColor ?? Theme.of(context).colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      borderRadius ?? constants.dInnerRadius),
-                ),
-                clipBehavior: Clip.antiAlias,
-                elevation: elevation ?? constants.dElevation,
-                child: InkWell(
-                  onTap: onTap,
-                  onDoubleTap: onDoubleTap,
-                  onLongPress: onLongPress,
-                  child: Align(
-                      alignment: childAlignment,
-                      child: Padding(
-                        padding: childPadding,
-                        child: child,
-                      )),
-                ))));
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).colorScheme.surface,
+        borderColor: borderColor,
+        borderRadius: borderRadius ?? constants.dInnerRadius,
+        elevation: elevation ?? constants.dElevation,
+        child: InkWell(
+          onTap: onTap,
+          onDoubleTap: onDoubleTap,
+          onLongPress: onLongPress,
+          child: Align(
+              alignment: childAlignment,
+              child: Padding(
+                padding: childPadding,
+                child: child,
+              )),
+        ));
   }
 }
 
 class DottedRRButton extends RRButton {
-  final Color? borderColor;
-
   const DottedRRButton(
       {super.key,
       required super.child,
       super.childAlignment,
       super.backgroundColor,
-      this.borderColor,
+      super.borderColor,
       super.borderRadius,
       super.decoration,
       super.padding,

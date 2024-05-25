@@ -40,9 +40,11 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       builder: (context, child) {
         // считаем константы для текущего устройства
+        // TODO(tech): переписать под 49 — это ближе к фигме
         final paddingUnit = MediaQuery.of(context).size.width / 48;
         final topPadding = MediaQuery.of(context).size.height -
             MediaQuery.of(context).padding.top -
+            Constants.topNavigationBarHeight * paddingUnit -
             Constants.bottomNavigationBarHeight * paddingUnit -
             Constants.screenHeight * paddingUnit;
         return ProviderScope(

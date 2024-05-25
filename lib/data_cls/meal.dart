@@ -6,9 +6,8 @@ import '../utility/constants.dart';
 import '../widgets/flat_list.dart';
 
 part 'meal.freezed.dart';
-part 'meal.g.dart';
 
-@Freezed(toJson: false)
+@Freezed(toJson: false, fromJson: false)
 class Meal with _$Meal {
   const Meal._();
 
@@ -27,13 +26,61 @@ class Meal with _$Meal {
       required int index,
 
       /// Список блюд, составляющих данный приём пищи.
-      required List<Dish> dishes}) = _Meal;
+      ///
+      /// Хранятся как словарь (блюдо, флаг),
+      /// где флаг равен true, если блюдо помечено как приготовленное,
+      /// false иначе.
+      required Map<Dish, bool> dishes}) = _Meal;
 
-  factory Meal.fromJson(Map<String, dynamic> json) => _$MealFromJson(json);
+  @Assert('index >= 0')
+  factory Meal.fromDishes(
+          {
+          /// Хэш приёма пищи.
+          required String hash,
+
+          /// Название приёма пищи, задаётся пользователем.
+          ///
+          /// Одно из: Завтрак, Обед, Ужин, Перекус
+          required String name,
+
+          /// Порядок приёма пищи в дне, нумерация с 0 (самый первый приём пищи за день).
+          required int index,
+
+          /// Список блюд, составляющих данный приём пищи.
+          ///
+          /// Хранятся как словарь (блюдо, флаг),
+          /// где флаг равен true, если блюдо помечено как приготовленное,
+          /// false иначе.
+          required List<Dish> dishes}) =>
+      Meal(
+          hash: hash,
+          name: name,
+          index: index,
+          dishes: <Dish, bool>{for (var dish in dishes) dish: false});
+
+  factory Meal.fromJson(Map<String, dynamic> json) {
+    switch (json) {
+      case {
+          'dishes': List<Map<String, dynamic>> dishes,
+          'dishes-amount': int _,
+          'hash': String hash,
+          'id': int _,
+          'index': int index,
+          'name': String name
+        }:
+        return Meal(
+            hash: hash, name: name, index: index, dishes: dishes.parseDishes());
+      case _:
+        debugPrint('DEBUG: $json');
+        throw UnimplementedError();
+    }
+  }
 
   int get dishesCount => dishes.length;
 
-  Dish getDish(int index) => dishes[index];
+  Dish getDish(int index) => dishes.keys.elementAt(index);
+
+  bool get done => dishes.values.every((cooked) => cooked);
 
   FlatList getDishesList(
     BuildContext context,
@@ -89,6 +136,10 @@ class Meal with _$Meal {
                 )),
       );
 }
+
+// extension FilterDone on List<(bool, Meal)> {
+//   List<(bool, Meal)>
+// }
 
 // TODO(server): подгрузить информацию о блюде (рецепт, список тегов, список ингредиентов)
 // - Тег из списка: название, ???

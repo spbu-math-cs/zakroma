@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'pair.dart';
-
 part 'selection.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class Selection extends _$Selection {
   @override
   Map<(bool, int), bool> build() {
+    /// ((личное, индекс), выбрано)
     return <(bool, int), bool>{};
   }
 
@@ -24,13 +22,21 @@ class Selection extends _$Selection {
     state = temp;
   }
 
-  void putIfAbsent(bool personal, int length) {
+  void selectSingle((bool, int) itemId) =>
+      state = {for (var item in state.keys) item: item == itemId};
+
+  void putIfAbsent((bool, int) itemId, bool selected) =>
+      state.putIfAbsent((itemId.$1, itemId.$2), () => selected);
+
+  void fillIfAbsent(bool personal, int length) {
     for (int i = 0; i < length; ++i) {
       state.putIfAbsent((personal, i), () => false);
     }
   }
+
+  void clear() => state = {};
 }
 
-/// (смотрим_личное, выбрано_переключателем)
-final viewPersonalProvider =
+/// (смотрим_личное, выбрано_вручную_переключателем)
+final viewingPersonalProvider =
     StateProvider<(bool, bool)>((ref) => (true, false));
