@@ -43,7 +43,7 @@ class RRButton extends ConsumerWidget {
         backgroundColor:
             backgroundColor ?? Theme.of(context).colorScheme.surface,
         borderColor: borderColor,
-        borderRadius: borderRadius ?? constants.dInnerRadius,
+        borderRadius: borderRadius,
         elevation: elevation ?? constants.dElevation,
         child: InkWell(
           onTap: onTap,
@@ -79,7 +79,7 @@ class DottedRRButton extends RRButton {
     return Padding(
       padding: padding,
       child: DottedBorder(
-        color: borderColor ?? Theme.of(context).colorScheme.surface,
+        color: borderColor,
         // 1.84 и 2 подобраны на глаз на Zenfone 9
         dashPattern: [constants.paddingUnit * 1.84, constants.paddingUnit * 2],
         padding: EdgeInsets.zero,

@@ -27,16 +27,21 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
+    debugPrint('${constants.paddingUnit}');
 
     return CustomScaffold(
-      header: const CustomHeader(title: 'Закрома'),
+      header: const CustomHeader(
+        title: 'Закрома',
+      ),
       body: Column(
         children: [
           // Предложения + статус доставки
-          const Expanded(flex: 18, child: RRSurface(child: Placeholder())),
+          const Expanded(
+              flex: 17 + 2, // размер_виджета + отступ снизу
+              child: RRSurface(child: Placeholder())),
           // Приёмы пищи на сегодня
           Expanded(
-              flex: 32,
+              flex: 29 + 2,
               child: RRSurface(
                   child: Column(children: [
                 // Заголовок: сегодняшняя дата и день недели
@@ -73,7 +78,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ]))),
           // Мои рецепты
           Expanded(
-              flex: 27,
+              flex: 25 + 2,
               child: RRSurface(
                   child: Column(
                 children: [
@@ -267,7 +272,6 @@ class MealsView extends ConsumerWidget {
                 label: const Text('Добавить блюдо')),
           );
         }
-        debugPrint('!!! ${constants.paddingUnit}');
         return Row(children: [
           // Список из не более трёх следующих приёмов пищи
           Expanded(

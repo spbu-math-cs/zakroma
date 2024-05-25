@@ -24,13 +24,13 @@ class Constants with _$Constants {
   /// Отсчитывается снизу, оставшееся сверху место остаётся пустым.
   /// Высота используемой части экрана будет равна [screenHeight] * [paddingUnit].
   /// Не учитывает высоту панели навигации приложения!
-  static const screenHeight = 91; // TODO: а в фигме тут 96,25!
+  static const screenHeight = 92;
 
   /// Высота заголовка приложения (Закрома, ...).
   static const headerHeight = 9;
 
   /// Высота верхней панели навигации приложения (в единицах [paddingUnit]).
-  static const topNavigationBarHeight = 3;
+  static const topNavigationBarHeight = 6;
 
   /// Высота нижней панели навигации приложения (в единицах [paddingUnit]).
   static const bottomNavigationBarHeight = 7;
