@@ -199,8 +199,8 @@ class Diets extends _$Diets {
 extension GetMeals on Pair<Diet, Diet?> {
   @Assert('dayIndex > 0 && dayIndex <= 7')
   List<(bool, Meal)> getMeals(int dayIndex) => [
-        for (var meal in first.days[dayIndex].meals) (true, meal),
-        for (var meal in second?.days[dayIndex].meals ?? []) (false, meal)
+        for (var meal in first.days[dayIndex - 1].meals) (true, meal),
+        for (var meal in second?.days[dayIndex - 1].meals ?? []) (false, meal)
       ];
 }
 

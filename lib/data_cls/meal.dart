@@ -112,6 +112,10 @@ class Meal with _$Meal {
                                       ),
                                       child: Image.asset(
                                         'assets/images/${getDish(dishIndex).name}.jpg',
+                                        errorBuilder: (context, exception,
+                                                stackTrace) =>
+                                            Image.asset(
+                                                'assets/images/dish_default.png'),
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),

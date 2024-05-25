@@ -211,6 +211,8 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
                   cacheHeight: height.floor(),
                   cacheWidth: height.floor(),
                   fit: BoxFit.fill,
+                  errorBuilder: (context, exception, stackTrace) =>
+                      Image.asset('assets/images/ingredient_default.png'),
                 );
                 return SizedBox(
                   height: height,
