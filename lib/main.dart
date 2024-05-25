@@ -98,7 +98,6 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     }
 
     return CustomScaffold(
-      topLevel: true,
       bottomNavigationBar: FunctionalBottomBar(
         onDestinationSelected: (index) {
           setState(() {
