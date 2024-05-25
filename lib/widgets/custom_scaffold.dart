@@ -115,8 +115,6 @@ class CustomHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
-    debugPrint(
-        '${constants.topPadding} + ${Constants.topNavigationBarHeight * constants.paddingUnit}');
     final defaultLayout = Padding(
       padding: padding ??
           EdgeInsets.only(
@@ -139,7 +137,7 @@ class CustomHeader extends ConsumerWidget {
             child: Expanded(
                 flex: Constants.headerHeight,
                 child: Padding(
-                  padding: ref.watch(constantsProvider).dAppHeadlinePadding,
+                  padding: constants.dAppHeadlinePadding,
                   child: header != null ? header! : const SizedBox.shrink(),
                 )),
           ),
@@ -148,7 +146,7 @@ class CustomHeader extends ConsumerWidget {
             child: Expanded(
                 flex: Constants.headerHeight,
                 child: Padding(
-                  padding: ref.watch(constantsProvider).dAppHeadlinePadding,
+                  padding: constants.dAppHeadlinePadding,
                   child: title != null
                       ? Align(
                           alignment: Alignment.centerLeft,
@@ -166,9 +164,12 @@ class CustomHeader extends ConsumerWidget {
     if (selectionAppBar == null) {
       return defaultLayout;
     }
-    final selectionModeEnabled = ref.watch(selectionProvider
-        .select((value) => value.values.any((element) => element)));
+    final selectionModeEnabled = ref
+        .watch(selectionProvider.select((value) => value.selectionModeEnabled));
     debugPrint('selectionModeEnabled = $selectionModeEnabled');
+    if (selectionModeEnabled) {
+      debugPrint('${ref.watch(selectionProvider)}');
+    }
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,

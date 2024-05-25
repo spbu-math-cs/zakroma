@@ -27,7 +27,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
-    debugPrint('${constants.paddingUnit}');
 
     return CustomScaffold(
       header: const CustomHeader(
@@ -252,9 +251,7 @@ class MealsView extends ConsumerWidget {
           )),
       builder: (meals) {
         for (var i = 0; i < meals.length; ++i) {
-          ref
-              .read(selectionProvider.notifier)
-              .putIfAbsent((meals[i].$1, i), i == 0);
+          ref.read(selectionProvider.notifier).put((meals[i].$1, i), i == 0);
         }
         meals.sort(((bool, Meal) a, (bool, Meal) b) =>
             a.$2.index.compareTo(b.$2.index));
@@ -282,7 +279,9 @@ class MealsView extends ConsumerWidget {
                   children: List<Widget>.generate(meals.length, (index) {
                     final (personal, meal) = meals[index];
                     final selected = ref.watch(selectionProvider
-                        .select((value) => value[(personal, index)]!));
+                        .select((value) => value.selected(personal, index)));
+                    debugPrint('${ref.read(selectionProvider)}');
+                    debugPrint('selected of ($personal, $index) = $selected');
                     return Expanded(
                         child: RRButton(
                             borderColor: Theme.of(context).colorScheme.outline,
@@ -339,7 +338,8 @@ class MealsView extends ConsumerWidget {
           Expanded(
               flex: 21,
               child: Builder(builder: (context) {
-                if (ref.watch(selectionProvider.select((map) => map.isEmpty))) {
+                // TODO(tech): проверить, что приём пустой
+                if (false) {
                   // блюда в приёме пищи отсутствуют
                   return Center(
                     child: TextButton.icon(
@@ -353,8 +353,8 @@ class MealsView extends ConsumerWidget {
                         label: const Text('Добавить блюдо')),
                   );
                 }
-                final selectedIndex = ref.watch(selectionProvider.select(
-                    (map) => map.entries.where((el) => el.value).first.key.$2));
+                final selectedIndex = ref.watch(
+                    selectionProvider.select((map) => map.singleSelection));
                 return RRCard(
                     borderColor: Theme.of(context).colorScheme.outline,
                     padding: EdgeInsets.only(bottom: constants.paddingUnit),

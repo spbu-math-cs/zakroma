@@ -51,11 +51,8 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
             (data) => (data.first.cart.length, data.second?.cart.length ?? 0))),
         builder: (lengths) {
           // TODO(tech): обработать ситуации, когда хотя бы одна из корзин пустая
-          debugPrint('got $lengths');
           final length = widget.personal ? lengths.$1 : lengths.$2;
-          ref
-              .read(selectionProvider.notifier)
-              .fillIfAbsent(widget.personal, length);
+          ref.read(selectionProvider.notifier).fill(widget.personal, length);
           return SizedBox(
             height: length * ingredientTileHeight + 2 * constants.paddingUnit,
             child: FlatList(
@@ -167,8 +164,8 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
       //             .entries
       //             .elementAt(widget.ingredientIndex))));
     }
-    final selected = ref.watch(selectionProvider
-        .select((value) => value[(widget.personal, widget.ingredientIndex)]!));
+    final selected = ref.watch(selectionProvider.select(
+        (value) => value.selected(widget.personal, widget.ingredientIndex)));
 
     final buttonStyle = IconButton.styleFrom(
         shape: RoundedRectangleBorder(
