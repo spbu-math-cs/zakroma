@@ -241,6 +241,7 @@ class MealsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
+    final sltnProvider = selectionProvider('Закрома');
     return AsyncBuilder(
       future: ref.watch(dietsProvider.selectAsync((diets) => diets
               .getMeals(DateTime.now().weekday)
@@ -251,7 +252,7 @@ class MealsView extends ConsumerWidget {
           )),
       builder: (meals) {
         for (var i = 0; i < meals.length; ++i) {
-          ref.read(selectionProvider.notifier).put((meals[i].$1, i), i == 0);
+          ref.read(sltnProvider.notifier).put((meals[i].$1, i), i == 0);
         }
         meals.sort(((bool, Meal) a, (bool, Meal) b) =>
             a.$2.index.compareTo(b.$2.index));
@@ -278,9 +279,9 @@ class MealsView extends ConsumerWidget {
                 child: Column(
                   children: List<Widget>.generate(meals.length, (index) {
                     final (personal, meal) = meals[index];
-                    final selected = ref.watch(selectionProvider
+                    final selected = ref.watch(sltnProvider
                         .select((value) => value.selected(personal, index)));
-                    debugPrint('${ref.read(selectionProvider)}');
+                    debugPrint('${ref.read(sltnProvider)}');
                     debugPrint('selected of ($personal, $index) = $selected');
                     return Expanded(
                         child: RRButton(
@@ -297,7 +298,7 @@ class MealsView extends ConsumerWidget {
                                 return;
                               }
                               ref
-                                  .read(selectionProvider.notifier)
+                                  .read(sltnProvider.notifier)
                                   .selectSingle((personal, index));
                             },
                             child: Align(
@@ -353,8 +354,8 @@ class MealsView extends ConsumerWidget {
                         label: const Text('Добавить блюдо')),
                   );
                 }
-                final selectedIndex = ref.watch(
-                    selectionProvider.select((map) => map.singleSelection));
+                final selectedIndex = ref
+                    .watch(sltnProvider.select((map) => map.singleSelection));
                 return RRCard(
                     borderColor: Theme.of(context).colorScheme.outline,
                     padding: EdgeInsets.only(bottom: constants.paddingUnit),

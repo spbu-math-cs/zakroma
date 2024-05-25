@@ -164,11 +164,11 @@ class CustomHeader extends ConsumerWidget {
     if (selectionAppBar == null) {
       return defaultLayout;
     }
-    final selectionModeEnabled = ref
-        .watch(selectionProvider.select((value) => value.selectionModeEnabled));
+    final selectionModeEnabled = ref.watch(selectionProvider(title!)
+        .select((value) => value.selectionModeEnabled));
     debugPrint('selectionModeEnabled = $selectionModeEnabled');
     if (selectionModeEnabled) {
-      debugPrint('${ref.watch(selectionProvider)}');
+      debugPrint('${ref.watch(selectionProvider(title!))}');
     }
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:

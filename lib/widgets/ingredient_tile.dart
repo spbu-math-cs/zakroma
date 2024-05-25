@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zakroma_frontend/utility/pair.dart';
-import 'package:zakroma_frontend/utility/selection.dart';
+import 'package:zakroma_frontend/utility/selection.dart' as selection;
 import 'package:zakroma_frontend/widgets/async_builder.dart';
 
 import '../data_cls/cart.dart';
@@ -37,6 +37,8 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
   /// Используется для множественного выбора
   int lastSelectionModified = -1;
 
+  late selection.SelectionProvider selectionProvider;
+
   @override
   Widget build(BuildContext context) {
     // final lengths = cart ? ref.watch(cartProvider.selectAsync(
@@ -46,6 +48,8 @@ class _IngredientCartViewState extends ConsumerState<IngredientsCartView> {
     final constants = ref.watch(constantsProvider);
     final ingredientTileHeight =
         (widget.ingredientTileHeight + 1) * constants.paddingUnit;
+    selectionProvider =
+        selection.selectionProvider(widget.cart ? 'Корзина' : 'Продукты');
     return AsyncBuilder(
         future: ref.watch(cartProvider.selectAsync(
             (data) => (data.first.cart.length, data.second?.cart.length ?? 0))),
@@ -151,11 +155,15 @@ class IngredientTile extends ConsumerStatefulWidget {
 
 class _IngredientTileState extends ConsumerState<IngredientTile>
     with AutomaticKeepAliveClientMixin {
+  late selection.SelectionProvider selectionProvider;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final constants = ref.watch(constantsProvider);
     final height = widget.height * constants.paddingUnit;
+    selectionProvider =
+        selection.selectionProvider(widget.cart ? 'Корзина' : 'Продукты');
     if (!widget.cart) {
       // ingredientData = ref.watch(storeProvider.selectAsync((cartData) =>
       //         Pair.fromMapEntry(cartData
