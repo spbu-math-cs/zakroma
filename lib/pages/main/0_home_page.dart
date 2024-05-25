@@ -53,7 +53,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                         // TODO(server): подгрузить информацию по доставке (bool есть_активная_доставка, ???)
                         child: RRButton(
                             onTap: () {},
-                            borderRadius: constants.dOuterRadius,
+                            borderRadius:
+                                BorderRadius.circular(constants.dOuterRadius),
                             childAlignment: Alignment.centerLeft,
                             childPadding: EdgeInsets.only(
                                 left: constants.paddingUnit * 2),
@@ -74,7 +75,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                               onTap: () {
                                 // этой кнопки не будет в новом дизайне, поэтому и париться не буду
                               },
-                              borderRadius: constants.dOuterRadius,
+                              borderRadius:
+                                  BorderRadius.circular(constants.dOuterRadius),
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .primaryContainer,
@@ -168,19 +170,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.surface,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
@@ -211,19 +205,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.surface,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
@@ -253,19 +239,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                             Expanded(
                                 child: RRButton(
                                     onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
                                     backgroundColor: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
-                                    foregroundDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          constants.dInnerRadius),
-                                      border: Border.all(
-                                          width: constants.paddingUnit / 4,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface),
-                                    ),
+                                    borderColor:
+                                        Theme.of(context).colorScheme.surface,
                                     padding: constants.dCardPadding,
                                     child: Column(
                                       children: [
@@ -364,27 +342,17 @@ class MealsView extends ConsumerWidget {
                                           );
                                         });
                                       },
-                                      borderRadius: constants.dInnerRadius,
                                       padding: EdgeInsets.zero,
                                       backgroundColor: todayMeals[index].first
                                           ? null
                                           : Theme.of(context)
                                               .colorScheme
                                               .background,
-                                      foregroundDecoration: todayMeals[index]
-                                              .first
-                                          ? null
-                                          : BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      constants.dInnerRadius),
-                                              border: Border.all(
-                                                  width:
-                                                      constants.paddingUnit / 2,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surface),
-                                            ),
+                                      borderColor: todayMeals[index].first
+                                          ? Colors.transparent
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .surface,
                                       child: StyledHeadline(
                                           // overflow: TextOverflow.clip,
                                           text: todayMeals[index].second.name,

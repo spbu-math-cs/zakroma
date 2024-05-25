@@ -86,15 +86,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     }
                                   },
                                   elevation: 0,
-                                  foregroundDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        constants.dInnerRadius),
-                                    border: Border.all(
-                                        width: constants.paddingUnit / 4,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface),
-                                  ),
+                                  borderColor:
+                                      Theme.of(context).colorScheme.surface,
                                   child: Material(
                                     borderRadius: BorderRadius.circular(
                                         constants.dInnerRadius),
