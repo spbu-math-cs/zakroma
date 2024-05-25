@@ -40,17 +40,27 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       builder: (context, child) {
         // считаем константы для текущего устройства
-        // TODO(tech): переписать под 49 — это ближе к фигме
-        final paddingUnit = MediaQuery.of(context).size.width / 48;
+        final paddingUnit = MediaQuery.of(context).size.width / 49;
+        debugPrint('''${MediaQuery.of(context).size.height} -
+            ${MediaQuery.of(context).padding.top} -
+            ${Constants.bottomNavigationBarHeight * paddingUnit} -
+            ${Constants.screenHeight * paddingUnit}''');
+        final bottomPadding = MediaQuery.of(context).padding.bottom / 1.13;
+        debugPrint(
+            'bottomPadding: $bottomPadding, plus navBar: ${bottomPadding + Constants.bottomNavigationBarHeight * paddingUnit}');
         final topPadding = MediaQuery.of(context).size.height -
             MediaQuery.of(context).padding.top -
-            Constants.topNavigationBarHeight * paddingUnit -
             Constants.bottomNavigationBarHeight * paddingUnit -
-            Constants.screenHeight * paddingUnit;
+            Constants.screenHeight * paddingUnit -
+            bottomPadding;
+        debugPrint(
+            'real screenHeight = ${MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - Constants.bottomNavigationBarHeight * paddingUnit - bottomPadding}, calculated = ${Constants.screenHeight * paddingUnit}, topPadding: $topPadding');
         return ProviderScope(
           overrides: [
-            constantsProvider.overrideWithValue(
-                Constants(paddingUnit: paddingUnit, topPadding: topPadding)),
+            constantsProvider.overrideWithValue(Constants(
+                paddingUnit: paddingUnit,
+                topPadding: topPadding,
+                bottomPadding: bottomPadding)),
           ],
           child: child!,
         );
@@ -88,6 +98,7 @@ class _ZakromaState extends ConsumerState<Zakroma> {
     }
 
     return CustomScaffold(
+      topLevel: true,
       bottomNavigationBar: FunctionalBottomBar(
         onDestinationSelected: (index) {
           setState(() {

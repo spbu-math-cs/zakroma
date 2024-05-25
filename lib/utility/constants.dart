@@ -15,7 +15,10 @@ class Constants with _$Constants {
       required double paddingUnit,
 
       /// Отступ сверху, подгоняющий экран под размеры [screenHeight] * [paddingUnit]
-      required double topPadding}) = _Constants;
+      required double topPadding,
+
+      /// Отступ между нижней системной панелью и панелью навигации
+      required double bottomPadding}) = _Constants;
 
   const Constants._();
 

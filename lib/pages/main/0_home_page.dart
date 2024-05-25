@@ -69,7 +69,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 // Перечисление приёмов пищи на сегодня
                 Expanded(
-                    flex: 23,
+                    flex: 22,
                     child: Padding(
                       padding: constants.dBlockPadding
                           .copyWith(bottom: constants.paddingUnit),
@@ -275,7 +275,7 @@ class MealsView extends ConsumerWidget {
         return Row(children: [
           // Список из не более трёх следующих приёмов пищи
           Expanded(
-              flex: 21,
+              flex: 22,
               child: Padding(
                 padding: EdgeInsets.only(right: constants.paddingUnit),
                 child: Column(
@@ -337,7 +337,7 @@ class MealsView extends ConsumerWidget {
               )),
           // Расширенный вид блюд из выбранного приёма
           Expanded(
-              flex: 19,
+              flex: 21,
               child: Builder(builder: (context) {
                 if (ref.watch(selectionProvider.select((map) => map.isEmpty))) {
                   // блюда в приёме пищи отсутствуют
@@ -359,7 +359,7 @@ class MealsView extends ConsumerWidget {
                     borderColor: Theme.of(context).colorScheme.outline,
                     padding: EdgeInsets.only(bottom: constants.paddingUnit),
                     // childAlignment: Alignment.topLeft,
-                    childPadding: EdgeInsets.all(2 * constants.paddingUnit),
+                    childPadding: EdgeInsets.all(constants.paddingUnit),
                     child: Wrap(
                       spacing: constants.paddingUnit,
                       runSpacing: constants.paddingUnit,

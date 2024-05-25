@@ -37,6 +37,7 @@ class _AuthorizationPageState extends ConsumerState<AuthorizationPage> {
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
+      topLevel: true,
       body: Padding(
         padding: constants.dBlockPadding
             .copyWith(top: constants.paddingUnit * 16, bottom: 0),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 
 import '../utility/constants.dart';
 import '../utility/selection.dart';
@@ -13,10 +12,12 @@ class CustomScaffold extends ConsumerWidget {
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final Widget? bottomNavigationBar;
+  final bool topLevel;
 
   const CustomScaffold({
     super.key,
     required this.body,
+    this.topLevel = false,
     this.header,
     this.bottomNavigationBar,
     this.floatingActionButton,
@@ -37,25 +38,30 @@ class CustomScaffold extends ConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: LayoutBuilder(
-            builder: (context, constraints) => Column(
-                  children: [
-                    Visibility(
-                        visible: header != null,
-                        child: Expanded(
-                          flex: Constants.topNavigationBarHeight +
-                              Constants.headerHeight,
-                          child: header != null
-                              ? header!
-                              : const SizedBox.shrink(),
-                        )),
-                    Expanded(
-                        flex: Constants.screenHeight -
-                            Constants.headerHeight -
-                            Constants.topNavigationBarHeight,
-                        child: body)
-                  ],
-                )),
+        child: Padding(
+          padding: topLevel
+              ? EdgeInsets.only(top: ref.watch(constantsProvider).topPadding)
+              : EdgeInsets.zero,
+          child: LayoutBuilder(
+              builder: (context, constraints) => Column(
+                    children: [
+                      Visibility(
+                          visible: header != null,
+                          child: Expanded(
+                            flex: Constants.topNavigationBarHeight +
+                                Constants.headerHeight,
+                            child: header != null
+                                ? header!
+                                : const SizedBox.shrink(),
+                          )),
+                      Expanded(
+                          flex: Constants.screenHeight -
+                              Constants.headerHeight -
+                              Constants.topNavigationBarHeight,
+                          child: body)
+                    ],
+                  )),
+        ),
       ),
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButtonLocation: floatingActionButtonLocation,
@@ -119,8 +125,7 @@ class CustomHeader extends ConsumerWidget {
       padding: padding ??
           EdgeInsets.only(
               top: topNavigationBar == null
-                  ? constants.topPadding +
-                      Constants.topNavigationBarHeight * constants.paddingUnit
+                  ? Constants.topNavigationBarHeight * constants.paddingUnit
                   : 0),
       child: Column(
         children: [
