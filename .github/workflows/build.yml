@@ -23,7 +23,7 @@ jobs:
         if: ${{ env.ACT }} # Only run on local act setups, as GitHub Actions provides the Android SDK on Ubuntu
         uses: android-actions/setup-android@v2
       - run: flutter pub get
-      - run: dart run build_runner
+      - run: dart run build_runner build
       - run: flutter build apk --release
       - name: 'Upload APK'
         uses: 'actions/upload-artifact@v2'
