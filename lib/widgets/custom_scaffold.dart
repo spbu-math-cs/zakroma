@@ -161,6 +161,7 @@ class CustomHeader extends ConsumerWidget {
         ],
       ),
     );
+    // TODO(design): selectionAppBar заменяет только topNavBar, не трогая title и header
     if (selectionAppBar == null) {
       return defaultLayout;
     }

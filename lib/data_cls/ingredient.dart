@@ -31,6 +31,12 @@ class Ingredient with _$Ingredient {
   factory Ingredient.fromJson(Map<String, dynamic> json) =>
       _$IngredientFromJson(json);
 
+  Image get image =>
+      Image.network(imageUrl, errorBuilder: (context, exception, stackTrace) {
+        debugPrint('Could not find image at `$imageUrl`');
+        return Image.asset('assets/images/ingredient_default.png');
+      });
+
   void showAlert(BuildContext context, void Function(Ingredient) onTap) async =>
       await showDialog(
           context: context,

@@ -273,7 +273,7 @@ class MealsView extends ConsumerWidget {
         return Row(children: [
           // Список из не более трёх следующих приёмов пищи
           Expanded(
-              flex: 22,
+              flex: 21,
               child: Padding(
                 padding: EdgeInsets.only(right: constants.paddingUnit),
                 child: Column(
@@ -281,8 +281,6 @@ class MealsView extends ConsumerWidget {
                     final (personal, meal) = meals[index];
                     final selected = ref.watch(sltnProvider
                         .select((value) => value.selected(personal, index)));
-                    debugPrint('${ref.read(sltnProvider)}');
-                    debugPrint('selected of ($personal, $index) = $selected');
                     return Expanded(
                         child: RRButton(
                             borderColor: Theme.of(context).colorScheme.outline,
@@ -337,7 +335,7 @@ class MealsView extends ConsumerWidget {
               )),
           // Расширенный вид блюд из выбранного приёма
           Expanded(
-              flex: 21,
+              flex: 20,
               child: Builder(builder: (context) {
                 // TODO(tech): проверить, что приём пустой
                 if (false) {
@@ -359,7 +357,8 @@ class MealsView extends ConsumerWidget {
                 return RRCard(
                     borderColor: Theme.of(context).colorScheme.outline,
                     padding: EdgeInsets.only(bottom: constants.paddingUnit),
-                    // childAlignment: Alignment.topLeft,
+                    // TODO(design): выравнивание надо ставить такое, но править паддинг
+                    childAlignment: Alignment.topLeft,
                     childPadding: EdgeInsets.all(constants.paddingUnit),
                     child: Wrap(
                       spacing: constants.paddingUnit,
@@ -367,8 +366,21 @@ class MealsView extends ConsumerWidget {
                       children: List<Widget>.generate(
                           meals[selectedIndex].$2.dishesCount.clamp(0, 4),
                           (index) => SizedBox.square(
-                              dimension: 8 * constants.paddingUnit,
-                              child: Placeholder())),
+                              dimension: (17 / 2) * constants.paddingUnit,
+                              child: RRButton(
+                                  onTap: () {},
+                                  elevation: 0,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  child: meals[selectedIndex]
+                                      .$2
+                                      .dishes
+                                      .entries
+                                      .where((el) => !el.value)
+                                      .elementAt(index)
+                                      .key
+                                      .image))),
                     ));
               }))
         ]);

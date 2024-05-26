@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'selection.g.dart';
@@ -41,7 +39,6 @@ class Selection extends _$Selection {
     for (int i = 0; i < length; ++i) {
       state.putIfAbsent((personal, i), () => false);
     }
-    debugPrint('after fill: $state');
   }
 
   /// Doesn't trigger rebuild

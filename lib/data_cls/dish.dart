@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../data_cls/ingredient.dart';
@@ -47,6 +47,8 @@ class Dish with _$Dish {
       /// Количество жиров на 100 гр/мл.
       @Default(0.0) double fats}) = _Dish;
 
+  const Dish._();
+
   factory Dish.fromJson(Map<String, dynamic> json) {
     switch (json) {
       case {
@@ -80,6 +82,12 @@ class Dish with _$Dish {
         throw UnimplementedError();
     }
   }
+
+  Image get image =>
+      Image.network(imageUrl, errorBuilder: (context, exception, stackTrace) {
+        debugPrint('Could not find image at `$imageUrl`');
+        return Image.asset('assets/images/dish_default.png');
+      });
 }
 
 extension ParseDishes on List<Map<String, dynamic>> {
