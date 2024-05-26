@@ -35,17 +35,17 @@ class AsyncBuilder<T> extends StatelessWidget {
         future: future,
         builder: (_, snapshot) {
           if (snapshot.hasError) {
-            debugPrint('FutureBuilder builder $debugText: return error');
+            // debugPrint('FutureBuilder builder $debugText: return error');
             return CustomErrorWidget(snapshot.error!, snapshot.stackTrace!);
           }
           if (!snapshot.hasData) {
-            debugPrint('FutureBuilder builder $debugText: return loading');
+            // debugPrint('FutureBuilder builder $debugText: return loading');
             return Center(
                 child: CircularProgressIndicator(
               color: circularProgressIndicatorColor,
             ));
           }
-          debugPrint('FutureBuilder builder $debugText: return builder');
+          // debugPrint('FutureBuilder builder $debugText: return builder');
           return builder(snapshot.data as T);
         });
   }

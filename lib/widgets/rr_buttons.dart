@@ -79,7 +79,7 @@ class DottedRRButton extends RRButton {
     return Padding(
       padding: padding,
       child: DottedBorder(
-        color: borderColor ?? Theme.of(context).colorScheme.surface,
+        color: borderColor,
         // 1.84 и 2 подобраны на глаз на Zenfone 9
         dashPattern: [constants.paddingUnit * 1.84, constants.paddingUnit * 2],
         padding: EdgeInsets.zero,

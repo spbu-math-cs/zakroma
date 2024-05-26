@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import 'package:zakroma_frontend/data_cls/recipes.dart';
+import 'package:zakroma_frontend/widgets/rr_card.dart';
 
 import '../../data_cls/diet.dart';
+import '../../data_cls/dish.dart';
 import '../../data_cls/meal.dart';
 import '../../utility/constants.dart';
 import '../../utility/get_current_date.dart';
-import '../../utility/pair.dart';
+import '../../utility/selection.dart';
 import '../../widgets/async_builder.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/styled_headline.dart';
-import '3_cart_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -30,105 +31,55 @@ class _HomePageState extends ConsumerState<HomePage> {
     final constants = ref.read(constantsProvider);
 
     return CustomScaffold(
-      header: const CustomHeader(title: 'Закрома'),
+      header: const CustomHeader(
+        title: 'Закрома',
+      ),
       body: Column(
         children: [
-          // Переключатель рационов: личный / семейный
-          Expanded(
-              flex: 12,
-              child: Padding(
-                  padding: constants.dBlockPadding,
-                  child: const Placeholder())),
-          // Статус холодильника/доставки + корзина
-          Expanded(
-              flex: 14,
-              child: Padding(
-                padding: constants.dBlockPadding,
-                child: Row(
-                  children: [
-                    // Статус холодильника/доставки
-                    // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
-                    Expanded(
-                        // TODO(server): подгрузить информацию по холодильнику (???)
-                        // TODO(server): подгрузить информацию по доставке (bool есть_активная_доставка, ???)
-                        child: RRButton(
-                            onTap: () {},
-                            borderRadius:
-                                BorderRadius.circular(constants.dOuterRadius),
-                            childAlignment: Alignment.centerLeft,
-                            childPadding: EdgeInsets.only(
-                                left: constants.paddingUnit * 2),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            child: StyledHeadline(
-                                text: 'Дома\nполно продуктов',
-                                textStyle:
-                                    Theme.of(context).textTheme.titleLarge))),
-                    // Корзина
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constants.dBlockPadding.left),
-                      child: SizedBox(
-                          // 12 * constants.paddingUnit — это высота этого блока (см. фигму)
-                          width: 12 * constants.paddingUnit,
-                          child: RRButton(
-                              onTap: () {
-                                // этой кнопки не будет в новом дизайне, поэтому и париться не буду
-                              },
-                              borderRadius:
-                                  BorderRadius.circular(constants.dOuterRadius),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                              child: Icon(Icons.local_mall_outlined,
-                                  size: 7 * constants.paddingUnit))),
-                    ),
-                  ],
-                ),
-              )),
+          // Предложения + статус доставки
+          const Expanded(
+              flex: 17 + 2, // размер_виджета + отступ снизу
+              child: RRSurface(child: Placeholder())),
           // Приёмы пищи на сегодня
           Expanded(
-              flex: 23,
+              flex: 29 + 2,
               child: RRSurface(
-                  child: Column(
-                children: [
-                  // Заголовок: сегодняшняя дата и день недели
-                  Expanded(
-                      flex: 7,
-                      child: Padding(
-                        padding: constants.dHeadingPadding,
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          return Align(
-                            alignment: Alignment.topLeft,
-                            child: StyledHeadline(
-                                text: getCurrentDate(),
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15 * constraints.maxHeight / 16,
-                                      height: 1,
-                                      leadingDistribution:
-                                          TextLeadingDistribution.proportional,
-                                    )),
-                          );
-                        }),
-                      )),
-                  // Перечисление приёмов пищи на сегодня
-                  Expanded(
-                      flex: 14,
-                      child: Padding(
-                        padding:
-                            constants.dBlockPadding - constants.dCardPadding,
-                        // TODO(refactor): вынести всю логику child'а
-                        child: const MealsView(),
-                      )),
-                ],
-              ))),
+                  child: Column(children: [
+                // Заголовок: сегодняшняя дата и день недели
+                Expanded(
+                  flex: 7,
+                  child: Padding(
+                      padding: constants.dHeadingPadding,
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: StyledHeadline(
+                              text: getCurrentDate(),
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15 * constraints.maxHeight / 16,
+                                    height: 1,
+                                    leadingDistribution:
+                                        TextLeadingDistribution.proportional,
+                                  )),
+                        );
+                      })),
+                ),
+                // Перечисление приёмов пищи на сегодня
+                Expanded(
+                    flex: 22,
+                    child: Padding(
+                      padding: constants.dBlockPadding
+                          .copyWith(bottom: constants.paddingUnit),
+                      child: const MealsView(),
+                    )),
+              ]))),
           // Мои рецепты
           Expanded(
-              flex: 27,
+              flex: 25 + 2,
               child: RRSurface(
                   child: Column(
                 children: [
@@ -162,116 +113,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                       child: Padding(
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
-                        child: Row(
-                          // TODO(server): подгрузить рецепты (id, название, иконка)
-                          // TODO(tech): реализовать recipesProvider?
-                          // TODO(tech): использовать генератор списков вместо перечисления
-                          children: [
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.surface,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/borsch.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Борщ',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall!
-                                                      .copyWith(height: 1)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.surface,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/potatoes.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Пюре с отбивной',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.surface,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/salad.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Цезарь с курицей',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                          ],
-                        ),
+                        child: AsyncBuilder(
+                            async: ref.watch(recipesProvider),
+                            builder: (dishes) {
+                              return Row(
+                                  // TODO(server): подгрузить рецепты (id, название, иконка)
+                                  // TODO(tech): реализовать recipesProvider?
+                                  // TODO(tech): использовать генератор списков вместо перечисления
+                                  children: List<Widget>.generate(
+                                      3, (index) => DishTile(dishes[index])));
+                            }),
                       ))
                 ],
               ))),
@@ -287,85 +138,199 @@ class MealsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
+    final sltnProvider = selectionProvider('Закрома');
     return AsyncBuilder(
-      async: ref.watch(dietsProvider),
-      builder: (diets) {
-        final todayMeals = diets.first
-                .getDay(DateTime.now().weekday)
-                .meals
-                .map((e) => Pair(true, e))
-                .toList() +
-            (diets.second
-                        ?.getDay(DateTime.now().weekday)
-                        .meals
-                        .map((e) => Pair(false, e)) ??
-                    [])
-                .toList();
-        todayMeals.sort((Pair<bool, Meal> a, Pair<bool, Meal> b) =>
-            a.second.index.compareTo(b.second.index));
-        return todayMeals.isEmpty
-            ? Center(
-                child: TextButton.icon(
-                    onPressed: () {
-                      // TODO(feat): всплывающее окно добавления блюда
-                    },
-                    style: TextButton.styleFrom(
-                        // padding: EdgeInsets.zero
-                        ),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Добавить блюдо')),
-              )
-            : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+      future: ref.watch(dietsProvider.selectAsync((diets) => diets
+          .getMeals(DateTime.now().weekday)
+          // смотрим только на те, которые не помечены пользователем как прошедшие
+          .where((el) => !el.$2.done)
+          .toList(growable: false))),
+      builder: (meals) {
+        meals = meals.sublist(0, 3 < meals.length ? 3 : meals.length);
+        for (var i = 0; i < meals.length; ++i) {
+          ref.read(sltnProvider.notifier).put((meals[i].$1, i), i == 0);
+        }
+        meals.sort(((bool, Meal) a, (bool, Meal) b) =>
+            a.$2.index.compareTo(b.$2.index));
+        if (meals.isEmpty) {
+          // приёмы на сегодня отсутствуют
+          return Center(
+            child: TextButton.icon(
+                onPressed: () {
+                  // TODO(feat): всплывающее окно добавления блюда
+                },
+                style: TextButton.styleFrom(
+                    // padding: EdgeInsets.zero
+                    ),
+                icon: const Icon(Icons.add),
+                label: const Text('Добавить блюдо')),
+          );
+        }
+        return Row(children: [
+          // Список из не более трёх следующих приёмов пищи
+          Expanded(
+              flex: 21,
+              child: Padding(
+                padding: EdgeInsets.only(right: constants.paddingUnit),
+                child: Column(
+                  children: List<Widget>.generate(meals.length, (index) {
+                    final (personal, meal) = meals[index];
+                    final selected = ref.watch(sltnProvider
+                        .select((value) => value.selected(personal, index)));
+                    return SizedBox(
+                        // 6 — высота кнопки, 1 — нижний отступ
+                        height: (6 + 1) * constants.paddingUnit,
+                        child: RRButton(
+                            borderColor: Theme.of(context).colorScheme.outline,
+                            backgroundColor: selected
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                            padding:
+                                EdgeInsets.only(bottom: constants.paddingUnit),
+                            onTap: () {
+                              if (selected) {
+                                return;
+                              }
+                              ref
+                                  .read(sltnProvider.notifier)
+                                  .selectSingle((personal, index));
+                            },
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 2 * constants.paddingUnit),
+                                child: Row(
+                                  children: <Widget>[
+                                        StyledHeadline(
+                                            text: meal.name,
+                                            textStyle: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge),
+                                      ] +
+                                      (!personal
+                                          ? [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left:
+                                                        constants.paddingUnit),
+                                                child: Icon(
+                                                  Icons.group,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                                ),
+                                              )
+                                            ]
+                                          : []),
+                                ),
+                              ),
+                            )));
+                  }),
+                ),
+              )),
+          // Расширенный вид блюд из выбранного приёма
+          Expanded(
+              flex: 20,
+              child: Builder(builder: (context) {
+                final selectedIndex = ref
+                    .watch(sltnProvider.select((map) => map.singleSelection));
+                Widget dishesDisplay = Center(
+                  // блюда в приёме пищи отсутствуют
+                  // TODO(design): «здесь пустовато...» вместо кнопки
+                  child: TextButton.icon(
+                      onPressed: () {
+                        // TODO(tech): всплывающее окно добавления блюда
+                      },
+                      style: TextButton.styleFrom(
+                          // padding: EdgeInsets.zero
+                          ),
+                      icon: const Icon(Icons.add),
+                      label: const Text('Добавить блюдо')),
+                );
+                if (meals[selectedIndex].$2.dishesCount > 0) {
+                  dishesDisplay = Wrap(
+                    spacing: constants.paddingUnit,
+                    runSpacing: constants.paddingUnit,
                     children: List<Widget>.generate(
-                        todayMeals.length,
-                        (index) => Padding(
-                              padding: constants.dCardPadding,
-                              child: SizedBox.square(
-                                  // 12 — константа, взятая, опять же, из фигмы
-                                  dimension: 12 * constants.paddingUnit,
-                                  child: RRButton(
-                                      onTap: () {
-                                        showSlidingBottomSheet(context,
-                                            builder: (context) {
-                                          return createSlidingSheet(
-                                            context,
-                                            headingText:
-                                                todayMeals[index].second.name,
-                                            body: todayMeals[index]
-                                                .second
-                                                .getDishesList(
-                                                    context, constants,
-                                                    dishMiniatures: true),
-                                            constants: constants,
-                                          );
-                                        });
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      backgroundColor: todayMeals[index].first
-                                          ? null
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .background,
-                                      borderColor: todayMeals[index].first
-                                          ? Colors.transparent
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .surface,
-                                      child: StyledHeadline(
-                                          // overflow: TextOverflow.clip,
-                                          text: todayMeals[index].second.name,
-                                          textStyle: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall))),
-                            ))),
-              );
+                        meals[selectedIndex].$2.dishesCount.clamp(0, 4),
+                        (index) => SizedBox.square(
+                            dimension: (17 / 2) * constants.paddingUnit,
+                            child: RRButton(
+                                onTap: () {},
+                                elevation: 0,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                child: meals[selectedIndex]
+                                    .$2
+                                    .dishes
+                                    .entries
+                                    .where((el) => !el.value)
+                                    .elementAt(index)
+                                    .key
+                                    .image))),
+                  );
+                }
+                return RRCard(
+                    borderColor: Theme.of(context).colorScheme.outline,
+                    padding: EdgeInsets.only(bottom: constants.paddingUnit),
+                    // TODO(design): выравнивание надо ставить такое, но править паддинг
+                    childAlignment: Alignment.topLeft,
+                    childPadding: EdgeInsets.all(constants.paddingUnit),
+                    child: dishesDisplay);
+              }))
+        ]);
       },
     );
   }
 }
 
+class DishTile extends ConsumerWidget {
+  final Dish dish;
+  const DishTile(this.dish, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants = ref.watch(constantsProvider);
+    return RRButton(
+        onTap: () {},
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        borderColor: Theme.of(context).colorScheme.outline,
+        padding: constants.dCardPadding,
+        child: SizedBox(
+          height: (16 + 2) * constants.paddingUnit,
+          width: (37 / 3) * constants.paddingUnit,
+          child: Column(
+            children: [
+              Expanded(
+                  flex: 49,
+                  child: SizedBox.expand(
+                    child: dish.image,
+                  )),
+              Expanded(
+                flex: 23,
+                child: Center(
+                  child: Padding(
+                    padding: constants.dLabelPadding,
+                    child: StyledHeadline(
+                        text: dish.name,
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(height: 1)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+// TODO(tech): переписать верхнюю панель со статусом/рекламой под DisplayBar
 enum DisplayBarType {
   deliveryStatus,
   viandStatus,

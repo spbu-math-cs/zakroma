@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zakroma_frontend/utility/selection.dart';
 
 import 'data_cls/user.dart';
 import 'pages/authorization_page.dart';
@@ -40,15 +41,19 @@ class MainPage extends ConsumerWidget {
       title: 'zakroma',
       builder: (context, child) {
         // считаем константы для текущего устройства
-        final paddingUnit = MediaQuery.of(context).size.width / 48;
+        final paddingUnit = MediaQuery.of(context).size.width / 49;
+        final bottomPadding = MediaQuery.of(context).padding.bottom / 1.13;
         final topPadding = MediaQuery.of(context).size.height -
             MediaQuery.of(context).padding.top -
             Constants.bottomNavigationBarHeight * paddingUnit -
-            Constants.screenHeight * paddingUnit;
+            Constants.screenHeight * paddingUnit -
+            bottomPadding;
         return ProviderScope(
           overrides: [
-            constantsProvider.overrideWithValue(
-                Constants(paddingUnit: paddingUnit, topPadding: topPadding)),
+            constantsProvider.overrideWithValue(Constants(
+                paddingUnit: paddingUnit,
+                topPadding: topPadding,
+                bottomPadding: bottomPadding)),
           ],
           child: child!,
         );
