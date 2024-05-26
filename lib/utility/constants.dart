@@ -81,7 +81,7 @@ class Constants with _$Constants {
 
   /// IP-адрес сервера (включает в себя порт).
   // TODO(server): по готовности заменить на адрес сервера
-  static const serverAddress = 'http://192.168.0.103:8080';
+  static const serverAddress = 'http://10.2.2.0:8080';
 
   /// Таймаут для запросов на сервер.
   static const networkTimeout = Duration(seconds: 5);
