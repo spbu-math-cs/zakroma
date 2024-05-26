@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -134,36 +135,19 @@ class Dish with _$Dish {
     }
   }
 
-  // Image get image => Image.network(imageUrl, fit: BoxFit.fill,
-  //         errorBuilder: (context, exception, stackTrace) {
-  //       debugPrint('Could not find image at `$imageUrl`');
-  //       return Image.asset('assets/images/dish_default.png');
-  //     });
-
-  Widget get image {
-    bool networkFail = false;
-    final networkImage = Ink.image(
-        image: NetworkImage(imageUrl),
-        fit: BoxFit.fill,
-        onImageError: (_, __) {
-          // TODO(tech): это не работает((( Когда входим в return, флаг всегда false
-          networkFail = true;
-        });
-    debugPrint('networkFail = $networkFail');
-    return networkFail
-        ? Ink.image(
-            image: const AssetImage('assets/images/dish_default.png'),
-            fit: BoxFit.fill)
-        : networkImage;
-    return Image.network(imageUrl, fit: BoxFit.fill,
-        errorBuilder: (context, exception, stackTrace) {
-      debugPrint('Could not find image at `$imageUrl`');
-      return Image.asset('assets/images/dish_default.png');
-    });
-  }
-
-  // Widget get image => Ink.image(
-  //     image: AssetImage('assets/images/dish_default.png'), fit: BoxFit.fill);
+  Widget get image => CachedNetworkImage(
+        imageUrl: imageUrl,
+        imageBuilder: (context, imageProvider) {
+          return Ink.image(
+            image: imageProvider,
+            fit: BoxFit.fill,
+          );
+        },
+        errorWidget: (context, s, error) => Ink.image(
+          image: const AssetImage('assets/images/dish_default.png'),
+          fit: BoxFit.fill,
+        ),
+      );
 }
 
 extension ParseDishes on List<Map<String, dynamic>> {

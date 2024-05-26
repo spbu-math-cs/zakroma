@@ -37,6 +37,7 @@ class RRButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    assert(debugCheckHasMaterial(context));
     final constants = ref.read(constantsProvider);
     return RRCard(
         padding: padding,
@@ -46,15 +47,17 @@ class RRButton extends ConsumerWidget {
         borderRadius: borderRadius,
         elevation: elevation ?? constants.dElevation,
         child: InkWell(
-            onTap: onTap,
-            onDoubleTap: onDoubleTap,
-            onLongPress: onLongPress,
-            child: Align(
-                alignment: childAlignment,
-                child: Padding(
-                  padding: childPadding,
-                  child: child,
-                ))));
+          onTap: onTap,
+          onDoubleTap: onDoubleTap,
+          onLongPress: onLongPress,
+          child: Align(
+            alignment: childAlignment,
+            child: Padding(
+              padding: childPadding,
+              child: child,
+            ),
+          ),
+        ));
   }
 }
 
