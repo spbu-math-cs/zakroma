@@ -24,10 +24,10 @@ jobs:
         uses: android-actions/setup-android@v2
       - run: flutter pub get
       - run: dart run build_runner build
-      - run: flutter build apk
+      - run: flutter build apk --debug
       - name: 'Upload APK'
         uses: 'actions/upload-artifact@v2'
         with:
           name: 'Built APK'
-          path: 'build/app/outputs/flutter-apk/app-release.apk'
+          path: 'build/app/outputs/flutter-apk/app-debug.apk'
     # Upload the built APK
