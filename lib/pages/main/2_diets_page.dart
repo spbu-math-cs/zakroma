@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../utility/constants.dart';
+import '../../utility/pair.dart';
 import '../../widgets/custom_scaffold.dart';
 import '../../widgets/rr_surface.dart';
 import 'dart:math';
@@ -258,16 +259,16 @@ class DailyRatiosScreen extends ConsumerWidget {
                                       gagList[index].soloRatio.isEmpty
                                   ? SizedBox(
                                       height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
+                                      child: IconButton(
+                                          icon: const Icon(
                                             Icons.add_circle_outline,
                                             color: Colors.black,
                                           ),
                                           onPressed: () {}))
                                   : SizedBox(
                                       height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
+                                      child: IconButton(
+                                          icon: const Icon(
                                             Icons.arrow_forward_ios_rounded,
                                             color: Colors.black,
                                           ),
@@ -315,11 +316,23 @@ class DailyRatiosScreen extends ConsumerWidget {
 }
 
 // --- DRAFT --- //
-Map<String, List<String>> gagListDishes = {
-  'Завтрак': ['Utka', 'ovoshi', 'eda'],
-  'Обед': ['AA', 'food', 'nothing', 'b'],
-  'Супердлинный ужин': ['AаааA', 'foооооооod', 'nоооооothing', 'b'],
-  'Ужин': ['A', 'Borcsh', 'aqua']
+Map<String, List<Pair<String, int>>> gagListDishes = {
+  'Завтрак': [
+    Pair(
+      'Utka',
+      1,
+    ),
+    Pair('ovoshi', 2),
+    Pair('eda', 2)
+  ],
+  'Обед': [Pair('AA', 1), Pair('food', 3), Pair('nothing', 3), Pair('b', 5)],
+  'Супердлинный ужин': [
+    Pair('AаааA', 5),
+    Pair('foооооооod', 7),
+    Pair('nоооооothing', 66),
+    Pair('b', 10)
+  ],
+  'Ужин': [Pair('A', 22), Pair('Borcsh', 11), Pair('aqua', 0)]
 };
 
 class DishesForRatioScreen extends ConsumerWidget {
@@ -340,6 +353,7 @@ class DishesForRatioScreen extends ConsumerWidget {
                     itemBuilder: (context, rIndex) {
                       return Container(
                           height: constants.paddingUnit * 12,
+                          width: double.maxFinite,
                           // padding: EdgeInsets.all(constants.paddingUnit / 2),
                           margin: EdgeInsets.only(
                               top: constants.paddingUnit / 2, bottom: constants.paddingUnit / 2),
@@ -349,9 +363,9 @@ class DishesForRatioScreen extends ConsumerWidget {
                                 width: constants.borderWidth),
                             borderRadius: BorderRadius.circular(constants.dInnerRadius),
                           ),
-                          child: Row(children: [
+                          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                             ClipRRect(
-                                borderRadius:  BorderRadius.only(
+                                borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(constants.dInnerRadius),
                                     bottomLeft: Radius.circular(constants.dInnerRadius)),
                                 child: Image.network(
@@ -359,16 +373,99 @@ class DishesForRatioScreen extends ConsumerWidget {
                                   cacheHeight: (constants.paddingUnit * 12).ceil(),
                                   cacheWidth: (constants.paddingUnit * 12).ceil(),
                                 )),
-                            // Text(gagListDishes[ratio]![rIndex],
-                            //style:
                             Padding(
-                                padding: EdgeInsets.only(left: constants.paddingUnit * 2),
-                                child: StyledHeadline(
-                                    text: gagListDishes[ratio]![rIndex],
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineLarge!
-                                        .copyWith(fontWeight: FontWeight.w600)))
+                                padding: EdgeInsets.only(
+                                        left: constants.paddingUnit, top: constants.paddingUnit) *
+                                    2,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      StyledHeadline(
+                                          text: gagListDishes[ratio]![rIndex].first,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge!
+                                              .copyWith(fontWeight: FontWeight.w600)),
+                                      Padding(
+                                          padding: EdgeInsets.only(top: constants.paddingUnit),
+                                          child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 0, right: constants.paddingUnit),
+                                                    child: SizedBox(
+                                                        height: constants.paddingUnit * 3,
+                                                        width: constants.paddingUnit * 3,
+                                                        child: ElevatedButton(
+                                                          onPressed: () => {
+                                                            gagListDishes[ratio]![rIndex].second =
+                                                                gagListDishes[ratio]![rIndex]
+                                                                        .second -
+                                                                    1
+                                                          },
+                                                          style: ElevatedButton.styleFrom(
+                                                            elevation: 0,
+                                                            padding: const EdgeInsets.all(0),
+                                                            backgroundColor: Theme.of(context)
+                                                                .colorScheme
+                                                                .surface,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(
+                                                                    constants.dInnerRadius / 2)),
+                                                          ),
+                                                          child: const Text('-',
+                                                              style: TextStyle(
+                                                                  color: Colors.black,
+                                                                  fontWeight: FontWeight.bold)),
+                                                        ))),
+                                                Text(
+                                                    gagListDishes[ratio]![rIndex].second.toString(),
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight: FontWeight.bold)),
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: constants.paddingUnit),
+                                                    child: SizedBox(
+                                                        height: constants.paddingUnit * 3,
+                                                        width: constants.paddingUnit * 3,
+                                                        child: ElevatedButton(
+                                                          onPressed: () => {
+                                                            gagListDishes[ratio]![rIndex].second =
+                                                                gagListDishes[ratio]![rIndex]
+                                                                        .second +
+                                                                    1
+                                                          },
+                                                          style: ElevatedButton.styleFrom(
+                                                            elevation: 0,
+                                                            padding: const EdgeInsets.all(0),
+                                                            backgroundColor: Theme.of(context)
+                                                                .colorScheme
+                                                                .surface,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(
+                                                                    constants.dInnerRadius / 2)),
+                                                          ),
+                                                          child: const Text('+',
+                                                              style: TextStyle(
+                                                                  color: Colors.black,
+                                                                  fontWeight: FontWeight.bold)),
+                                                        ))),
+                                                SizedBox(
+                                                    width: constants.paddingUnit * 15,
+                                                    height: constants.paddingUnit * 4.5,
+                                                    child: Expanded(
+                                                      child:SizedBox(
+                                                        child: IconButton(
+                                                            icon: const Icon(Icons.delete),
+                                                            onPressed: () {},
+                                                            color: Theme.of(context)
+                                                                .colorScheme
+                                                                .secondary))))
+                                              ]))
+                                    ]))
                           ]));
                     }))));
   }
