@@ -161,23 +161,53 @@ class CustomHeader extends ConsumerWidget {
         ],
       ),
     );
-    // TODO(design): selectionAppBar заменяет только topNavBar, не трогая title и header
     if (selectionAppBar == null) {
       return defaultLayout;
     }
     final selectionModeEnabled = ref.watch(selectionProvider(title!)
         .select((value) => value.selectionModeEnabled));
-    debugPrint('selectionModeEnabled = $selectionModeEnabled');
-    if (selectionModeEnabled) {
-      debugPrint('${ref.watch(selectionProvider(title!))}');
-    }
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: selectionModeEnabled
             ? Theme.of(context).colorScheme.surface
             : Colors.transparent));
-    if (selectionModeEnabled) {}
-    return selectionModeEnabled ? selectionAppBar! : defaultLayout;
+    if (selectionModeEnabled) {
+      return Column(
+        children: [
+          SizedBox(
+              height: constants.topPadding +
+                  Constants.topNavigationBarHeight * constants.paddingUnit,
+              child: selectionAppBar!),
+          Visibility(
+            visible: header != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: constants.dAppHeadlinePadding,
+                  child: header != null ? header! : const SizedBox.shrink(),
+                )),
+          ),
+          Visibility(
+            visible: title != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: constants.dAppHeadlinePadding,
+                  child: title != null
+                      ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: StyledHeadline(
+                            text: title!,
+                            textStyle: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                )),
+          )
+        ],
+      );
+    }
+    return defaultLayout;
   }
 }
