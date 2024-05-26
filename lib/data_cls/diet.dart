@@ -127,15 +127,7 @@ class Diets extends _$Diets {
                             hash: 'meal-2',
                             name: 'Обед',
                             index: 0,
-                            dishes: const [
-                              Dish(
-                                  hash: 'dish-2',
-                                  name: 'Борщ',
-                                  recipe: '',
-                                  tags: [],
-                                  ingredients: {},
-                                  imageUrl: '')
-                            ]),
+                            dishes: const []),
                       ]))),
           Diet(
               hash: '1',

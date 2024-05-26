@@ -80,7 +80,7 @@ class Meal with _$Meal {
 
   Dish getDish(int index) => dishes.keys.elementAt(index);
 
-  bool get done => dishes.values.every((cooked) => cooked);
+  bool get done => dishes.isNotEmpty && dishes.values.every((cooked) => cooked);
 
   FlatList getDishesList(
     BuildContext context,

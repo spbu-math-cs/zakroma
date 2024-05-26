@@ -244,13 +244,12 @@ class MealsView extends ConsumerWidget {
     final sltnProvider = selectionProvider('Закрома');
     return AsyncBuilder(
       future: ref.watch(dietsProvider.selectAsync((diets) => diets
-              .getMeals(DateTime.now().weekday)
-              // смотрим только на те, которые не помечены пользователем как прошедшие
-              .where((el) => !el.$2.done)
-              .toList(growable: false)
-              .sublist(0, 3) // показываем только 3 следующих приёма пищи
-          )),
+          .getMeals(DateTime.now().weekday)
+          // смотрим только на те, которые не помечены пользователем как прошедшие
+          .where((el) => !el.$2.done)
+          .toList(growable: false))),
       builder: (meals) {
+        meals = meals.sublist(0, 3 < meals.length ? 3 : meals.length);
         for (var i = 0; i < meals.length; ++i) {
           ref.read(sltnProvider.notifier).put((meals[i].$1, i), i == 0);
         }
@@ -337,51 +336,52 @@ class MealsView extends ConsumerWidget {
           Expanded(
               flex: 20,
               child: Builder(builder: (context) {
-                // TODO(tech): проверить, что приём пустой
-                if (false) {
-                  // блюда в приёме пищи отсутствуют
-                  return Center(
-                    child: TextButton.icon(
-                        onPressed: () {
-                          // TODO(feat): всплывающее окно добавления блюда
-                        },
-                        style: TextButton.styleFrom(
-                            // padding: EdgeInsets.zero
-                            ),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Добавить блюдо')),
-                  );
-                }
                 final selectedIndex = ref
                     .watch(sltnProvider.select((map) => map.singleSelection));
+                Widget dishesDisplay = Center(
+                  // блюда в приёме пищи отсутствуют
+                  // TODO(design): «здесь пустовато...» вместо кнопки
+                  child: TextButton.icon(
+                      onPressed: () {
+                        // TODO(tech): всплывающее окно добавления блюда
+                      },
+                      style: TextButton.styleFrom(
+                          // padding: EdgeInsets.zero
+                          ),
+                      icon: const Icon(Icons.add),
+                      label: const Text('Добавить блюдо')),
+                );
+                if (meals[selectedIndex].$2.dishesCount > 0) {
+                  dishesDisplay = Wrap(
+                    spacing: constants.paddingUnit,
+                    runSpacing: constants.paddingUnit,
+                    children: List<Widget>.generate(
+                        meals[selectedIndex].$2.dishesCount.clamp(0, 4),
+                        (index) => SizedBox.square(
+                            dimension: (17 / 2) * constants.paddingUnit,
+                            child: RRButton(
+                                onTap: () {},
+                                elevation: 0,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                child: meals[selectedIndex]
+                                    .$2
+                                    .dishes
+                                    .entries
+                                    .where((el) => !el.value)
+                                    .elementAt(index)
+                                    .key
+                                    .image))),
+                  );
+                }
                 return RRCard(
                     borderColor: Theme.of(context).colorScheme.outline,
                     padding: EdgeInsets.only(bottom: constants.paddingUnit),
                     // TODO(design): выравнивание надо ставить такое, но править паддинг
                     childAlignment: Alignment.topLeft,
                     childPadding: EdgeInsets.all(constants.paddingUnit),
-                    child: Wrap(
-                      spacing: constants.paddingUnit,
-                      runSpacing: constants.paddingUnit,
-                      children: List<Widget>.generate(
-                          meals[selectedIndex].$2.dishesCount.clamp(0, 4),
-                          (index) => SizedBox.square(
-                              dimension: (17 / 2) * constants.paddingUnit,
-                              child: RRButton(
-                                  onTap: () {},
-                                  elevation: 0,
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  child: meals[selectedIndex]
-                                      .$2
-                                      .dishes
-                                      .entries
-                                      .where((el) => !el.value)
-                                      .elementAt(index)
-                                      .key
-                                      .image))),
-                    ));
+                    child: dishesDisplay);
               }))
         ]);
       },
