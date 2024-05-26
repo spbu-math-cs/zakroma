@@ -36,199 +36,488 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return CustomScaffold(
         header: const CustomHeader(title: 'Профиль'),
-        body: Column(
-          children: [
-            // Профиль пользователя
-            Expanded(
-                flex: 16,
-                child: RRSurface(
-                  child: Padding(
-                    padding: EdgeInsets.all(constants.paddingUnit),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            flex: 12,
-                            child: Padding(
-                              padding: EdgeInsets.all(constants.paddingUnit),
-                              child: Center(
-                                child: RRButton(
-                                  // TODO: сделать добавление фото из галареи после появления запроса на бэке
-                                  onTap: () async {
-                                    final image = await ImagePicker()
-                                        .pickImage(source: ImageSource.gallery);
-                                    if (image != null) {
-                                      //   final user = ref.read(userProvider);
-                                      //   ref
-                                      //       .read(userProvider.notifier)
-                                      //       .updatePic(
-                                      //           image.path);
-                                      // debugPrint(image.path);
-                                      await showDialog(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                                title: const Text('Ошибка'),
-                                                content: const Text(
-                                                    'К сожалению, на данный момент мы не можем отобразить Ваше фото в профиле :('),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        if (Navigator.of(
-                                                                context)
-                                                            .canPop()) {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        }
-                                                      },
-                                                      child:
-                                                          const Text('Готово')),
-                                                ],
-                                              ));
-                                    }
-                                  },
-                                  elevation: 0,
-                                  borderColor:
-                                      Theme.of(context).colorScheme.surface,
-                                  child: Material(
-                                    borderRadius: BorderRadius.circular(
-                                        constants.dInnerRadius),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: FutureBuilder(
-                                        future: ref.watch(
-                                            userProvider.selectAsync(
-                                                (user) => user.userPicUrl)),
-                                        builder: (_, userPicUrl) => userPicUrl
-                                                .hasData
-                                            ? SizedBox.square(
-                                                dimension:
-                                                    constants.paddingUnit * 12,
-                                                child: Image.network(
-                                                  userPicUrl.requireData,
-                                                  cacheHeight:
-                                                      (constants.paddingUnit *
+        body: SingleChildScrollView(
+          child: SizedBox(
+            height: constants.paddingUnit * 84,
+            child: Column(
+              children: [
+                Expanded( // Профиль пользователя
+                    flex: 16,
+                    child: RRSurface(
+                      child: Padding(
+                        padding: EdgeInsets.all(constants.paddingUnit),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                flex: 12,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.all(constants.paddingUnit),
+                                  child: Center(
+                                    child: RRButton(
+                                      // TODO: сделать добавление фото из галареи после появления запроса на бэке
+                                      onTap: () async {
+                                        final image = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.gallery);
+                                        if (image != null) {
+                                          //   final user = ref.read(userProvider);
+                                          //   ref
+                                          //       .read(userProvider.notifier)
+                                          //       .updatePic(
+                                          //           image.path);
+                                          // debugPrint(image.path);
+                                          await showDialog(
+                                              context: context,
+                                              builder: (_) => AlertDialog(
+                                                    title: const Text('Ошибка'),
+                                                    content: const Text(
+                                                        'К сожалению, на данный момент мы не можем отобразить Ваше фото в профиле :('),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            if (Navigator.of(
+                                                                    context)
+                                                                .canPop()) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            }
+                                                          },
+                                                          child: const Text(
+                                                              'Готово')),
+                                                    ],
+                                                  ));
+                                        }
+                                      },
+                                      elevation: 0,
+                                      borderColor:
+                                          Theme.of(context).colorScheme.surface,
+                                      child: Material(
+                                        borderRadius: BorderRadius.circular(
+                                            constants.dInnerRadius),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: FutureBuilder(
+                                            future: ref.watch(
+                                                userProvider.selectAsync(
+                                                    (user) => user.userPicUrl)),
+                                            builder: (_, userPicUrl) => userPicUrl
+                                                    .hasData
+                                                ? SizedBox.square(
+                                                    dimension:
+                                                        constants.paddingUnit *
+                                                            12,
+                                                    child: Image.network(
+                                                      userPicUrl.requireData,
+                                                      cacheHeight: (constants
+                                                                  .paddingUnit *
                                                               12)
                                                           .ceil(),
-                                                  cacheWidth:
-                                                      (constants.paddingUnit *
+                                                      cacheWidth: (constants
+                                                                  .paddingUnit *
                                                               12)
                                                           .ceil(),
+                                                    ),
+                                                  )
+                                                : const CircularProgressIndicator()),
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                            Expanded(
+                                flex: 26,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.all(constants.paddingUnit),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: RRButton(
+                                      onTap: () {},
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer,
+                                      elevation: 0,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              // Заменить в процессе разработки новой страницы Профиля на более разумное решение
+                                              Expanded(
+                                                child: AsyncBuilder(
+                                                  async: ref.read(userProvider),
+                                                  builder: (user) => Text(
+                                                    '${user.firstName} ${user.secondName}',
+                                                    // text: 'Дима Sherem.',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall!
+                                                        .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text('Подробнее',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .onPrimaryContainer)),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: constants.paddingUnit /
+                                                        4,
+                                                    left:
+                                                        constants.paddingUnit /
+                                                            2),
+                                                child: Icon(
+                                                  Icons.info_outline,
+                                                  size:
+                                                      constants.paddingUnit * 2,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer,
                                                 ),
                                               )
-                                            : const CircularProgressIndicator()),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            )),
-                        Expanded(
-                            flex: 26,
+                                )),
+                          ],
+                        ),
+                      ),
+                    )),             
+                Expanded( // Настройки и группа
+                    flex: 12,
+                    child: RRSurface(
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: RRButton(
+                            onTap: () {},
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.only(
+                                topLeft:
+                                    Radius.circular(constants.dOuterRadius),
+                                topRight:
+                                    Radius.circular(constants.dOuterRadius)),
+                            childAlignment: Alignment.centerLeft,
                             child: Padding(
-                              padding: EdgeInsets.all(constants.paddingUnit),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: RRButton(
+                              padding: EdgeInsets.only(
+                                  top: constants.paddingUnit / 2),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: constants.paddingUnit * 2,
+                                        right: constants.paddingUnit),
+                                    child: Icon(
+                                      Icons.settings_outlined,
+                                      size: constants.paddingUnit * 3,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Настройки',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )),
+                          Expanded(
+                              child: RRButton(
                                   onTap: () {},
                                   backgroundColor: Theme.of(context)
                                       .colorScheme
                                       .primaryContainer,
-                                  elevation: 0,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Заменить в процессе разработки новой страницы Профиля на более разумное решение
-                                          Expanded(
-                                            child: AsyncBuilder(
-                                              async: ref.read(userProvider),
-                                              builder: (user) => Text(
-                                                '${user.firstName} ${user.secondName}',
-                                                // text: 'Дима Sherem.',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineSmall!
-                                                    .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(
+                                          constants.dOuterRadius),
+                                      bottomRight: Radius.circular(
+                                          constants.dOuterRadius)),
+                                  childAlignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: constants.paddingUnit / 2),
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: constants.paddingUnit * 2,
+                                              right: constants.paddingUnit),
+                                          child: Icon(
+                                            Icons.group,
+                                            size: constants.paddingUnit * 3,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
                                           ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Подробнее',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .copyWith(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimaryContainer)),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: constants.paddingUnit / 4,
-                                                left:
-                                                    constants.paddingUnit / 2),
-                                            child: Icon(
-                                              Icons.info_outline,
-                                              size: constants.paddingUnit * 2,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimaryContainer,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                )),
-            // Список настроек
-            Expanded(
-                flex: 12,
-                child: RRSurface(
-                  child: FlatList(
-                      scrollPhysics: const ClampingScrollPhysics(),
-                      dividerColor: Theme.of(context).colorScheme.surface,
-                      children: List.generate(
-                        categoryList.length,
-                        (index) => Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => {
-                              // TODO(func): переходить в категорию
-                            },
+                                        ),
+                                        Text(
+                                          'Группа',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall,
+                                        ),
+                                      ],
+                                    ),
+                                  )))
+                        ],
+                      ),
+                    )),
+                Expanded(
+              flex: 18,
+              child: RRSurface(
+                  child: Column(
+                children: [
+                  // Заголовок: «Статистика»
+                  Expanded(
+                      flex: 8,
+                      child: Padding(
+                        padding: constants.dHeadingPadding,
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return Align(
+                            alignment: Alignment.topLeft,
                             child: StyledHeadline(
-                              text: categoryList[index],
-                              textStyle: categoryTextStyle,
-                            ),
-                          ),
-                        ),
+                                text: 'Статистика',
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15 * constraints.maxHeight / 16,
+                                      height: 1,
+                                      leadingDistribution:
+                                          TextLeadingDistribution.proportional,
+                                    )),
+                          );
+                        }),
                       )),
-                )),
-            Expanded(
-                flex: 18,
-                child: IconButton(
-                    onPressed: () async {
-                      ref.read(userProvider.notifier).logout();
-                      if (!context.mounted) return;
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const Zakroma()));
-                    },
-                    icon: Icon(
-                      Icons.logout,
-                      color: Theme.of(context).colorScheme.onSurface,
+                  // Перечисление рецептов
+                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
+                  const Expanded(
+                      flex: 12,
+                        child: RRSurface(borderRadius: BorderRadius.zero, child: Placeholder()),
+                      )
+                ],
+              ))),
+                Expanded( // Любимые блюда
+                    flex: 25,
+                    child: RRSurface(
+                        child: Column(
+                      children: [
+                        // Заголовок: «Любимые блюда»
+                        Expanded(
+                            flex: 7,
+                            child: Padding(
+                              padding: constants.dHeadingPadding,
+                              child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: StyledHeadline(
+                                      text: 'Любимые блюда',
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                15 * constraints.maxHeight / 16,
+                                            height: 1,
+                                            leadingDistribution:
+                                                TextLeadingDistribution
+                                                    .proportional,
+                                          )),
+                                );
+                              }),
+                            )),
+                        // Перечисление рецептов
+                        // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
+                        Expanded(
+                            flex: 18,
+                            child: Padding(
+                              padding: constants.dBlockPadding -
+                                  constants.dCardPadding,
+                              child: Row(
+                                // TODO(server): подгрузить рецепты (id, название, иконка)
+                                // TODO(tech): реализовать recipesProvider?
+                                // TODO(tech): использовать генератор списков вместо перечисления
+                                children: [
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          borderColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+                                                  flex: 49,
+                                                  child: SizedBox.expand(
+                                                    child: Image.asset(
+                                                      'assets/images/borsch.jpeg',
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  )),
+                                              Expanded(
+                                                flex: 23,
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text: 'Борщ',
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall!
+                                                                .copyWith(
+                                                                    height: 1)),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          borderColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+                                                  flex: 49,
+                                                  child: SizedBox.expand(
+                                                    child: Image.asset(
+                                                      'assets/images/potatoes.jpeg',
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  )),
+                                              Expanded(
+                                                flex: 23,
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text: 'Пюре с отбивной',
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ))),
+                                  Expanded(
+                                      child: RRButton(
+                                          onTap: () {},
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          borderColor: Theme.of(context)
+                                              .colorScheme
+                                              .surface,
+                                          padding: constants.dCardPadding,
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+                                                  flex: 49,
+                                                  child: SizedBox.expand(
+                                                    child: Image.asset(
+                                                      'assets/images/salad.jpeg',
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  )),
+                                              Expanded(
+                                                flex: 23,
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        constants.dLabelPadding,
+                                                    child: StyledHeadline(
+                                                        text:
+                                                            'Цезарь с курицей',
+                                                        textStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .headlineSmall),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ))),
+                                ],
+                              ),
+                            ))
+                      ],
                     ))),
-            const Expanded(flex: 25, child: RRSurface(child: Placeholder())),
-          ],
+                Expanded( // Выйти из аккаунта
+                    flex: 6,
+                    child: RRSurface(
+                      borderRadius:
+                          BorderRadius.circular(constants.dOuterRadius) / 2,
+                      child: RRButton(
+                        onTap: () async {
+                          ref.read(userProvider.notifier).logout();
+                          if (!context.mounted) return;
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) => const Zakroma()));
+                        },
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        borderRadius:
+                            BorderRadius.circular(constants.dOuterRadius) / 2,
+                        child: Text(
+                          'Выйти из аккаунта',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondary),
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+          ),
         ));
   }
 }
