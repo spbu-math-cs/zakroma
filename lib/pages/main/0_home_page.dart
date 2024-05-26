@@ -280,7 +280,9 @@ class MealsView extends ConsumerWidget {
                     final (personal, meal) = meals[index];
                     final selected = ref.watch(sltnProvider
                         .select((value) => value.selected(personal, index)));
-                    return Expanded(
+                    return SizedBox(
+                        // 6 — высота кнопки, 1 — нижний отступ
+                        height: (6 + 1) * constants.paddingUnit,
                         child: RRButton(
                             borderColor: Theme.of(context).colorScheme.outline,
                             backgroundColor: selected
