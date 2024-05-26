@@ -71,7 +71,7 @@ class Meal with _$Meal {
         return Meal(
             hash: hash, name: name, index: index, dishes: dishes.parseDishes());
       case _:
-        debugPrint('DEBUG: $json');
+        debugPrint('Meal.fromJson failed to parse: $json');
         throw UnimplementedError();
     }
   }

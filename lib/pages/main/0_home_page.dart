@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
+import 'package:zakroma_frontend/data_cls/recipes.dart';
 import 'package:zakroma_frontend/widgets/rr_card.dart';
 
 import '../../data_cls/diet.dart';
+import '../../data_cls/dish.dart';
 import '../../data_cls/meal.dart';
 import '../../utility/constants.dart';
 import '../../utility/get_current_date.dart';
@@ -111,121 +113,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                       child: Padding(
                         padding:
                             constants.dBlockPadding - constants.dCardPadding,
-                        child: Row(
-                          // TODO(server): подгрузить рецепты (id, название, иконка)
-                          // TODO(tech): реализовать recipesProvider?
-                          // TODO(tech): использовать генератор списков вместо перечисления
-                          children: [
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.outline,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/borsch.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Борщ',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall!
-                                                      .copyWith(height: 1)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.outline,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        // TODO(server): запрос на сервер для получения блюд
-                                        // TODO(tape): убрать заглушки
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/potatoes.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Пюре с отбивной',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                            Expanded(
-                                child: RRButton(
-                                    onTap: () {},
-                                    borderRadius: constants.dInnerRadius,
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer,
-                                    borderColor:
-                                        Theme.of(context).colorScheme.outline,
-                                    padding: constants.dCardPadding,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                            flex: 49,
-                                            child: SizedBox.expand(
-                                              child: Image.asset(
-                                                'assets/images/salad.jpeg',
-                                                fit: BoxFit.fill,
-                                              ),
-                                            )),
-                                        Expanded(
-                                          flex: 23,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: constants.dLabelPadding,
-                                              child: StyledHeadline(
-                                                  text: 'Цезарь с курицей',
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ))),
-                          ],
-                        ),
+                        child: AsyncBuilder(
+                            async: ref.watch(recipesProvider),
+                            builder: (dishes) {
+                              return Row(
+                                  // TODO(server): подгрузить рецепты (id, название, иконка)
+                                  // TODO(tech): реализовать recipesProvider?
+                                  // TODO(tech): использовать генератор списков вместо перечисления
+                                  children: List<Widget>.generate(
+                                      3, (index) => DishTile(dishes[index])));
+                            }),
                       ))
                 ],
               ))),
@@ -391,6 +288,50 @@ class MealsView extends ConsumerWidget {
   }
 }
 
+class DishTile extends ConsumerWidget {
+  final Dish dish;
+  const DishTile(this.dish, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final constants = ref.watch(constantsProvider);
+    return RRButton(
+        onTap: () {},
+        borderRadius: constants.dInnerRadius,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        borderColor: Theme.of(context).colorScheme.outline,
+        padding: constants.dCardPadding,
+        child: SizedBox(
+          height: (16 + 2) * constants.paddingUnit,
+          width: (37 / 3) * constants.paddingUnit,
+          child: Column(
+            children: [
+              Expanded(
+                  flex: 49,
+                  child: SizedBox.expand(
+                    child: dish.image,
+                  )),
+              Expanded(
+                flex: 23,
+                child: Center(
+                  child: Padding(
+                    padding: constants.dLabelPadding,
+                    child: StyledHeadline(
+                        text: dish.name,
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(height: 1)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+// TODO(tech): переписать верхнюю панель со статусом/рекламой под DisplayBar
 enum DisplayBarType {
   deliveryStatus,
   viandStatus,

@@ -52,16 +52,18 @@ class Dish with _$Dish {
   factory Dish.fromJson(Map<String, dynamic> json) {
     switch (json) {
       case {
-          'hash': String hash,
-          'name': String name,
-          'image-path': String imageUrl,
-          'recipe': String recipe,
           'calories': double kcal,
           'carbs': double carbs,
-          'proteins': double proteins,
           'fats': double fats,
+          'hash': String hash,
+          'id': int _,
+          'image-path': String imageUrl,
+          'name': String name,
+          'products': Map<Ingredient, int>
+              ingredients, // TODO(tech): там List<...>
+          'proteins': double proteins,
+          'recipe': String recipe,
           'tags': List<dynamic> tags,
-          'ingredients': Map<Ingredient, int> ingredients,
         }:
         return Dish(
             hash: hash,
@@ -77,17 +79,91 @@ class Dish with _$Dish {
             ingredients: Map<Ingredient, int>.from(ingredients.map(
                 (key, value) => MapEntry(
                     Ingredient.fromJson(key as Map<String, dynamic>), value))));
+      case {
+          'calories': double kcal,
+          'carbs': double carbs,
+          'fats': double fats,
+          'hash': String hash,
+          'id': int _,
+          'image-path': String imageUrl,
+          'name': String name,
+          'products': Map<Ingredient, int>
+              ingredients, // TODO(tech): там List<...>
+          'proteins': double proteins,
+          'recipe': String recipe,
+        }:
+        return Dish(
+            hash: hash,
+            name: name,
+            imageUrl: imageUrl,
+            recipe: recipe,
+            kcal: kcal,
+            carbs: carbs,
+            proteins: proteins,
+            fats: fats,
+            tags: [],
+            ingredients: Map<Ingredient, int>.from(ingredients.map(
+                (key, value) => MapEntry(
+                    Ingredient.fromJson(key as Map<String, dynamic>), value))));
+      case {
+          'calories': double kcal,
+          'carbs': double carbs,
+          'fats': double fats,
+          'hash': String hash,
+          'id': int _,
+          'image-path': String imageUrl,
+          'name': String name,
+          'products': null,
+          'proteins': double proteins,
+          'recipe': '',
+        }:
+        return Dish(
+            hash: hash,
+            name: name,
+            imageUrl: imageUrl,
+            kcal: kcal,
+            carbs: carbs,
+            proteins: proteins,
+            fats: fats,
+            recipe: '',
+            tags: [],
+            ingredients: {});
       case _:
-        debugPrint('DEBUG: $json');
+        debugPrint('Dish.fromJson failed to parse: $json');
         throw UnimplementedError();
     }
   }
 
-  Image get image =>
-      Image.network(imageUrl, errorBuilder: (context, exception, stackTrace) {
-        debugPrint('Could not find image at `$imageUrl`');
-        return Image.asset('assets/images/dish_default.png');
-      });
+  // Image get image => Image.network(imageUrl, fit: BoxFit.fill,
+  //         errorBuilder: (context, exception, stackTrace) {
+  //       debugPrint('Could not find image at `$imageUrl`');
+  //       return Image.asset('assets/images/dish_default.png');
+  //     });
+
+  Widget get image {
+    bool networkFail = false;
+    final networkImage = Ink.image(
+        image: NetworkImage(imageUrl),
+        fit: BoxFit.fill,
+        onImageError: (_, __) {
+          // TODO(tech): это не работает((( Когда входим в return, флаг всегда false
+          networkFail = true;
+        });
+    debugPrint('networkFail = $networkFail');
+    return networkFail
+        ? Ink.image(
+            image: const AssetImage('assets/images/dish_default.png'),
+            fit: BoxFit.fill)
+        : networkImage;
+    return Image.network(imageUrl, fit: BoxFit.fill,
+        errorBuilder: (context, exception, stackTrace) {
+      debugPrint('Could not find image at `$imageUrl`');
+      return Image.asset('assets/images/dish_default.png');
+    });
+  }
+
+  // Widget get image => Ink.image(
+  //     image: AssetImage('assets/images/dish_default.png'), fit: BoxFit.fill);
 }
 
 extension ParseDishes on List<Map<String, dynamic>> {

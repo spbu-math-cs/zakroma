@@ -62,9 +62,12 @@ class Client extends _$Client {
     return http.Client();
   }
 
-  Future<http.Response> get(String request,
-      {required String token, required String cookie}) async {
+  Future<http.Response> get<T>(String request,
+      {T? body, String? token, String? cookie}) async {
     // debugPrint('---GET---\n($request, $token, $cookie)');
+    final httpRequest = http.Request('GET', makeUri(request));
+    httpRequest.body = jsonEncode(body);
+    return http.Response.fromStream(await state.send(httpRequest));
     return state
         .get(makeUri(request), headers: makeHeader(token, cookie))
         .timeout(Constants.networkTimeout,
