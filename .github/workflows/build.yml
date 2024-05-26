@@ -24,7 +24,7 @@ jobs:
         uses: android-actions/setup-android@v2
       - run: flutter pub get
       - run: dart run build_runner build
-      - run: flutter build apk --release
+      - run: flutter build apk
       - name: 'Upload APK'
         uses: 'actions/upload-artifact@v2'
         with:
