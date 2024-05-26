@@ -45,13 +45,16 @@ class RRButton extends ConsumerWidget {
         borderColor: borderColor,
         borderRadius: borderRadius,
         elevation: elevation ?? constants.dElevation,
-        childAlignment: childAlignment,
-        childPadding: childPadding,
         child: InkWell(
             onTap: onTap,
             onDoubleTap: onDoubleTap,
             onLongPress: onLongPress,
-            child: child));
+            child: Align(
+                alignment: childAlignment,
+                child: Padding(
+                  padding: childPadding,
+                  child: child,
+                ))));
   }
 }
 
