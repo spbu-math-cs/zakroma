@@ -420,26 +420,6 @@ class DailyRatiosScreen extends ConsumerWidget {
   }
 }
 
-// // --- DRAFT --- //
-// Map<String, List<Pair<String, int>>> gagListDishes = {
-//   'Завтрак': [
-//     Pair(
-//       'Utka',
-//       1,
-//     ),
-//     Pair('ovoshi', 2),
-//     Pair('eda', 2)
-//   ],
-//   'Обед': [Pair('AA', 1), Pair('food', 3), Pair('nothing', 3), Pair('b', 5)],
-//   'Супердлинный ужин': [
-//     Pair('AаааA', 5),
-//     Pair('foооооооod', 7),
-//     Pair('nоооооothing', 66),
-//     Pair('b', 10)
-//   ],
-//   'Ужин': [Pair('A', 22), Pair('Borcsh', 11), Pair('aqua', 0)]
-// };
-
 class DishesForRatioScreen extends ConsumerWidget {
   final String ratio;
   final String date;
@@ -506,8 +486,8 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                         child: ElevatedButton(
                                                           onPressed: () => {
                                                             gagDishList[date]![ratio]![rIndex]
-                                                                .second > 0 ?gagDishList[date]![ratio]![rIndex]
-                                                                .second-- : {},
+                                                                .second > 1 ?gagDishList[date]![ratio]![rIndex]
+                                                                .second-- : {gagDishList[date]![ratio]!.remove(gagDishList[date]![ratio]![rIndex])},
                                                             Navigator.of(context).pop(),
                                                             Navigator.push(
                                                                 context,
@@ -582,7 +562,16 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                         child: SizedBox(
                                                             child: IconButton(
                                                                 icon: const Icon(Icons.delete),
-                                                                onPressed: () {},
+                                                                onPressed: () {
+                                                                  gagDishList[date]![ratio]!.remove(gagDishList[date]![ratio]![rIndex]);
+                                                                  Navigator.of(context).pop();
+                                                                  Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                  DishesForRatioScreen(
+                                                                  ratio, date)));
+                                                                },
                                                                 color: Theme.of(context)
                                                                     .colorScheme
                                                                     .secondary))))
