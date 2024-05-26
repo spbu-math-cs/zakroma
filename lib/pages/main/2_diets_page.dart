@@ -12,19 +12,14 @@ const String gagImg =
     'https://www.eatingwell.com/thmb/rmLlvSjdnJCCy_7iqqj3x7XS72c=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chopped-power-salad-with-chicken-0ad93f1931524a679c0f8854d74e6e57.jpg';
 
 List<Gag> gagList = [
-  Gag(date: '27 мая', soloRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'], familyRatio: []),
-  Gag(date: '28 мая', soloRatio: [], familyRatio: []),
-  Gag(date: '29 мая', soloRatio: [], familyRatio: ['Ужин']),
-  Gag(date: '30 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(date: '31 мая', soloRatio: ['Ужин'], familyRatio: []),
-  Gag(date: '1 июня', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
-  Gag(date: '2 июня', soloRatio: ['Завтрак'], familyRatio: []),
-  Gag(date: '3 июня', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(date: '4 июня', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(
-      date: '5 июня',
-      soloRatio: ['Супердлинный Ужин'],
-      familyRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'])
+  Gag(date: '27 мая', soloRatio: ['Банкет день Города', 'Завтрак', 'Обед'], familyRatio: ['Ужин']),
+  Gag(date: '28 мая', soloRatio: [], familyRatio: ['Романтика Ужин']),
+  Gag(date: '29 мая', soloRatio: ['Завтрак у Тиффани'], familyRatio: ['Ужин дома:(']),
+  Gag(date: '30 мая', soloRatio: [], familyRatio: []),
+  Gag(date: '31 мая', soloRatio: ['Ужин Мишлен'], familyRatio: []),
+  Gag(date: '1 июня', soloRatio: ['Завтрак ПП'], familyRatio: []),
+  Gag(date: '2 июня', soloRatio: [], familyRatio: ['Ужин Диета']),
+  Gag(date: '3 июня', soloRatio: ['Завтрак', 'Перекус'], familyRatio: ['Обед в Таверне', 'Ужин?']),
 ];
 
 class Gag {
@@ -41,15 +36,100 @@ class GagDish {
   GagDish({required this.name});
 }
 
-List<GagDish> gagDishList = [
-  GagDish(name: 'AAAA'),
-  GagDish(name: 'базированное блюдо'),
-  GagDish(name: 'СУПЕР ЕДА'),
-  GagDish(name: 'яблоко'),
-  GagDish(name: 'Джем'),
-  GagDish(name: 'что-то супердлинное'),
-  GagDish(name: 'овсянка'),
-];
+Map<String, Map<String, List<Pair<GagDish, int>>>> gagDishList = {
+  '27 мая': {
+    'Банкет день Города': [
+      Pair(GagDish(name: 'Тарталетки'), 2),
+      Pair(GagDish(name: 'Торт'), 1),
+      Pair(GagDish(name: 'Сок'), 1)
+    ],
+    'Завтрак': [Pair(GagDish(name: 'Булочка'), 1), Pair(GagDish(name: 'Чай'), 1)],
+    'Обед': [
+      Pair(GagDish(name: 'Салат Оливье'), 1),
+      Pair(GagDish(name: 'Борщ'), 1),
+      Pair(GagDish(name: 'Морс'), 1),
+      Pair(GagDish(name: 'Корзиночка'), 1)
+    ],
+    'Ужин': [
+      Pair(GagDish(name: 'Котлеты Домашние'), 1),
+      Pair(GagDish(name: 'Щи'), 1),
+      Pair(GagDish(name: 'Морс'), 1),
+      Pair(GagDish(name: 'Корзиночка'), 1),
+      Pair(GagDish(name: 'Чай с ромашкой'), 1),
+      Pair(GagDish(name: 'Еще пирожное'), 1),
+    ],
+  },
+  '28 мая': {
+    'Романтика Ужин': [
+      Pair(GagDish(name: 'Вино'), 1),
+      Pair(GagDish(name: 'Клубника'), 1),
+      Pair(GagDish(name: 'Шоколад'), 1),
+    ],
+  },
+  '29 мая': {
+    'Завтрак у Тиффани': [
+      Pair(GagDish(name: 'Кофе'), 1),
+      Pair(GagDish(name: 'Круассан'), 1),
+    ],
+    'Ужин дома:(': [
+      Pair(GagDish(name: 'Котлеты Домашние'), 1),
+      Pair(GagDish(name: 'Щи'), 1),
+      Pair(GagDish(name: 'Морс'), 1),
+      Pair(GagDish(name: 'Корзиночка'), 1),
+      Pair(GagDish(name: 'Чай с ромашкой'), 1),
+      Pair(GagDish(name: 'Еще пирожное'), 1),
+    ],
+  },
+  '30 мая': {},
+  '31 мая': {
+    'Ужин Мишлен': [
+      Pair(GagDish(name: 'Паста с креветками'), 1),
+      Pair(GagDish(name: 'Сорбет'), 1),
+      Pair(GagDish(name: 'Тарт'), 1)
+    ],
+  },
+  '1 июня': {
+    'Завтрак ПП': [
+      Pair(GagDish(name: 'Сок апельсиновый'), 1),
+      Pair(GagDish(name: 'Яблоки'), 1),
+      Pair(GagDish(name: 'Протеин'), 1),
+      Pair(GagDish(name: 'Оладьи'), 1),
+      Pair(GagDish(name: 'Салат'), 1),
+      Pair(GagDish(name: 'Грудка индейка'), 1),
+    ],
+  },
+  '2 июня': {
+    'Ужин Диента': [Pair(GagDish(name: 'Вода('), 1)],
+  },
+  '3 июня': {
+    'Завтрак': [
+      Pair(GagDish(name: 'Чай черный'), 1),
+      Pair(GagDish(name: 'Блины'), 1),
+      Pair(GagDish(name: 'Голубика'), 1)
+    ],
+    'Перекус': [
+      Pair(GagDish(name: 'Яблоки'), 1),
+      Pair(GagDish(name: 'Вода'), 1),
+      Pair(GagDish(name: 'Вафля'), 1),
+    ],
+    'Ужин?': [
+      Pair(GagDish(name: 'Котлетки?'), 1),
+      Pair(GagDish(name: 'Щи?'), 1),
+      Pair(GagDish(name: 'Морс?'), 1),
+      Pair(GagDish(name: 'Корзиночка'), 1),
+      Pair(GagDish(name: 'Чай с ромашкой'), 1),
+      Pair(GagDish(name: 'Еще пирожное'), 1),
+    ],
+    'Обед в Таверне': [
+      Pair(GagDish(name: 'Хмель'), 1),
+      Pair(GagDish(name: 'Щи'), 1),
+      Pair(GagDish(name: 'Морс'), 1),
+      Pair(GagDish(name: 'Мясо домашнее'), 1),
+      Pair(GagDish(name: 'Чай без ромашки'), 1),
+      Pair(GagDish(name: 'Содовая'), 1),
+    ],
+  },
+};
 
 class DietListPage extends ConsumerWidget {
   const DietListPage({super.key});
@@ -253,7 +333,7 @@ class DailyRatiosScreen extends ConsumerWidget {
                                             gagList[index].soloRatio.length > rIndex
                                                 ? gagList[index].soloRatio[rIndex]
                                                 : gagList[index].familyRatio[
-                                                    rIndex - gagList[index].soloRatio.length])));
+                                                    rIndex - gagList[index].soloRatio.length], gagList[index].date)));
                               },
                               trailing: gagList[index].familyRatio.isEmpty &&
                                       gagList[index].soloRatio.isEmpty
@@ -280,14 +360,29 @@ class DailyRatiosScreen extends ConsumerWidget {
                                                         gagList[index].soloRatio.length > rIndex
                                                             ? gagList[index].soloRatio[rIndex]
                                                             : gagList[index].familyRatio[rIndex -
-                                                                gagList[index].soloRatio.length])));
+                                                                gagList[index].soloRatio.length],
+                                                        gagList[index].date)));
                                           })),
                               subtitle: SizedBox(
                                   child: ListView.builder(
                                       shrinkWrap: true,
-                                      itemExtent:
-                                          constants.paddingUnit / 3 * (gagDishList.length + 7),
-                                      itemCount: min(4, gagDishList.length),
+                                      itemExtent: constants.paddingUnit /
+                                          3 *
+                                          (gagList[index].soloRatio.length > rIndex
+                                              ? gagDishList[gagList[index].date]![gagList[index].soloRatio[rIndex]]!.length +
+                                                  7
+                                              : gagDishList[gagList[index].date]![gagList[index].familyRatio[rIndex - gagList[index].soloRatio.length]]!
+                                                      .length +
+                                                  7),
+                                      itemCount: min(
+                                          4,
+                                          gagList[index].soloRatio.length > rIndex
+                                              ? gagDishList[gagList[index].date]![
+                                                      gagList[index].soloRatio[rIndex]]!
+                                                  .length
+                                              : gagDishList[gagList[index].date]![gagList[index]
+                                                      .familyRatio[rIndex - gagList[index].soloRatio.length]]!
+                                                  .length),
                                       padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
                                       physics: const NeverScrollableScrollPhysics(),
                                       itemBuilder: (BuildContext context, int dishIndex) {
@@ -306,8 +401,18 @@ class DailyRatiosScreen extends ConsumerWidget {
                                                 : const SizedBox(),
                                             title: Text(
                                               dishIndex < 3
-                                                  ? gagDishList[dishIndex].name
-                                                  : 'и еще ${gagDishList.length - 3}',
+                                                  ? (gagList[index].soloRatio.length > rIndex
+                                                      ? gagDishList[gagList[index].date]![
+                                                              gagList[index]
+                                                                  .soloRatio[rIndex]]![dishIndex]
+                                                          .first.name
+                                                      : gagDishList[gagList[index].date]![
+                                                              gagList[index].familyRatio[rIndex -
+                                                                  gagList[index]
+                                                                      .soloRatio
+                                                                      .length]]![dishIndex]
+                                                          .first.name)
+                                                  : 'и еще ${gagList[index].soloRatio.length > rIndex ? gagDishList[gagList[index].date]![gagList[index].soloRatio[rIndex]]!.length - 3: gagDishList[gagList[index].date]![gagList[index].familyRatio[rIndex - gagList[index].soloRatio.length]]!.length - 3}',
                                               style: TextStyle(fontSize: constants.paddingUnit * 2),
                                             ));
                                       }))));
@@ -315,30 +420,31 @@ class DailyRatiosScreen extends ConsumerWidget {
   }
 }
 
-// --- DRAFT --- //
-Map<String, List<Pair<String, int>>> gagListDishes = {
-  'Завтрак': [
-    Pair(
-      'Utka',
-      1,
-    ),
-    Pair('ovoshi', 2),
-    Pair('eda', 2)
-  ],
-  'Обед': [Pair('AA', 1), Pair('food', 3), Pair('nothing', 3), Pair('b', 5)],
-  'Супердлинный ужин': [
-    Pair('AаааA', 5),
-    Pair('foооооооod', 7),
-    Pair('nоооооothing', 66),
-    Pair('b', 10)
-  ],
-  'Ужин': [Pair('A', 22), Pair('Borcsh', 11), Pair('aqua', 0)]
-};
+// // --- DRAFT --- //
+// Map<String, List<Pair<String, int>>> gagListDishes = {
+//   'Завтрак': [
+//     Pair(
+//       'Utka',
+//       1,
+//     ),
+//     Pair('ovoshi', 2),
+//     Pair('eda', 2)
+//   ],
+//   'Обед': [Pair('AA', 1), Pair('food', 3), Pair('nothing', 3), Pair('b', 5)],
+//   'Супердлинный ужин': [
+//     Pair('AаааA', 5),
+//     Pair('foооооооod', 7),
+//     Pair('nоооооothing', 66),
+//     Pair('b', 10)
+//   ],
+//   'Ужин': [Pair('A', 22), Pair('Borcsh', 11), Pair('aqua', 0)]
+// };
 
 class DishesForRatioScreen extends ConsumerWidget {
   final String ratio;
+  final String date;
 
-  const DishesForRatioScreen(this.ratio, {super.key});
+  const DishesForRatioScreen(this.ratio, this.date, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -349,7 +455,7 @@ class DishesForRatioScreen extends ConsumerWidget {
             child: Padding(
                 padding: EdgeInsets.all(constants.paddingUnit * 2),
                 child: ListView.builder(
-                    itemCount: gagListDishes[ratio]!.length,
+                    itemCount: gagDishList[date]![ratio]!.length,
                     itemBuilder: (context, rIndex) {
                       return Container(
                           height: constants.paddingUnit * 12,
@@ -381,11 +487,11 @@ class DishesForRatioScreen extends ConsumerWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       StyledHeadline(
-                                          text: gagListDishes[ratio]![rIndex].first,
+                                          text: gagDishList[date]![ratio]![rIndex].first.name,
                                           textStyle: Theme.of(context)
                                               .textTheme
                                               .headlineLarge!
-                                              .copyWith(fontWeight: FontWeight.w600)),
+                                              .copyWith(fontWeight: FontWeight.w600, fontSize: constants.paddingUnit * 2.5)),
                                       Padding(
                                           padding: EdgeInsets.only(top: constants.paddingUnit),
                                           child: Row(
@@ -399,15 +505,16 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                         width: constants.paddingUnit * 3,
                                                         child: ElevatedButton(
                                                           onPressed: () => {
-                                                            gagListDishes[ratio]![rIndex].second =
-                                                                gagListDishes[ratio]![rIndex]
-                                                                        .second -
-                                                                    1,
-                                                          Navigator.of(context).pop(),
-                                                          Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                          builder: (context) => DishesForRatioScreen(ratio)))
+                                                            gagDishList[date]![ratio]![rIndex]
+                                                                .second > 0 ?gagDishList[date]![ratio]![rIndex]
+                                                                .second-- : {},
+                                                            Navigator.of(context).pop(),
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        DishesForRatioScreen(
+                                                                            ratio, date)))
                                                           },
                                                           style: ElevatedButton.styleFrom(
                                                             elevation: 0,
@@ -425,12 +532,15 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                                   fontWeight: FontWeight.bold)),
                                                         ))),
                                                 SizedBox(
-                                                  width: constants.paddingUnit * 2,
-                                                    child:Center(child:Text(
-                                                    gagListDishes[ratio]![rIndex].second.toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight: FontWeight.bold)))),
+                                                    width: constants.paddingUnit * 2,
+                                                    child: Center(
+                                                        child: Text(
+                                                            gagDishList[date]![ratio]![rIndex]
+                                                                .second
+                                                                .toString(),
+                                                            style: const TextStyle(
+                                                                color: Colors.black,
+                                                                fontWeight: FontWeight.bold)))),
                                                 Padding(
                                                     padding: EdgeInsets.only(
                                                         left: constants.paddingUnit),
@@ -439,15 +549,16 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                         width: constants.paddingUnit * 3,
                                                         child: ElevatedButton(
                                                           onPressed: () => {
-                                                            gagListDishes[ratio]![rIndex].second =
-                                                                gagListDishes[ratio]![rIndex]
-                                                                        .second +
-                                                                    1,
-                                                            Navigator.of(context).pop(), //TODO: нормально переписать с сервером
-                                                          Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                          builder: (context) => DishesForRatioScreen(ratio))),
+                                                            gagDishList[date]![ratio]![rIndex]
+                                                                .second++,
+                                                            Navigator.of(context).pop(),
+                                                            //TODO: нормально переписать с сервером
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        DishesForRatioScreen(
+                                                                            ratio, date))),
                                                           },
                                                           style: ElevatedButton.styleFrom(
                                                             elevation: 0,
@@ -468,13 +579,13 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                     width: constants.paddingUnit * 15,
                                                     height: constants.paddingUnit * 4.5,
                                                     child: Expanded(
-                                                      child:SizedBox(
-                                                        child: IconButton(
-                                                            icon: const Icon(Icons.delete),
-                                                            onPressed: () {},
-                                                            color: Theme.of(context)
-                                                                .colorScheme
-                                                                .secondary))))
+                                                        child: SizedBox(
+                                                            child: IconButton(
+                                                                icon: const Icon(Icons.delete),
+                                                                onPressed: () {},
+                                                                color: Theme.of(context)
+                                                                    .colorScheme
+                                                                    .secondary))))
                                               ]))
                                     ]))
                           ]));
