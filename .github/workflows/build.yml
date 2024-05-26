@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [ "apk" ]
+  pull_request:
+    branches: [ "apk" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.19.0
+      - name: Set up Android SDK
+        if: ${{ env.ACT }} # Only run on local act setups, as GitHub Actions provides the Android SDK on Ubuntu
+        uses: android-actions/setup-android@v2
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - name: 'Upload APK'
+        uses: 'actions/upload-artifact@v2'
+        with:
+          name: 'Built APK'
+          path: 'build/app/outputs/flutter-apk/app-release.apk'
+    # Upload the built APK
