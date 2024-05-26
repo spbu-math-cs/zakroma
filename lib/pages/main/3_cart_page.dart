@@ -39,12 +39,44 @@ class _CartPageState extends ConsumerState<CartPage> {
     return CustomScaffold(
         header: CustomHeader(
             title: 'Корзина',
-            // TODO(design): нарисовать верхнюю панель с опциями при множественном выборе
             selectionAppBar: SizedBox.expand(
               child: Container(
                 margin: EdgeInsets.only(bottom: 2 * constants.paddingUnit),
                 color: Theme.of(context).colorScheme.surface,
-                child: const Center(child: Text('Типа режим выбора')),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: constants.paddingUnit),
+                        child: IconButton(
+                            onPressed: () => ref
+                                .read(selectionProvider('Корзина').notifier)
+                                .clearSelection(),
+                            icon: const Icon(Icons.arrow_back_ios_new)),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: constants.paddingUnit),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_vert)),
+                            IconButton(
+                                onPressed: () => ref
+                                    .read(selectionProvider('Корзина').notifier)
+                                    .selectAll(),
+                                icon: const Icon(Icons.select_all)),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             )),
         body: Column(

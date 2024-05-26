@@ -46,23 +46,76 @@ class Cart extends _$Cart {
     } catch (error) {
       return Pair(
           CartData(personal: true, cart: {
-            const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 3,
-            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 2,
-            const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
-                4,
-            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 1,
-            const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 1,
+            const Ingredient(
+                id: 0,
+                name: 'Яблоко',
+                marketName: 'Яблоко',
+                imageUrl:
+                    'https://images.vfl.ru/ii/1534842504/26678a98/22976691.png'): 3,
+            const Ingredient(
+                id: 1,
+                name: 'Банан',
+                marketName: 'Банан',
+                imageUrl:
+                    'https://ariprodesigns.co.uk/development/vegas-indian-bazaar/wp-content/uploads/2021/10/banana-regular-scaled.jpg'): 2,
+            const Ingredient(
+                id: 2,
+                name: 'Мандарин',
+                marketName: 'Мандарин',
+                imageUrl:
+                    'https://gas-kvas.com/grafic/uploads/posts/2023-10/1696533557_gas-kvas-com-p-kartinki-mandarin-2.jpg'): 4,
+            const Ingredient(
+                id: 3,
+                name: 'Киви',
+                marketName: 'Киви',
+                imageUrl:
+                    'https://parfum-asmodeus.ru/wp-content/uploads/a/9/c/a9c83b44d1c63f8e1b1b05828f195651.png'): 1,
+            const Ingredient(
+                id: 4,
+                name: 'Груша',
+                marketName: 'Груша',
+                imageUrl:
+                    'https://kartinki.pics/uploads/posts/2022-12/1670516444_2-kartinkin-net-p-kartinki-fruktov-po-otdelnosti-vkontakte-2.png'): 1,
             // const Ingredient(id: 5, name: 'Слива', marketName: 'Слива'): 20,
             // const Ingredient(id: 6, name: 'Что-то', marketName: 'с чем-то'): 3,
           }),
           CartData(personal: false, cart: {
-            const Ingredient(id: 0, name: 'Яблоко', marketName: 'Яблоко'): 6,
-            const Ingredient(id: 1, name: 'Банан', marketName: 'Банан'): 8,
-            const Ingredient(id: 2, name: 'Мандарин', marketName: 'Мандарин'):
-                10,
-            const Ingredient(id: 3, name: 'Киви', marketName: 'Киви'): 6,
-            const Ingredient(id: 4, name: 'Груша', marketName: 'Груша'): 4,
-            const Ingredient(id: 5, name: 'Слива', marketName: 'Слива'): 20,
+            const Ingredient(
+                id: 0,
+                name: 'Яблоко',
+                marketName: 'Яблоко',
+                imageUrl:
+                    'https://images.vfl.ru/ii/1534842504/26678a98/22976691.png'): 6,
+            const Ingredient(
+                id: 1,
+                name: 'Банан',
+                marketName: 'Банан',
+                imageUrl:
+                    'https://ariprodesigns.co.uk/development/vegas-indian-bazaar/wp-content/uploads/2021/10/banana-regular-scaled.jpg'): 8,
+            const Ingredient(
+                id: 2,
+                name: 'Мандарин',
+                marketName: 'Мандарин',
+                imageUrl:
+                    'https://gas-kvas.com/grafic/uploads/posts/2023-10/1696533557_gas-kvas-com-p-kartinki-mandarin-2.jpg'): 10,
+            const Ingredient(
+                id: 3,
+                name: 'Киви',
+                marketName: 'Киви',
+                imageUrl:
+                    'https://parfum-asmodeus.ru/wp-content/uploads/a/9/c/a9c83b44d1c63f8e1b1b05828f195651.png'): 6,
+            const Ingredient(
+                id: 4,
+                name: 'Груша',
+                marketName: 'Груша',
+                imageUrl:
+                    'https://kartinki.pics/uploads/posts/2022-12/1670516444_2-kartinkin-net-p-kartinki-fruktov-po-otdelnosti-vkontakte-2.png'): 4,
+            const Ingredient(
+                id: 5,
+                name: 'Слива',
+                marketName: 'Слива',
+                imageUrl:
+                    'https://gas-kvas.com/grafic/uploads/posts/2023-09/1695989452_gas-kvas-com-p-kartinki-sliva-7.jpg'): 20,
           }));
     }
   }
