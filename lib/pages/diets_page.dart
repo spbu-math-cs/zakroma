@@ -99,7 +99,16 @@ class DietListPage extends ConsumerWidget {
                                                     height: 1,
                                                     // leadingDistribution: TextLeadingDistribution.proportional, убрать это?
                                                   ))),
-                                  onTap: () {},
+                                  onTap: () {
+                                    gagList[index].familyRatio.isEmpty &&
+                                            gagList[index].soloRatio.isEmpty
+                                        ? showInputDialog(context, index)
+                                        : Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => DailyRatiosScreen(index)),
+                                          );
+                                  },
                                   trailing: gagList[index].familyRatio.isEmpty &&
                                           gagList[index].soloRatio.isEmpty
                                       ? SizedBox(
