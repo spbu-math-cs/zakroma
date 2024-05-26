@@ -12,17 +12,17 @@ const String gagImg =
     'https://www.eatingwell.com/thmb/rmLlvSjdnJCCy_7iqqj3x7XS72c=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chopped-power-salad-with-chicken-0ad93f1931524a679c0f8854d74e6e57.jpg';
 
 List<Gag> gagList = [
-  Gag(date: '2 мая', soloRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'], familyRatio: []),
-  Gag(date: '3 мая', soloRatio: [], familyRatio: []),
-  Gag(date: '4 мая', soloRatio: [], familyRatio: ['Ужин']),
-  Gag(date: '5 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(date: '6 мая', soloRatio: ['Ужин'], familyRatio: []),
-  Gag(date: '7 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
-  Gag(date: '8 мая', soloRatio: ['Завтрак'], familyRatio: []),
-  Gag(date: '9 мая', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
-  Gag(date: '10 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '27 мая', soloRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'], familyRatio: []),
+  Gag(date: '28 мая', soloRatio: [], familyRatio: []),
+  Gag(date: '29 мая', soloRatio: [], familyRatio: ['Ужин']),
+  Gag(date: '30 мая', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '31 мая', soloRatio: ['Ужин'], familyRatio: []),
+  Gag(date: '1 июня', soloRatio: ['Завтрак', 'Ужин'], familyRatio: []),
+  Gag(date: '2 июня', soloRatio: ['Завтрак'], familyRatio: []),
+  Gag(date: '3 июня', soloRatio: [], familyRatio: ['Завтрак', 'Ужин']),
+  Gag(date: '4 июня', soloRatio: ['Завтрак', 'Ужин'], familyRatio: ['Завтрак', 'Ужин']),
   Gag(
-      date: '11 мая',
+      date: '5 июня',
       soloRatio: ['Супердлинный Ужин'],
       familyRatio: ['Завтрак', 'Обед', 'Полдник', 'Ужин'])
 ];
@@ -354,7 +354,6 @@ class DishesForRatioScreen extends ConsumerWidget {
                       return Container(
                           height: constants.paddingUnit * 12,
                           width: double.maxFinite,
-                          // padding: EdgeInsets.all(constants.paddingUnit / 2),
                           margin: EdgeInsets.only(
                               top: constants.paddingUnit / 2, bottom: constants.paddingUnit / 2),
                           decoration: BoxDecoration(
@@ -403,7 +402,12 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                             gagListDishes[ratio]![rIndex].second =
                                                                 gagListDishes[ratio]![rIndex]
                                                                         .second -
-                                                                    1
+                                                                    1,
+                                                          Navigator.of(context).pop(),
+                                                          Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                          builder: (context) => DishesForRatioScreen(ratio)))
                                                           },
                                                           style: ElevatedButton.styleFrom(
                                                             elevation: 0,
@@ -420,11 +424,13 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                                   color: Colors.black,
                                                                   fontWeight: FontWeight.bold)),
                                                         ))),
-                                                Text(
+                                                SizedBox(
+                                                  width: constants.paddingUnit * 2,
+                                                    child:Center(child:Text(
                                                     gagListDishes[ratio]![rIndex].second.toString(),
                                                     style: const TextStyle(
                                                         color: Colors.black,
-                                                        fontWeight: FontWeight.bold)),
+                                                        fontWeight: FontWeight.bold)))),
                                                 Padding(
                                                     padding: EdgeInsets.only(
                                                         left: constants.paddingUnit),
@@ -436,7 +442,12 @@ class DishesForRatioScreen extends ConsumerWidget {
                                                             gagListDishes[ratio]![rIndex].second =
                                                                 gagListDishes[ratio]![rIndex]
                                                                         .second +
-                                                                    1
+                                                                    1,
+                                                            Navigator.of(context).pop(), //TODO: нормально переписать с сервером
+                                                          Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                          builder: (context) => DishesForRatioScreen(ratio))),
                                                           },
                                                           style: ElevatedButton.styleFrom(
                                                             elevation: 0,
@@ -469,4 +480,6 @@ class DishesForRatioScreen extends ConsumerWidget {
                           ]));
                     }))));
   }
+
+  setState(() param0) {}
 }
