@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/data_cls/diet.dart';
+import 'package:zakroma_frontend/data_cls/meal.dart';
 import 'package:zakroma_frontend/utility/selection.dart';
 import 'package:zakroma_frontend/widgets/rr_buttons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rxdart/rxdart.dart';
+import 'dart:math';
 
 import '../../data_cls/user.dart';
 import '../../main.dart';
@@ -13,8 +16,6 @@ import '../../widgets/custom_scaffold.dart';
 import '../../widgets/flat_list.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/styled_headline.dart';
-
-// TODO(design): переписать в новом дизайне
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -34,11 +35,32 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       'Группа',
     ];
 
+    // ккал в неделю
+    Future<double> weekKcal = ref.watch(dietsProvider.selectAsync((diets) =>
+        diets.first.days.fold(
+            0.0,
+            (curDay, day) =>
+                curDay +
+                day.meals.fold(
+                    0.0,
+                    (curMealKcal, mealKcal) =>
+                        curMealKcal + mealKcal.getKcal()))));
+
+    Future<double> maxKcal = ref.watch(dietsProvider.selectAsync((diets) =>
+        diets.first.days.fold(
+            0.0,
+            (curDay, day) => max(
+                curDay,
+                day.meals.fold(
+                    0.0,
+                    (curMealKcal, mealKcal) =>
+                        curMealKcal + mealKcal.getKcal())))));
+
     return CustomScaffold(
         header: const CustomHeader(title: 'Профиль'),
         body: SingleChildScrollView(
           child: SizedBox(
-            height: constants.paddingUnit * 86,
+            height: constants.paddingUnit * 88,
             child: Column(
               children: [
                 Expanded(
@@ -291,7 +313,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     )),
                 Expanded(
                     // Статистика
-                    flex: 20,
+                    flex: 22,
                     child: RRSurface(
                         child: Column(
                       children: [
@@ -325,96 +347,180 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                         Expanded(
                           // КБЖУ и диаграмма
-                          flex: 15,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  //  Текстовая статистика
-                                  child: Padding(
-                                    padding: constants.dBlockPadding,
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              // Белки
-                                              child: Text('100 г - белки',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                          color: Theme.of(context)
-                                                              .colorScheme
-                                                              .onPrimaryContainer))),
-                                          Expanded(
-                                              // Жиры
-                                              child: Text('100 г - жиры',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                          color: Theme.of(context)
-                                                              .colorScheme
-                                                              .onPrimaryContainer))),
-                                          Expanded(
-                                              // Углеводы
-                                              child: Text('100 г - углеводы',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .copyWith(
-                                                          color: Theme.of(context)
-                                                              .colorScheme
-                                                              .onPrimaryContainer))),
-                                          Expanded(
-                                              // ккал
-                                              child: Text('2957 ккал',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineMedium!
-                                                      .copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                      ))),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                              Expanded(
-                                  // Диаграмма
-                                  child: Padding(
-                                    padding: constants.dBlockPadding,
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Row(
-                                          // Дни недели
-                                          children: List<Widget>.generate(
-                                        7,
-                                        (index) => Expanded(
+                          flex: 17,
+                          child: AsyncBuilder(
+                              future: maxKcal,
+                              builder: (maxKcal) {
+                                return Row(
+                                  children: [
+                                    AsyncBuilder(
+                                      future: ref.watch(
+                                                      dietsProvider.selectAsync(
+                                                          (diets) => diets.first
+                                                              .getDay(DateTime.now().weekday)
+                                                              .meals
+                                                              )),
+                                      builder: (meals) {
+                                        return Expanded(
+                                            //  Текстовая статистика
                                             child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: constants.paddingUnit / 2),
-                                          child: Container(
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                                color: Colors
-                                                    .black, // index == Date... ? цвет_выделенный : цвет_обычный,
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(
-                                                    constants.dOuterRadius / 5,
-                                                  ),
-                                                  topRight: Radius.circular(
-                                                      constants.dOuterRadius /
-                                                          5),
-                                                )),
+                                          padding: constants.dBlockPadding,
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    // Белки
+                                                    child: Text('${meals.fold(
+                                                                  0.0,
+                                                                  (current,
+                                                                          meal) =>
+                                                                      current +
+                                                                      meal.getProteins()).round()} г - белки',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .onPrimaryContainer,
+                                                                height: 1))),
+                                                Expanded(
+                                                    // Жиры
+                                                    child: Text('${meals.fold(
+                                                                  0.0,
+                                                                  (current,
+                                                                          meal) =>
+                                                                      current +
+                                                                      meal.getFats()).round()} г - жиры',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .onPrimaryContainer,
+                                                                height: 1))),
+                                                Expanded(
+                                                    // Углеводы
+                                                    child: Text('${meals.fold(
+                                                                  0.0,
+                                                                  (current,
+                                                                          meal) =>
+                                                                      current +
+                                                                      meal.getCarbs()).round()} г - углеводы',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .onPrimaryContainer,
+                                                                height: 1))),
+                                                Expanded(
+                                                    // ккал
+                                                    child: Text('${meals.fold(
+                                                                  0.0,
+                                                                  (current,
+                                                                          meal) =>
+                                                                      current +
+                                                                      meal.getKcal()).round()} ккал',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineMedium!
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight.bold,
+                                                                height: 1))),
+                                              ],
+                                            ),
                                           ),
-                                        )),
-                                      )),
+                                        ));
+                                      }
                                     ),
-                                  ))
-                            ],
-                          ),
+                                    Expanded(
+                                        // Диаграмма
+                                        child: Padding(
+                                      padding: constants.dBlockPadding,
+                                      child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              // Дни недели
+                                              children: List<Widget>.generate(
+                                                7,
+                                                (index) {
+                                                  Future<double> viewKcal = ref.watch(
+                                                      dietsProvider.selectAsync(
+                                                          (diets) => diets.first
+                                                              .getDay(index + 1)
+                                                              .meals
+                                                              .fold(
+                                                                  0.0,
+                                                                  (current,
+                                                                          meal) =>
+                                                                      current +
+                                                                      meal.getKcal())));
+                                                  return Expanded(
+                                                      // Столбцы диаграммы
+                                                      child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: constants
+                                                                .paddingUnit /
+                                                            2),
+                                                    child: AsyncBuilder(
+                                                        future: viewKcal,
+                                                        builder: (viewKcal) {
+                                                          debugPrint(viewKcal
+                                                              .toString());
+                                                          return Container(
+                                                            height: constants
+                                                                    .paddingUnit +
+                                                                (11 *
+                                                                        constants
+                                                                            .paddingUnit) *
+                                                                    viewKcal /
+                                                                    maxKcal,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: index +
+                                                                                1 ==
+                                                                            DateTime.now()
+                                                                                .weekday
+                                                                        ? Theme.of(context)
+                                                                            .colorScheme
+                                                                            .primary
+                                                                        : Theme.of(context)
+                                                                            .colorScheme
+                                                                            .shadow,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .only(
+                                                                      topLeft:
+                                                                          Radius
+                                                                              .circular(
+                                                                        constants.dOuterRadius /
+                                                                            5,
+                                                                      ),
+                                                                      topRight: Radius.circular(
+                                                                          constants.dOuterRadius /
+                                                                              5),
+                                                                    )),
+                                                          );
+                                                        }),
+                                                  ));
+                                                },
+                                              ))),
+                                    ))
+                                  ],
+                                );
+                              }),
                         )
                       ],
                     ))),
