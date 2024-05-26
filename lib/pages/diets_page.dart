@@ -10,7 +10,7 @@ import '../constants.dart';
 import '../data_cls/diet.dart';
 import '../data_cls/path.dart';
 import '../pages/diet_page.dart';
-import '../utility/async_builder.dart';
+// import '../utility/async_builder.dart';
 import '../utility/custom_scaffold.dart';
 import '../utility/rr_buttons.dart';
 import '../utility/rr_surface.dart';
@@ -62,7 +62,7 @@ class DietListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
-    final asyncDiets = ref.watch(dietsProvider);
+    // final asyncDiets = ref.watch(dietsProvider);
     return CustomScaffold(
         title: 'Питание',
         body: RRSurface(
@@ -88,58 +88,58 @@ class DietListPage extends ConsumerWidget {
                               ),
                               child: ListTile(
                                   contentPadding:
-                                      EdgeInsets.only(left: constants.paddingUnit, right: 0),
+                                  EdgeInsets.only(left: constants.paddingUnit, right: 0),
                                   title: Padding(
                                       padding: EdgeInsets.only(bottom: constants.paddingUnit),
                                       child: StyledHeadline(
                                           text: gagList[index].date,
                                           textStyle:
-                                              Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    height: 1,
-                                                    // leadingDistribution: TextLeadingDistribution.proportional, убрать это?
-                                                  ))),
+                                          Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            height: 1,
+                                            // leadingDistribution: TextLeadingDistribution.proportional, убрать это?
+                                          ))),
                                   onTap: () {
                                     gagList[index].familyRatio.isEmpty &&
-                                            gagList[index].soloRatio.isEmpty
+                                        gagList[index].soloRatio.isEmpty
                                         ? showInputDialog(context, index)
                                         : Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => DailyRatiosScreen(index)),
-                                          );
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DailyRatiosScreen(index)),
+                                    );
                                   },
                                   trailing: gagList[index].familyRatio.isEmpty &&
-                                          gagList[index].soloRatio.isEmpty
+                                      gagList[index].soloRatio.isEmpty
                                       ? SizedBox(
-                                          height: double.infinity,
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.add_circle_outline,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimaryContainer,
-                                              ),
-                                              onPressed: () {
-                                                showInputDialog(context, index);
-                                              }))
+                                      height: double.infinity,
+                                      child: IconButton(
+                                          icon: Icon(
+                                            Icons.add_circle_outline,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer,
+                                          ),
+                                          onPressed: () {
+                                            showInputDialog(context, index);
+                                          }))
                                       : SizedBox(
-                                          height: double.infinity,
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.arrow_forward_ios_rounded,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimaryContainer,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DailyRatiosScreen(index)),
-                                                );
-                                              })),
+                                      height: double.infinity,
+                                      child: IconButton(
+                                          icon: Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DailyRatiosScreen(index)),
+                                            );
+                                          })),
                                   subtitle: Wrap(
                                       spacing: constants.paddingUnit / 2,
                                       runSpacing: constants.paddingUnit / 2,
@@ -153,9 +153,9 @@ class DietListPage extends ConsumerWidget {
                                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                               minimumSize: Size.zero,
                                               backgroundColor:
-                                                  (itemIndex < gagList[index].soloRatio.length
-                                                      ? Theme.of(context).colorScheme.surface
-                                                      : Theme.of(context).hoverColor),
+                                              (itemIndex < gagList[index].soloRatio.length
+                                                  ? Theme.of(context).colorScheme.surface
+                                                  : Theme.of(context).hoverColor),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(
                                                       constants.dInnerRadius))),
@@ -163,7 +163,7 @@ class DietListPage extends ConsumerWidget {
                                               itemIndex < gagList[index].soloRatio.length
                                                   ? gagList[index].soloRatio[itemIndex]
                                                   : gagList[index].familyRatio[
-                                                      itemIndex - gagList[index].soloRatio.length],
+                                              itemIndex - gagList[index].soloRatio.length],
                                               style: TextStyle(
                                                   color: Theme.of(context).colorScheme.secondary)),
                                         );
@@ -183,13 +183,13 @@ class DietTile extends ConsumerWidget {
     return RRButton(
       onTap: () {
         ref.read(pathProvider.notifier).update((state) => state.copyWith(
-              dietId: diet.dietHash,
-            ));
+          dietId: diet.dietHash,
+        ));
         Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
       },
       padding: EdgeInsets.only(bottom: constants.paddingUnit),
       childPadding:
-          EdgeInsets.all(constants.paddingUnit * 2).copyWith(right: constants.paddingUnit),
+      EdgeInsets.all(constants.paddingUnit * 2).copyWith(right: constants.paddingUnit),
       childAlignment: Alignment.topLeft,
       backgroundColor: diet.isActive
           ? Theme.of(context).colorScheme.surface
@@ -243,37 +243,37 @@ class DietTile extends ConsumerWidget {
   }
 }
 
-Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
-  return AsyncBuilder(
-      asyncValue: ref.watch(dietsProvider),
-      builder: (diets) {
-        final constants = ref.read(constantsProvider);
-        if (diets.isEmpty || index == 1) {
-          return DottedRRButton(
-              onTap: () => Diet.showAddDietDialog(context, ref),
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 60,
-              ));
-        }
-        index = (index - 1).clamp(0, diets.length);
-        return RRButton(
-            onTap: () {
-              ref.read(pathProvider.notifier).update((state) => state.copyWith(
-                    dietId: diets[index].dietHash,
-                  ));
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
-            },
-            child: Padding(
-              padding: EdgeInsets.all(constants.paddingUnit * 2),
-              child: StyledHeadline(
-                text: diets[index].name,
-                textStyle: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ));
-      });
-}
+// Widget getDietTile(BuildContext context, WidgetRef ref, int index) {
+//   return AsyncBuilder(
+//       asyncValue: ref.watch(dietsProvider),
+//       builder: (diets) {
+//         final constants = ref.read(constantsProvider);
+//         if (diets.isEmpty || index == 1) {
+//           return DottedRRButton(
+//               onTap: () => Diet.showAddDietDialog(context, ref),
+//               child: Icon(
+//                 Icons.add,
+//                 color: Theme.of(context).colorScheme.onSurfaceVariant,
+//                 size: 60,
+//               ));
+//         }
+//         index = (index - 1).clamp(0, diets.length);
+//         return RRButton(
+//             onTap: () {
+//               ref.read(pathProvider.notifier).update((state) => state.copyWith(
+//                     dietId: diets[index].dietHash,
+//                   ));
+//               Navigator.push(context, MaterialPageRoute(builder: (context) => const DietPage()));
+//             },
+//             child: Padding(
+//               padding: EdgeInsets.all(constants.paddingUnit * 2),
+//               child: StyledHeadline(
+//                 text: diets[index].name,
+//                 textStyle: Theme.of(context).textTheme.headlineMedium,
+//               ),
+//             ));
+//       });
+// }
 
 showInputDialog(BuildContext context, int indexDay) {
   String inputText = '';
@@ -337,21 +337,21 @@ class DailyRatiosScreen extends ConsumerWidget {
                           ),
                           child: ListTile(
                               contentPadding:
-                                  EdgeInsets.only(left: constants.paddingUnit, right: 0),
+                              EdgeInsets.only(left: constants.paddingUnit, right: 0),
                               title: Row(children: [
                                 StyledHeadline(
                                     text:
-                                        '${gagList[index].soloRatio.length > rIndex ? gagList[index].soloRatio[rIndex] : gagList[index].familyRatio[rIndex - gagList[index].soloRatio.length]} ',
+                                    '${gagList[index].soloRatio.length > rIndex ? gagList[index].soloRatio[rIndex] : gagList[index].familyRatio[rIndex - gagList[index].soloRatio.length]} ',
                                     textStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          height: 1,
-                                          leadingDistribution: TextLeadingDistribution.proportional,
-                                        )),
+                                      fontWeight: FontWeight.bold,
+                                      height: 1,
+                                      leadingDistribution: TextLeadingDistribution.proportional,
+                                    )),
                                 gagList[index].soloRatio.length <= rIndex
                                     ? Icon(
-                                        Icons.group,
-                                        color: Theme.of(context).colorScheme.secondary,
-                                      )
+                                  Icons.group,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                )
                                     : const SizedBox()
                               ]),
                               onTap: () {
@@ -362,40 +362,40 @@ class DailyRatiosScreen extends ConsumerWidget {
                                             gagList[index].soloRatio.length > rIndex
                                                 ? gagList[index].soloRatio[rIndex]
                                                 : gagList[index].familyRatio[
-                                                    rIndex - gagList[index].soloRatio.length])));
+                                            rIndex - gagList[index].soloRatio.length])));
                               },
                               trailing: gagList[index].familyRatio.isEmpty &&
-                                      gagList[index].soloRatio.isEmpty
+                                  gagList[index].soloRatio.isEmpty
                                   ? SizedBox(
-                                      height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
-                                            Icons.add_circle_outline,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: () {}))
+                                  height: double.infinity,
+                                  child: TextButton(
+                                      child: const Icon(
+                                        Icons.add_circle_outline,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {}))
                                   : SizedBox(
-                                      height: double.infinity,
-                                      child: TextButton(
-                                          child: const Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => DishesForRatioScreen(
-                                                        gagList[index].soloRatio.length > rIndex
-                                                            ? gagList[index].soloRatio[rIndex]
-                                                            : gagList[index].familyRatio[rIndex -
-                                                                gagList[index].soloRatio.length])));
-                                          })),
+                                  height: double.infinity,
+                                  child: TextButton(
+                                      child: const Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => DishesForRatioScreen(
+                                                    gagList[index].soloRatio.length > rIndex
+                                                        ? gagList[index].soloRatio[rIndex]
+                                                        : gagList[index].familyRatio[rIndex -
+                                                        gagList[index].soloRatio.length])));
+                                      })),
                               subtitle: SizedBox(
                                   child: ListView.builder(
                                       shrinkWrap: true,
                                       itemExtent:
-                                          constants.paddingUnit / 3 * (gagDishList.length + 7),
+                                      constants.paddingUnit / 3 * (gagDishList.length + 7),
                                       itemCount: min(4, gagDishList.length),
                                       padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
                                       physics: const NeverScrollableScrollPhysics(),
@@ -404,14 +404,14 @@ class DailyRatiosScreen extends ConsumerWidget {
                                             contentPadding: EdgeInsets.zero,
                                             leading: dishIndex < 3
                                                 ? Container(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: constants.paddingUnit),
-                                                    width: constants.paddingUnit / 1.5,
-                                                    height: constants.paddingUnit / 1.5,
-                                                    decoration: const BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.black26,
-                                                    ))
+                                                padding: EdgeInsets.only(
+                                                    bottom: constants.paddingUnit),
+                                                width: constants.paddingUnit / 1.5,
+                                                height: constants.paddingUnit / 1.5,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.black26,
+                                                ))
                                                 : const SizedBox(),
                                             title: Text(
                                               dishIndex < 3
@@ -459,9 +459,12 @@ class DishesForRatioScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(constants.dInnerRadius),
                           ),
                           child: Text(
-                            gagListDishes[ratio]![rIndex],
-                            style: TextStyle(fontSize: constants.paddingUnit * 2),
-                          ));
+                              gagListDishes[ratio]![rIndex],
+                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                fontWeight: FontWeight.w600,
+                                height: 1,
+                                leadingDistribution: TextLeadingDistribution.proportional,
+                              )));
                     }))));
   }
 }
