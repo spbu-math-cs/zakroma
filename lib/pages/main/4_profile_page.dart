@@ -38,10 +38,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         header: const CustomHeader(title: 'Профиль'),
         body: SingleChildScrollView(
           child: SizedBox(
-            height: constants.paddingUnit * 84,
+            height: constants.paddingUnit * 86,
             child: Column(
               children: [
-                Expanded( // Профиль пользователя
+                Expanded(
+                    // Профиль пользователя
                     flex: 16,
                     child: RRSurface(
                       child: Padding(
@@ -151,7 +152,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                   async: ref.read(userProvider),
                                                   builder: (user) => Text(
                                                     '${user.firstName} ${user.secondName}',
-                                                    // text: 'Дима Sherem.',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .headlineSmall!
@@ -203,8 +203,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           ],
                         ),
                       ),
-                    )),             
-                Expanded( // Настройки и группа
+                    )),
+                Expanded(
+                    // Настройки и группа
                     flex: 12,
                     child: RRSurface(
                       child: Column(
@@ -289,42 +290,136 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                     )),
                 Expanded(
-              flex: 18,
-              child: RRSurface(
-                  child: Column(
-                children: [
-                  // Заголовок: «Статистика»
-                  Expanded(
-                      flex: 8,
-                      child: Padding(
-                        padding: constants.dHeadingPadding,
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          return Align(
-                            alignment: Alignment.topLeft,
-                            child: StyledHeadline(
-                                text: 'Статистика',
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15 * constraints.maxHeight / 16,
-                                      height: 1,
-                                      leadingDistribution:
-                                          TextLeadingDistribution.proportional,
-                                    )),
-                          );
-                        }),
-                      )),
-                  // Перечисление рецептов
-                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
-                  const Expanded(
-                      flex: 12,
-                        child: RRSurface(borderRadius: BorderRadius.zero, child: Placeholder()),
-                      )
-                ],
-              ))),
-                Expanded( // Любимые блюда
+                    // Статистика
+                    flex: 20,
+                    child: RRSurface(
+                        child: Column(
+                      children: [
+                        Expanded(
+                            // Заголовок: «Статистика»
+                            flex: 8,
+                            child: Padding(
+                              padding: constants.dHeadingPadding,
+                              child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: StyledHeadline(
+                                      text: 'Статистика',
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                15 * constraints.maxHeight / 16,
+                                            height: 1,
+                                            leadingDistribution:
+                                                TextLeadingDistribution
+                                                    .proportional,
+                                          )),
+                                );
+                              }),
+                            )),
+                        // КБЖУ и ккал
+                        // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
+                        Expanded(
+                          // КБЖУ и диаграмма
+                          flex: 15,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  //  Текстовая статистика
+                                  child: Padding(
+                                    padding: constants.dBlockPadding,
+                                    child: Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                              // Белки
+                                              child: Text('100 г - белки',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                          color: Theme.of(context)
+                                                              .colorScheme
+                                                              .onPrimaryContainer))),
+                                          Expanded(
+                                              // Жиры
+                                              child: Text('100 г - жиры',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                          color: Theme.of(context)
+                                                              .colorScheme
+                                                              .onPrimaryContainer))),
+                                          Expanded(
+                                              // Углеводы
+                                              child: Text('100 г - углеводы',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                          color: Theme.of(context)
+                                                              .colorScheme
+                                                              .onPrimaryContainer))),
+                                          Expanded(
+                                              // ккал
+                                              child: Text('2957 ккал',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineMedium!
+                                                      .copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                      ))),
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                              Expanded(
+                                  // Диаграмма
+                                  child: Padding(
+                                    padding: constants.dBlockPadding,
+                                    child: Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Row(
+                                          // Дни недели
+                                          children: List<Widget>.generate(
+                                        7,
+                                        (index) => Expanded(
+                                            child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: constants.paddingUnit / 2),
+                                          child: Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: Colors
+                                                    .black, // index == Date... ? цвет_выделенный : цвет_обычный,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(
+                                                    constants.dOuterRadius / 5,
+                                                  ),
+                                                  topRight: Radius.circular(
+                                                      constants.dOuterRadius /
+                                                          5),
+                                                )),
+                                          ),
+                                        )),
+                                      )),
+                                    ),
+                                  ))
+                            ],
+                          ),
+                        )
+                      ],
+                    ))),
+                Expanded(
+                    // Любимые блюда
                     flex: 25,
                     child: RRSurface(
                         child: Column(
@@ -486,7 +581,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ))
                       ],
                     ))),
-                Expanded( // Выйти из аккаунта
+                Expanded(
+                    // Выйти из аккаунта
                     flex: 6,
                     child: RRSurface(
                       borderRadius:
