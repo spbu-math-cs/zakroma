@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -126,7 +128,7 @@ class DietListPage extends ConsumerWidget {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          DailyDishesScreen(index)),
+                                                          DailyRatiosScreen(index)),
                                                 );
                                               })),
                                   subtitle: Wrap(
@@ -298,10 +300,10 @@ showInputDialog(BuildContext context, int indexDay) {
   );
 }
 
-class DailyDishesScreen extends ConsumerWidget {
+class DailyRatiosScreen extends ConsumerWidget {
   final int index;
 
-  const DailyDishesScreen(this.index, {super.key});
+  const DailyRatiosScreen(this.index, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -343,7 +345,16 @@ class DailyDishesScreen extends ConsumerWidget {
                                       )
                                     : const SizedBox()
                               ]),
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DishesForRatioScreen(
+                                            gagList[index].soloRatio.length > rIndex
+                                                ? gagList[index].soloRatio[rIndex]
+                                                : gagList[index].familyRatio[
+                                                    rIndex - gagList[index].soloRatio.length])));
+                              },
                               trailing: gagList[index].familyRatio.isEmpty &&
                                       gagList[index].soloRatio.isEmpty
                                   ? SizedBox(
@@ -376,22 +387,27 @@ class DailyDishesScreen extends ConsumerWidget {
                                       shrinkWrap: true,
                                       itemExtent:
                                           constants.paddingUnit / 3 * (gagDishList.length + 7),
-                                      itemCount: gagDishList.length,
+                                      itemCount: min(4, gagDishList.length),
                                       padding: EdgeInsets.only(bottom: constants.paddingUnit * 3),
+                                      physics: const NeverScrollableScrollPhysics(),
                                       itemBuilder: (BuildContext context, int dishIndex) {
                                         return ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: Container(
-                                                padding:
-                                                    EdgeInsets.only(bottom: constants.paddingUnit),
-                                                width: constants.paddingUnit / 1.5,
-                                                height: constants.paddingUnit / 1.5,
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.black26,
-                                                )),
+                                            leading: dishIndex < 3
+                                                ? Container(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: constants.paddingUnit),
+                                                    width: constants.paddingUnit / 1.5,
+                                                    height: constants.paddingUnit / 1.5,
+                                                    decoration: const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.black26,
+                                                    ))
+                                                : const SizedBox(),
                                             title: Text(
-                                              gagDishList[dishIndex].name,
+                                              dishIndex < 3
+                                                  ? gagDishList[dishIndex].name
+                                                  : 'и еще ${gagDishList.length - 3}',
                                               style: TextStyle(fontSize: constants.paddingUnit * 2),
                                             ));
                                       }))));
@@ -404,7 +420,7 @@ Map<String, List<String>> gagListDishes = {
   'Завтрак': ['Utka', 'ovoshi', 'eda'],
   'Обед': ['AA', 'food', 'nothing', 'b'],
   'Супердлинный ужин': ['AаааA', 'foооооооod', 'nоооооothing', 'b'],
-  'Ужин' : ['A', 'Borcsh', 'aqua']
+  'Ужин': ['A', 'Borcsh', 'aqua']
 };
 
 class DishesForRatioScreen extends ConsumerWidget {
