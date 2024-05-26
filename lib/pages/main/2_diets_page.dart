@@ -351,9 +351,9 @@ class DishesForRatioScreen extends ConsumerWidget {
                           ),
                           child: Row(children: [
                             ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(8.0),
-                                    bottomLeft: Radius.circular(8.0)),
+                                borderRadius:  BorderRadius.only(
+                                    topLeft: Radius.circular(constants.dInnerRadius),
+                                    bottomLeft: Radius.circular(constants.dInnerRadius)),
                                 child: Image.network(
                                   gagImg,
                                   cacheHeight: (constants.paddingUnit * 12).ceil(),
