@@ -354,95 +354,88 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 return Row(
                                   children: [
                                     AsyncBuilder(
-                                      future: ref.watch(
-                                                      dietsProvider.selectAsync(
-                                                          (diets) => diets.first
-                                                              .getDay(DateTime.now().weekday)
-                                                              .meals
-                                                              )),
-                                      builder: (meals) {
-                                        return Expanded(
-                                            //  Текстовая статистика
-                                            child: Padding(
-                                          padding: constants.dBlockPadding,
-                                          child: Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                    // Белки
-                                                    child: Text('${meals.fold(
-                                                                  0.0,
-                                                                  (current,
-                                                                          meal) =>
-                                                                      current +
-                                                                      meal.getProteins()).round()} г - белки',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge!
-                                                            .copyWith(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onPrimaryContainer,
-                                                                height: 1))),
-                                                Expanded(
-                                                    // Жиры
-                                                    child: Text('${meals.fold(
-                                                                  0.0,
-                                                                  (current,
-                                                                          meal) =>
-                                                                      current +
-                                                                      meal.getFats()).round()} г - жиры',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge!
-                                                            .copyWith(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onPrimaryContainer,
-                                                                height: 1))),
-                                                Expanded(
-                                                    // Углеводы
-                                                    child: Text('${meals.fold(
-                                                                  0.0,
-                                                                  (current,
-                                                                          meal) =>
-                                                                      current +
-                                                                      meal.getCarbs()).round()} г - углеводы',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge!
-                                                            .copyWith(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .onPrimaryContainer,
-                                                                height: 1))),
-                                                Expanded(
-                                                    // ккал
-                                                    child: Text('${meals.fold(
-                                                                  0.0,
-                                                                  (current,
-                                                                          meal) =>
-                                                                      current +
-                                                                      meal.getKcal()).round()} ккал',
+                                        future: ref.watch(dietsProvider
+                                            .selectAsync((diets) => diets.first
+                                                .getDay(DateTime.now().weekday)
+                                                .meals)),
+                                        builder: (meals) {
+                                          return Expanded(
+                                              //  Текстовая статистика
+                                              child: Padding(
+                                            padding: constants.dBlockPadding,
+                                            child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                      // Белки
+                                                      child: Text(
+                                                          '${meals.fold(0.0, (current, meal) => current + meal.getProteins()).round()} г - белки',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyLarge!
+                                                              .copyWith(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onPrimaryContainer,
+                                                                  height: 1))),
+                                                  Expanded(
+                                                      // Жиры
+                                                      child: Text(
+                                                          '${meals.fold(0.0, (current, meal) => current + meal.getFats()).round()} г - жиры',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyLarge!
+                                                              .copyWith(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onPrimaryContainer,
+                                                                  height: 1))),
+                                                  Expanded(
+                                                      // Углеводы
+                                                      child: Text(
+                                                          '${meals.fold(0.0, (current, meal) => current + meal.getCarbs()).round()} г - углеводы',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyLarge!
+                                                              .copyWith(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .onPrimaryContainer,
+                                                                  height: 1))),
+                                                  Expanded(
+                                                      // ккал
+                                                      child: LayoutBuilder(
+                                                          builder: (context,
+                                                              constraints) {
+                                                    return Text(
+                                                        '${meals.fold(0.0, (current, meal) => current + meal.getKcal()).round()} ккал',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .headlineMedium!
                                                             .copyWith(
+                                                                fontSize: 15 *
+                                                                    constraints
+                                                                        .maxHeight /
+                                                                    16,
                                                                 fontWeight:
-                                                                    FontWeight.bold,
-                                                                height: 1))),
-                                              ],
+                                                                    FontWeight
+                                                                        .bold,
+                                                                height: 1));
+                                                  })),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ));
-                                      }
-                                    ),
+                                          ));
+                                        }),
                                     Expanded(
                                         // Диаграмма
                                         child: Padding(
@@ -486,7 +479,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                                         constants
                                                                             .paddingUnit) *
                                                                     viewKcal /
-                                                                    maxKcal,
+                                                                    maxKcal.clamp(
+                                                                        1,
+                                                                        double
+                                                                            .infinity),
                                                             decoration:
                                                                 BoxDecoration(
                                                                     color: index +
