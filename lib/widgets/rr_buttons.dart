@@ -37,6 +37,7 @@ class RRButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    assert(debugCheckHasMaterial(context));
     final constants = ref.read(constantsProvider);
     return RRCard(
         padding: padding,

@@ -174,6 +174,10 @@ class _IngredientTileState extends ConsumerState<IngredientTile>
     }
     final selected = ref.watch(selectionProvider.select(
         (value) => value.selected(widget.personal, widget.ingredientIndex)));
+    ref.listen(
+        selectionProvider.select(
+            (value) => value.selected(widget.personal, widget.ingredientIndex)),
+        (old, neww) => debugPrint('Oh hi, Mark!'));
 
     final buttonStyle = IconButton.styleFrom(
         shape: RoundedRectangleBorder(

@@ -41,8 +41,13 @@ class Selection extends _$Selection {
     }
   }
 
-  /// Doesn't trigger rebuild
-  void clear() => _updateMap({});
+  /// Triggers rebuild
+  void clearSelection() =>
+      _updateMap(state.map((key, _) => MapEntry(key, false)));
+
+  /// Triggers rebuild
+  void selectAll() =>
+      _updateMap(state.map((key, value) => MapEntry(key, true)));
 
   /// Triggers rebuild
   void _updateMap(Map<(bool, int), bool> newMap) => state = newMap;
