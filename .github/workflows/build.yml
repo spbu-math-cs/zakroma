@@ -33,3 +33,4 @@ jobs:
         with:
           tag: "${{ steps.date.outputs.date }}"
           artifacts: build/app/outputs/flutter-apk/app-debug.apk
+        if: ${{ github.event_name == 'push' }}
