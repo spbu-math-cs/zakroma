@@ -314,7 +314,6 @@ class DishTile extends ConsumerWidget {
     final constants = ref.watch(constantsProvider);
     return RRButton(
         onTap: () {},
-        borderRadius: constants.dInnerRadius,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         borderColor: Theme.of(context).colorScheme.outline,
         padding: constants.dCardPadding,

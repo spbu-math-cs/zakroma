@@ -82,6 +82,22 @@ class Meal with _$Meal {
 
   bool get done => dishes.isNotEmpty && dishes.values.every((cooked) => cooked);
 
+  double getProteins() => dishes.entries
+      .where((element) => element.value)
+      .fold(0, (current, mapEntry) => current + mapEntry.key.proteins);
+
+  double getFats() => dishes.entries
+      .where((element) => element.value)
+      .fold(0, (current, mapEntry) => current + mapEntry.key.fats);
+
+  double getCarbs() => dishes.entries
+      .where((element) => element.value)
+      .fold(0, (current, mapEntry) => current + mapEntry.key.carbs);
+
+  double getKcal() => dishes.entries
+      .where((element) => element.value)
+      .fold(0, (current, mapEntry) => current + mapEntry.key.kcal);
+
   FlatList getDishesList(
     BuildContext context,
     Constants constants, {

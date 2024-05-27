@@ -110,7 +110,6 @@ class _CartPageState extends ConsumerState<CartPage> {
                           duration: Constants.dAnimationDuration,
                           child: RRButton(
                               onTap: checkout,
-                              borderRadius: constants.dInnerRadius,
                               padding: constants.dBlockPadding +
                                   constants.dCardPadding,
                               child: Text(

@@ -7,7 +7,7 @@ import '../utility/constants.dart';
 
 class RRButton extends ConsumerWidget {
   final Color? backgroundColor;
-  final double? borderRadius;
+  final BorderRadius? borderRadius;
   final Widget child;
   final Alignment childAlignment;
   final EdgeInsets childPadding;
@@ -51,12 +51,11 @@ class RRButton extends ConsumerWidget {
           onDoubleTap: onDoubleTap,
           onLongPress: onLongPress,
           child: Align(
-            alignment: childAlignment,
-            child: Padding(
-              padding: childPadding,
-              child: child,
-            ),
-          ),
+              alignment: childAlignment,
+              child: Padding(
+                padding: childPadding,
+                child: child,
+              )),
         ));
   }
 }
@@ -88,7 +87,8 @@ class DottedRRButton extends RRButton {
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
         strokeWidth: 4,
-        radius: Radius.circular(borderRadius ?? constants.dInnerRadius),
+        radius:
+            borderRadius?.topLeft ?? Radius.circular(constants.dInnerRadius),
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(

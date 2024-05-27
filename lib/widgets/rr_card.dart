@@ -5,7 +5,7 @@ import '../utility/constants.dart';
 
 class RRCard extends ConsumerWidget {
   final Color? backgroundColor;
-  final double? borderRadius;
+  final BorderRadius? borderRadius;
   final Widget child;
   final Alignment childAlignment;
   final EdgeInsets childPadding;
@@ -34,7 +34,8 @@ class RRCard extends ConsumerWidget {
         padding: padding,
         child: Container(
             foregroundDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(constants.dInnerRadius),
+              borderRadius:
+                  borderRadius ?? BorderRadius.circular(constants.dInnerRadius),
               border:
                   Border.all(width: constants.borderWidth, color: borderColor),
             ),
@@ -42,8 +43,8 @@ class RRCard extends ConsumerWidget {
                 color: backgroundColor ??
                     Theme.of(context).colorScheme.primaryContainer,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      borderRadius ?? constants.dInnerRadius),
+                  borderRadius: borderRadius ??
+                      BorderRadius.circular(constants.dInnerRadius),
                 ),
                 clipBehavior: Clip.antiAlias,
                 elevation: borderColor != Colors.transparent
