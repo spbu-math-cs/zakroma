@@ -270,7 +270,6 @@ AddRatio(BuildContext context, int indexDay) {
               gagList[indexDay].soloRatio.add(inputText);
               gagDishList[gagList[indexDay].date]![inputText] = [];
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
               Navigator.push(
                   context,
                   MaterialPageRoute(
