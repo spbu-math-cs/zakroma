@@ -11,11 +11,14 @@ class Constants with _$Constants {
       {
       /// Единичный отступ, на основании которого считаются все остальные отступы.
       ///
-      /// Зависит от размеров экрана. Равен ширина_экрана / 48.
+      /// Зависит от размеров экрана. Равен ширина_экрана / 48. TODO: а в фигме тут 49.125!
       required double paddingUnit,
 
       /// Отступ сверху, подгоняющий экран под размеры [screenHeight] * [paddingUnit]
-      required double topPadding}) = _Constants;
+      required double topPadding,
+
+      /// Отступ между нижней системной панелью и панелью навигации
+      required double bottomPadding}) = _Constants;
 
   const Constants._();
 
@@ -24,13 +27,13 @@ class Constants with _$Constants {
   /// Отсчитывается снизу, оставшееся сверху место остаётся пустым.
   /// Высота используемой части экрана будет равна [screenHeight] * [paddingUnit].
   /// Не учитывает высоту панели навигации приложения!
-  static const screenHeight = 91;
+  static const screenHeight = 92;
 
   /// Высота заголовка приложения (Закрома, ...).
   static const headerHeight = 9;
 
   /// Высота верхней панели навигации приложения (в единицах [paddingUnit]).
-  static const topNavigationBarHeight = 3;
+  static const topNavigationBarHeight = 6;
 
   /// Высота нижней панели навигации приложения (в единицах [paddingUnit]).
   static const bottomNavigationBarHeight = 7;
@@ -81,7 +84,7 @@ class Constants with _$Constants {
   static const serverAddress = 'http://10.2.2.0:8080';
 
   /// Таймаут для запросов на сервер.
-  static const networkTimeout = Duration(seconds: 1);
+  static const networkTimeout = Duration(seconds: 5);
 
   /// Отступ заголовка приложения (Закрома, ...).
   ///
@@ -136,7 +139,7 @@ class Constants with _$Constants {
   double get dInnerRadius => dOuterRadius / 2;
 
   /// Толщина рамок и границ.
-  double get borderWidth => paddingUnit / 4;
+  double get borderWidth => paddingUnit / 3;
 
   /// Размер и интенсивность теней.
   double get dElevation => paddingUnit / 2;

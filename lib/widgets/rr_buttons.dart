@@ -1,17 +1,18 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zakroma_frontend/widgets/rr_card.dart';
 
 import '../utility/constants.dart';
 
 class RRButton extends ConsumerWidget {
   final Color? backgroundColor;
-  final double? borderRadius;
+  final BorderRadius? borderRadius;
   final Widget child;
   final Alignment childAlignment;
   final EdgeInsets childPadding;
   final Decoration? decoration;
-  final Decoration? foregroundDecoration;
+  final Color borderColor;
   final EdgeInsets padding;
   final double? elevation;
   final void Function()? onTap;
@@ -25,8 +26,8 @@ class RRButton extends ConsumerWidget {
     this.backgroundColor,
     this.borderRadius,
     this.decoration,
-    this.foregroundDecoration,
     this.padding = EdgeInsets.zero,
+    this.borderColor = Colors.transparent,
     this.elevation,
     required this.onTap,
     this.onDoubleTap,
@@ -37,41 +38,34 @@ class RRButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.read(constantsProvider);
-    return Padding(
+    return RRCard(
         padding: padding,
-        child: Container(
-            foregroundDecoration: foregroundDecoration,
-            child: Material(
-                color: backgroundColor ?? Theme.of(context).colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      borderRadius ?? constants.dInnerRadius),
-                ),
-                clipBehavior: Clip.antiAlias,
-                elevation: elevation ?? constants.dElevation,
-                child: InkWell(
-                  onTap: onTap,
-                  onDoubleTap: onDoubleTap,
-                  onLongPress: onLongPress,
-                  child: Align(
-                      alignment: childAlignment,
-                      child: Padding(
-                        padding: childPadding,
-                        child: child,
-                      )),
-                ))));
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).colorScheme.surface,
+        borderColor: borderColor,
+        borderRadius: borderRadius,
+        elevation: elevation ?? constants.dElevation,
+        child: InkWell(
+          onTap: onTap,
+          onDoubleTap: onDoubleTap,
+          onLongPress: onLongPress,
+          child: Align(
+              alignment: childAlignment,
+              child: Padding(
+                padding: childPadding,
+                child: child,
+              )),
+        ));
   }
 }
 
 class DottedRRButton extends RRButton {
-  final Color? borderColor;
-
   const DottedRRButton(
       {super.key,
       required super.child,
       super.childAlignment,
       super.backgroundColor,
-      this.borderColor,
+      super.borderColor,
       super.borderRadius,
       super.decoration,
       super.padding,
@@ -85,14 +79,15 @@ class DottedRRButton extends RRButton {
     return Padding(
       padding: padding,
       child: DottedBorder(
-        color: borderColor ?? Theme.of(context).colorScheme.surface,
+        color: borderColor,
         // 1.84 и 2 подобраны на глаз на Zenfone 9
         dashPattern: [constants.paddingUnit * 1.84, constants.paddingUnit * 2],
         padding: EdgeInsets.zero,
         // чтобы не вылезать за границы; размер, кажется, всегда strokeWidth / 2
         borderPadding: const EdgeInsets.all(2),
         strokeWidth: 4,
-        radius: Radius.circular(borderRadius ?? constants.dInnerRadius),
+        radius:
+            borderRadius?.topLeft ?? Radius.circular(constants.dInnerRadius),
         strokeCap: StrokeCap.round,
         borderType: BorderType.RRect,
         child: RRButton(

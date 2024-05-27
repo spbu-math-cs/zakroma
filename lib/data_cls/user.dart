@@ -106,6 +106,7 @@ class User extends _$User {
       case 400:
         throw Exception('Неверный запрос');
       default:
+        debugPrint('${response.statusCode}');
         throw Exception('Неизвестная ошибка');
     }
     final cookies = response.headers['set-cookie']!
@@ -113,12 +114,13 @@ class User extends _$User {
         .map((e) => MapEntry(e.split('=')[0], e.split('=')[1]));
     final body = jsonDecode(response.body) as Map<String, dynamic>;
     final nameBody = processResponse(await ref.watch(clientProvider).get(
-        makeUri('api/user/name'),
-        headers: makeHeader(
-            body['token'],
-            cookies
-                .firstWhere((element) => element.key == 'zakroma_session')
-                .value))).first;
+            makeUri('api/user/name'),
+            headers: makeHeader(
+                body['token'],
+                cookies
+                    .firstWhere((element) => element.key == 'zakroma_session')
+                    .value)))
+        .first;
     _updateSharedPrefs(
       token: body['token'],
       cookie: cookies
@@ -163,6 +165,7 @@ class User extends _$User {
       case 400:
         throw Exception('Неверный запрос');
       default:
+        debugPrint('${response.statusCode}');
         throw Exception('Неизвестная ошибка');
     }
     await authorize(email, password);
@@ -249,6 +252,8 @@ class User extends _$User {
         .firstWhere((element) => element.key == 'zakroma_session')
         .value;
   }
+
+  void updatePic(String picPath) {_updateStateWith(userPicUrl: picPath);}
 
   void _updateStateWith(
       {String? firstName,

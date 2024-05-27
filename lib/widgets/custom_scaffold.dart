@@ -25,10 +25,14 @@ class CustomScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // делаем системную панель навигации «прозрачной»
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor:
-            Theme.of(context).colorScheme.primaryContainer,
+        systemNavigationBarColor: Colors.transparent,
+        // systemNavigationBarColor: bottomNavigationBar != null
+        //     ? Theme.of(context).colorScheme.primaryContainer
+        //     : Theme.of(context).colorScheme.primary,
         statusBarColor: Colors.transparent));
+    final constants = ref.watch(constantsProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -38,9 +42,11 @@ class CustomScaffold extends ConsumerWidget {
                   children: [
                     Visibility(
                         visible: header != null,
-                        child: Expanded(
-                          flex: Constants.topNavigationBarHeight +
-                              Constants.headerHeight,
+                        child: SizedBox(
+                          height: constants.topPadding +
+                              Constants.topNavigationBarHeight *
+                                  constants.paddingUnit +
+                              Constants.headerHeight * constants.paddingUnit,
                           child: header != null
                               ? header!
                               : const SizedBox.shrink(),
@@ -103,7 +109,8 @@ class CustomHeader extends ConsumerWidget {
       this.header,
       this.selectionAppBar,
       this.padding})
-      : assert(title == null || header == null);
+      : assert((title == null || header == null) &&
+            (title != null || header != null));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -111,10 +118,10 @@ class CustomHeader extends ConsumerWidget {
     final defaultLayout = Padding(
       padding: padding ??
           EdgeInsets.only(
-              top: topNavigationBar == null
-                  ? constants.topPadding +
-                      Constants.topNavigationBarHeight * constants.paddingUnit
-                  : 0),
+              top: constants.topPadding +
+                  (topNavigationBar == null
+                      ? Constants.topNavigationBarHeight * constants.paddingUnit
+                      : 0)),
       child: Column(
         children: [
           Visibility(
@@ -126,18 +133,29 @@ class CustomHeader extends ConsumerWidget {
                     : const SizedBox.shrink()),
           ),
           Visibility(
+            visible: header != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: constants.dAppHeadlinePadding,
+                  child: header != null ? header! : const SizedBox.shrink(),
+                )),
+          ),
+          Visibility(
             visible: title != null,
             child: Expanded(
                 flex: Constants.headerHeight,
                 child: Padding(
-                  padding: ref.watch(constantsProvider).dAppHeadlinePadding,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: StyledHeadline(
-                      text: title!,
-                      textStyle: Theme.of(context).textTheme.displayLarge,
-                    ),
-                  ),
+                  padding: constants.dAppHeadlinePadding,
+                  child: title != null
+                      ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: StyledHeadline(
+                            text: title!,
+                            textStyle: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 )),
           )
         ],
@@ -146,16 +164,50 @@ class CustomHeader extends ConsumerWidget {
     if (selectionAppBar == null) {
       return defaultLayout;
     }
-    final selectionModeEnabled = ref.watch(selectionProvider
-        .select((value) => value.values.any((element) => element)));
-    debugPrint('selectionModeEnabled = $selectionModeEnabled');
+    final selectionModeEnabled = ref.watch(selectionProvider(title!)
+        .select((value) => value.selectionModeEnabled));
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         systemNavigationBarColor:
             Theme.of(context).colorScheme.primaryContainer,
         statusBarColor: selectionModeEnabled
             ? Theme.of(context).colorScheme.surface
             : Colors.transparent));
-    if (selectionModeEnabled) {}
-    return selectionModeEnabled ? selectionAppBar! : defaultLayout;
+    if (selectionModeEnabled) {
+      return Column(
+        children: [
+          SizedBox(
+              height: constants.topPadding +
+                  Constants.topNavigationBarHeight * constants.paddingUnit,
+              child: selectionAppBar!),
+          Visibility(
+            visible: header != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: constants.dAppHeadlinePadding,
+                  child: header != null ? header! : const SizedBox.shrink(),
+                )),
+          ),
+          Visibility(
+            visible: title != null,
+            child: Expanded(
+                flex: Constants.headerHeight,
+                child: Padding(
+                  padding: constants.dAppHeadlinePadding,
+                  child: title != null
+                      ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: StyledHeadline(
+                            text: title!,
+                            textStyle: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                )),
+          )
+        ],
+      );
+    }
+    return defaultLayout;
   }
 }

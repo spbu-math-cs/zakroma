@@ -13,6 +13,8 @@ import '../../widgets/rr_buttons.dart';
 import '../../widgets/rr_surface.dart';
 import '../../widgets/text_divider.dart';
 
+// TODO(tech): очищать selection при выходе со страницы
+
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
 
@@ -53,7 +55,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                 return;
               }
               ref
-                  .read(viewPersonalProvider.notifier)
+                  .read(viewingPersonalProvider.notifier)
                   .update((state) => (personal, true));
             })),
             // Продукты в корзине + кнопка оформления заказа
@@ -76,7 +78,6 @@ class _CartPageState extends ConsumerState<CartPage> {
                           duration: Constants.dAnimationDuration,
                           child: RRButton(
                               onTap: checkout,
-                              borderRadius: constants.dInnerRadius,
                               padding: constants.dBlockPadding +
                                   constants.dCardPadding,
                               child: Text(
@@ -139,7 +140,7 @@ class CartSwitch extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final constants = ref.watch(constantsProvider);
     final personal =
-        ref.watch(viewPersonalProvider.select((value) => value.$1));
+        ref.watch(viewingPersonalProvider.select((value) => value.$1));
     final tabTitles = ['Личная', 'Семейная'];
     return Padding(
       padding: constants.dBlockPadding.copyWith(bottom: 0),
@@ -182,7 +183,7 @@ class _CartIngredientsState extends ConsumerState<CartIngredients> {
   Widget build(BuildContext context) {
     final constants = ref.watch(constantsProvider);
     final personal =
-        ref.watch(viewPersonalProvider.select((value) => value.$1));
+        ref.watch(viewingPersonalProvider.select((value) => value.$1));
 
     _initScrollController(
         personal,
@@ -232,38 +233,38 @@ class _CartIngredientsState extends ConsumerState<CartIngredients> {
   void _initScrollController(bool personal, Future<(int, int)> cartLengths,
       double ingredientTileHeight) {
     cartLengths.then((cartLengths) => scrollController.addListener(() {
-          if (ref.read(viewPersonalProvider).$2) {
+          if (ref.read(viewingPersonalProvider).$2) {
             return;
           }
           if (personal &&
               scrollController.offset >
                   ingredientTileHeight * cartLengths.$1 / 2) {
             ref
-                .read(viewPersonalProvider.notifier)
+                .read(viewingPersonalProvider.notifier)
                 .update((state) => (false, state.$2));
           } else if (!personal &&
               scrollController.offset <
                   ingredientTileHeight * cartLengths.$1 / 2) {
             ref
-                .read(viewPersonalProvider.notifier)
+                .read(viewingPersonalProvider.notifier)
                 .update((state) => (true, state.$2));
           }
         }));
 
-    ref.listen(viewPersonalProvider, (previous, next) {
+    ref.listen(viewingPersonalProvider, (previous, next) {
       if (previous == null || !next.$2) {
         return;
       }
       scrollController
           .animateTo(
-              ref.read(viewPersonalProvider).$1
+              ref.read(viewingPersonalProvider).$1
                   ? 0
                   : ref.read(cartProvider).value!.first.cart.length *
                       ingredientTileHeight,
               duration: Constants.dAnimationDuration,
               curve: Curves.easeIn)
           .whenComplete(() => ref
-              .read(viewPersonalProvider.notifier)
+              .read(viewingPersonalProvider.notifier)
               .update((state) => (state.$1, false)));
     });
   }
