@@ -29,6 +29,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final constants = ref.read(constantsProvider);
+    final promotionImageUrls = [
+      'https://i.ytimg.com/vi/ntqPdpejWJA/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AHUBoAC4AOKAgwIABABGH8gEygmMA8=&rs=AOn4CLAPMPKFygqHga-4hq5H5ae35gvGqA',
+      'https://i.ytimg.com/vi/9-syTaYOR9E/maxresdefault.jpg',
+      'https://telegra.ph/file/a918143d801e34b2aafc2.jpg'
+    ];
 
     return CustomScaffold(
       header: const CustomHeader(
@@ -37,9 +42,25 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: Column(
         children: [
           // Предложения + статус доставки
-          const Expanded(
+          Expanded(
               flex: 17 + 2, // размер_виджета + отступ снизу
-              child: RRSurface(child: Placeholder())),
+              child: PageView(
+                padEnds: false,
+                scrollDirection: Axis.horizontal,
+                children: List<Widget>.generate(
+                    promotionImageUrls.length,
+                    (index) => RRButton(
+                          backgroundColor: Colors.transparent,
+                          onTap: () {},
+                          padding: constants.dBlockPadding,
+                          child: SizedBox.expand(
+                            child: Image.network(
+                              promotionImageUrls[index],
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        )),
+              )),
           // Приёмы пищи на сегодня
           Expanded(
               flex: 29 + 2,
@@ -107,7 +128,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                         }),
                       )),
                   // Перечисление рецептов
-                  // TODO(tech): реализовать горизонтальную прокрутку, индикаторы снизу
                   Expanded(
                       flex: 18,
                       child: Padding(
@@ -117,9 +137,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                             async: ref.watch(recipesProvider),
                             builder: (dishes) {
                               return Row(
-                                  // TODO(server): подгрузить рецепты (id, название, иконка)
-                                  // TODO(tech): реализовать recipesProvider?
-                                  // TODO(tech): использовать генератор списков вместо перечисления
                                   children: List<Widget>.generate(
                                       3, (index) => DishTile(dishes[index])));
                             }),
